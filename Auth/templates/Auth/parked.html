@@ -1,0 +1,171 @@
+
+{% extends 'Auth/Base.html' %}
+{% load static %}
+
+{% block sources %}
+  <link rel="stylesheet" href="{% static 'resources/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'resources/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'resources/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <h4 class="text-center display-4">Parked Vehicles</h4>
+      </div>
+      <!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 offset-md-0">
+                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#add_car">
+                        Add Car
+                    </button>
+                </div>
+            </div> 
+            <!-- List of Accounts-->
+            <div class="row mt-2">
+                <div class="col-md-12 offset-md-0">
+                  <!--Entity Table-->
+        <div class="card card-default">
+            <div class="card-header">
+              <h3 class="card-title">Parked Cars</h3>
+  
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                  <i class="fas fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-tool" data-card-widget="remove">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body" style="display: block;" id="entities">
+                <table class="table" id="example1">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Date</th>
+                                            <th>Plate Number</th>
+                                            <th>Entry Gate</th>
+                                            <th>Checkin time</th>
+                                            <th>Elapsed</th>
+                                            <th>Close Ticket</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for Car in List %}
+                                        <tr>
+                                            <th scope="row">{{forloop.counter}}</th>
+                                            <td>{{Car.Date}}</td>
+                                            <td>{{Car.PlateNum}}</td>
+                                            <td>{{Car.EntryGate}}</td>
+                                            <td>{{Car.Checkin}}</td>
+                                            <td>{{Car.Duration}} Minutes</td>
+                                            <td>
+                                                {% comment %} <button class="btn btn-warning mb-3" data-toggle="modal" data-target="#closeTicket" style="color: #ffffff;"> <i class="zmdi zmdi-close"></i> Close Ticket</button>
+                                                {% endcomment %}<a href="history/{{Car.TicketId}}/close" class="btn btn-warning" role="button" data-bs-toggle="button">Close Ticket</a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+              <!-- /.row -->
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer" style="display: block;">
+              TOTAL Parked Cars : {{ total_accounts }}
+            </div>
+        </div>
+                  <!-- /.card -->
+                </div>
+                <!-- /.col -->
+            </div>
+        </div>
+
+        <!-- Modal Dialogs ========= --> 
+    <!-- Default Size -->
+    <!-- Default Size -->
+    <div class="modal fade" id="add_car" tabindex="-1" role="dialog">
+        <div class="modal-dialog " role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="title" id="defaultModalLabel"> Add New Vehicle</h4>
+                </div>
+                <div class="modal-body"> 
+                    <div class="col-sm-12">
+                        
+                        <div class="form-group col-sm-12">    
+                            <label>Plate Number </label>                                  
+                            <input type="text" class="form-control" placeholder="Enter Plate Number">
+                        </div>
+                        <div class="form-group col-sm-12">    
+                            <label>Entrace at</label>                                
+                            <input type="time" class="form-control" placeholder="Enter Time from">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary waves-effect">Save Changes</button>
+                    <button type="button" class="btn btn-danger btn-simple waves-effect" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>    
+    </section>
+  </div>
+
+{% endblock %}
+
+{% block script %}
+
+<!-- jQuery -->
+<script src="{% static 'resources/plugins/jquery/jquery.min.js' %}"></script>
+<!-- Bootstrap 4 -->
+<script src="{% static 'resources/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<!-- Select2 -->
+<script src="{% static 'resources/plugins/select2/js/select2.full.min.js' %}"></script>
+<!-- DataTables  & Plugins -->
+<script src="{% static 'resources/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'resources/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'resources/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'resources/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+<script src="{% static 'resources/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'resources/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+<script src="{% static 'resources/plugins/jszip/jszip.min.js' %}"></script>
+<script src="{% static 'resources/plugins/pdfmake/vfs_fonts.js' %}"></script>
+<script src="{% static 'resources/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+<script src="{% static 'resources/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+
+
+<script>
+    $(function () {
+      $("#example1").DataTable({
+        "responsive": true, "lengthChange": false, "autoWidth": false,
+        "buttons": ["copy", "csv", "excel", "colvis"]
+      }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+      $('#example2').DataTable({
+        "paging": true,
+        "lengthChange": false,
+        "searching": false,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+      });
+    });
+  </script>
+
+<script>
+  $(function () {
+    $('.select2').select2()
+  });
+</script>
+{% endblock %}

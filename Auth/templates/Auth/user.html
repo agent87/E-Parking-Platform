@@ -1,0 +1,117 @@
+{% extends 'Auth/default.html' %}
+{% load static %}
+
+{% block content %}
+
+    <!-- Main Content -->
+    <div class="body_area">
+
+    
+        <div class="container pt-5">
+            <div class="row clearfix">
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="card">
+                        <div class="header">
+                            <h2><strong>All User</strong>  <small>System-Accesss </h2>
+                            <button class="btn btn-primary mt-3"     data-toggle="modal" data-target="#defaultModal"> <i class="zmdi zmdi-plus"></i> Add New</button>  
+
+                        </div>
+                        <div class="body">
+                            <table class="table table-filter table-hover m-b-0">
+                                <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Full Name</th>
+                                            <th>Email</th>
+                                            <th>Phone Number</th>
+                                            <th>Role</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>                            
+                                <tbody>
+                                    <tr data-status="approved">
+                                        <td>1</td>
+                                        <td>Karangwa Donald</td>
+                                        <td>k.donald@gnail.com</td>
+                                        <td>0788293847</td>
+                                        <td>Gate Cashier</td>
+                                        <td><span class="badge badge-success">Approved</span></td>
+                                        <td><button class="btn btn-warning mb-3" data-toggle="modal" data-target="#removeuser" style="color: #ffffff;"> <i class="zmdi zmdi-close"></i>View Profile</button></td>
+                                        
+                                    </tr>
+                                    <tr data-status="approved">
+                                        <td>1</td>
+                                        <td>Kwizera Goliath</td>
+                                        <td>k.td@gnail.com</td>
+                                        <td>078824537</td>
+                                        <td>Gate Cashier</td>
+                                        <td><span class="badge badge-warning">Suspended</span></td>
+                                        <td><button class="btn btn-warning mb-3" data-toggle="modal" data-target="#removeuser" style="color: #ffffff;"> <i class="zmdi zmdi-close"></i>View Profile</button></td>
+                                        
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modal Dialogs ========= --> 
+    <!-- Default Size -->
+    <form method="POST" action="users">
+    {% csrf_token %}
+    <div class="modal fade" id="defaultModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="title" id="defaultModalLabel"> Add New User</h4>
+                </div>
+                <div class="modal-body"> 
+                    <div class="col-sm-12">
+                        <label for="sel1">Full Name</label>
+                        <div class="form-group col-sm-12">                                    
+                            <input id="NameField" name="Name" type="text" class="form-control" placeholder="Full Name">
+                        </div>
+                        <label for="sel1">Email</label>
+                        <div class="form-group col-sm-12">                                   
+                            <input id="EmailField" name="Email" type="text" class="form-control" placeholder="E-mail">
+                        </div>
+                        <label for="sel1">Password</label>
+                        <div class="form-group col-sm-12">                                   
+                            <input id="PasswordField" name="Password" type="password" class="form-control" placeholder="Password">
+                        </div>
+                        <label for="sel1">Phone Number</label>
+                        <div class="form-group col-sm-12">                                   
+                            <input id="PhoneNumField" name="PhoneNum" type="number" class="form-control" placeholder="Phone">
+                        </div>
+                        <label for="sel1">Role</label>
+                        <div class="form-group col-sm-12">                                   
+                            <input id="RoleField" name="RoleNum" type="text" class="form-control" placeholder="Phone">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary waves-effect">SAVE CHANGES</button>
+                    <button type="button" class="btn btn-danger btn-simple waves-effect" data-dismiss="modal">CLOSE</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </form>
+
+
+</div>
+
+{% endblock %}
+<!-- Jquery Core Js --> 
+<script src="{%static 'assets/bundles/libscripts.bundle.js'%}"></script> <!-- Lib Scripts Plugin Js --> 
+<script src="{%static 'assets/bundles/vendorscripts.bundle.js'%}"></script> <!-- Lib Scripts Plugin Js --> 
+
+<script src="{%static 'assets/bundles/mainscripts.bundle.js'%}"></script><!-- Custom Js --> 
+</body>
+</html>
