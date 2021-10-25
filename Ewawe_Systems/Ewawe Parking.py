@@ -136,23 +136,13 @@ class application:
 		dashboard_frame = ttk.Frame(application_tab,width=1186, height=525)
 		sales_frame = ttk.Frame(application_tab,width=1186, height=525)
 		warehouse_frame = ttk.Frame(application_tab,width=1186, height=525)
-		logistics_frame = ttk.Frame(application_tab,width=1186, height=525)
-		procurement_frame = ttk.Frame(application_tab,width=1186, height=525)
-		human_res_frame  = ttk.Frame(application_tab,width=1186, height=525)
-		finance_frame = ttk.Frame(application_tab,width=1186, height=525)
-		assets_frame = ttk.Frame(application_tab,width=1186, height=525)
 
 		
 		##############
 
 		application_tab.add(dashboard_frame,   text="{:15}".format(" Dashboard & KPI's  "))
-		application_tab.add(sales_frame,       text="{:15}".format(" Sales     "))
-		application_tab.add(warehouse_frame,   text="{:15}".format(" Warehouse "))
-		application_tab.add(logistics_frame,   text="{:15}".format(" Logistics "))
-		application_tab.add(procurement_frame, text="{:15}".format(" Procurement "))
-		application_tab.add(human_res_frame,   text="{:15}".format(" Human Resources "))
-		application_tab.add(finance_frame,     text="{:15}".format(" Finance & Accounting "))
-		application_tab.add(assets_frame,      text="{:15}".format(" Assets & Maintaince "))
+		application_tab.add(sales_frame,       text="{:15}".format(" CAMERA 1    "))
+		application_tab.add(warehouse_frame,   text="{:15}".format(" CAMERA 2 "))
 
 
 		application_tab.pack()

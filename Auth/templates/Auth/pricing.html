@@ -1,25 +1,54 @@
-{% extends 'Auth/default.html' %}
+
+{% extends 'Auth/Base.html' %}
 {% load static %}
+
+{% block sources %}
+  <link rel="stylesheet" href="{% static 'resources/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'resources/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'resources/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+{% endblock %}
+
 {% block content %}
 
-<div id="body" class="theme-cyan">
- 
-    <!-- Main Content -->
-    <div class="body_area">
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <h4 class="text-center display-4">Parking Tarrifs</h4>
+      </div>
+      <!-- /.container-fluid -->
+    </section>
 
-    
-        <div class="container pt-5">
-            <div class="row clearfix">
-                <div class="col-lg-12 col-md-12 col-sm-12">
-                    <div class="card">
-                        <div class="header">
-                            <button class="btn btn-primary mb-3"     data-toggle="modal" data-target="#defaultModal"> <i class="zmdi zmdi-plus"></i> Add New</button>  
-                            <h2><strong>Parking Pricing</strong> <small>All Parking Pricing Details</small> </h2>                       
-                        </div>
-                        <div class="body">
-
-                            <div class="table-responsive">
-                                <table class="table">
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 offset-md-0">
+                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#TariffForm">
+                        Add Tarrifs
+                    </button>
+                </div>
+            </div> 
+            <!-- List of Accounts-->
+            <div class="row mt-2">
+                <div class="col-md-12 offset-md-0">
+                  <!--Entity Table-->
+        <div class="card card-default">
+            <div class="card-header">
+              <h3 class="card-title">Parking Tarrifs</h3>
+  
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                  <i class="fas fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-tool" data-card-widget="remove">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body" style="display: block;" id="entities">
+                <table class="table" id="example1">
                                     <thead>
                                         <tr>
                                             <th>#</th>
@@ -39,18 +68,21 @@
                                         {% endfor %}
                                     </tbody>
                                 </table>
-                            </div>
-                        </div>
-                    </div>
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer" style="display: block;">
+              TOTAL TARRRIFS : {{ total_accounts }}
+            </div>
+        </div>
+                  <!-- /.card -->
                 </div>
+                <!-- /.col -->
             </div>
         </div>
 
-    </div>
-
-    <!-- Modal Dialogs ========= --> 
+        <!-- Modal Dialogs ========= --> 
     <!-- Default Size -->
-    <div class="modal fade" id="defaultModal" tabindex="-1" role="dialog">
+    <div class="modal fade" id="TariffForm" tabindex="-1" role="dialog">
         <div class="modal-dialog " role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -76,17 +108,54 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div>    
+    </section>
+  </div>
 
-{% endblock %}  
+{% endblock %}
 
-</div>
+{% block script %}
+
+<!-- jQuery -->
+<script src="{% static 'resources/plugins/jquery/jquery.min.js' %}"></script>
+<!-- Bootstrap 4 -->
+<script src="{% static 'resources/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<!-- Select2 -->
+<script src="{% static 'resources/plugins/select2/js/select2.full.min.js' %}"></script>
+<!-- DataTables  & Plugins -->
+<script src="{% static 'resources/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'resources/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'resources/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'resources/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+<script src="{% static 'resources/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'resources/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+<script src="{% static 'resources/plugins/jszip/jszip.min.js' %}"></script>
+<script src="{% static 'resources/plugins/pdfmake/vfs_fonts.js' %}"></script>
+<script src="{% static 'resources/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+<script src="{% static 'resources/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
 
 
-<!-- Jquery Core Js --> 
-<script src="{%static 'assets/bundles/libscripts.bundle.js'%}"></script> <!-- Lib Scripts Plugin Js --> 
-<script src="{%static 'assets/bundles/vendorscripts.bundle.js'%}"></script> <!-- Lib Scripts Plugin Js --> 
+<script>
+    $(function () {
+      $("#example1").DataTable({
+        "responsive": true, "lengthChange": false, "autoWidth": false,
+        "buttons": ["copy", "csv", "excel", "colvis"]
+      }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+      $('#example2').DataTable({
+        "paging": true,
+        "lengthChange": false,
+        "searching": false,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+      });
+    });
+  </script>
 
-<script src="{%static 'assets/bundles/mainscripts.bundle.js'%}"></script><!-- Custom Js --> 
-</body>
-</html>
+<script>
+  $(function () {
+    $('.select2').select2()
+  });
+</script>
+{% endblock %}

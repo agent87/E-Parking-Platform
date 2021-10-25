@@ -1,92 +1,80 @@
 {% load static %}
-<!doctype html>
-<html class="no-js " lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=Edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="Responsive Bootstrap 4 and web Application ui kit.">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ewawe Systems | Log in</title>
 
-<title>:: Ewawe Smart Parking :: Sign In</title>
-<!-- Favicon-->
-<link rel="icon" href="favicon.ico" type="image/x-icon">
-<link rel="stylesheet" href="{% static 'assets/plugins/bootstrap/css/bootstrap.min.css'%}">
-
-<!-- Custom Css -->
-<link rel="stylesheet" href="{%static 'assets/css/amaze.style.min.css'%}">
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="{% static 'resources/plugins/fontawesome-free/css/all.min.css' %}">
+  <!-- icheck bootstrap -->
+  <link rel="stylesheet" href="{% static 'resources/plugins/icheck-bootstrap/icheck-bootstrap.min.css' %}">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{% static 'resources/dist/css/adminlte.min.css' %}">
 </head>
+<body class="hold-transition login-page">
+<div class="login-box">
+  <div class="login-logo">
+    <a href="."><b>Ewawe Systems</b>LTE</a>
+  </div>
+  <!-- /.login-logo -->
+  <div class="card">
+    <div class="card-body login-card-body">
+      <p class="login-box-msg">Sign in to start your session</p>
 
-<body class="font-ubuntu">
-
-<div id="body" class="theme-cyan">
-
-    <div class="authentication">
-        <div class="container">
-            <div class="row clearfix">
-                <div class="col-lg-6 col-md-12">
-                    <div class="company_detail">
-                        <h4 class="logo"><img class="mr-2" src="{%static 'assets/images/logo.svg'%}" alt="Logo"> Ewawe Smart Parking</h4>
-                        <h3><strong>Ewawe Smart Parking</strong> </h3>
-                        <div class="footer">
-                            <ul  class="social_link list-unstyled">
-                                <li><a href="#" title="ThemeMakker"><i class="zmdi zmdi-globe"></i></a></li>
-                                <li><a href="#" title="Themeforest"><i class="zmdi zmdi-shield-check"></i></a></li>
-                                <li><a href="#" title="LinkedIn"><i class=" zmdi-linkedin"></i></a></li>
-                                <li><a href="#" title="Facebook"><i class="zmdi zmdi-facebook"></i></a></li>
-                                <li><a href="#" title="Twitter"><i class="zmdi zmdi-twitter"></i></a></li>
-                                <li><a href="#" title="Behance"><i class="zmdi zmdi-behance"></i></a></li>
-                                <li><a href="#" title="dribbble"><i class="zmdi zmdi-dribbble"></i></a></li>
-                            </ul>
-                            <hr>
-                            <p class="copyright font-12">Copyright 2021 © All Rights Reserved. Ewawe Smart Parking  </p>
-                        </div>
-                    </div>
-                </div>                        
-                <div class="col-lg-6 col-md-12">
-                    <div class="card-plain ml-auto">
-                        <div class="header">
-                            <h5>Log in</h5>
-                        </div>
-                        <div class="header"  style = "position:relative; color:#FF0000; top:35px; left:5px">
-                        {% if code == 302 %}
-                                <h7>Wrong username or password!</h7>
-                        {% endif %}
-                        </div>
-                        <form class="form mt-5" action="login" method="POST">
-                            {% csrf_token %}
-                            <div class="form-group mb-1">
-                                <div class="input-group">
-                                    <input name="username" type="text" class="form-control" placeholder="Username">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="input-group">
-                                    <input name="password" type="password" class="form-control" placeholder="Password">
-                                </div>
-                                <a href="forgot-password.html" class="link font-13 float-right">Forgot Password?</a>
-                            </div>
-                            <div class="footer mt-3">
-                                <input type="submit" class="btn btn-secondary btn-block" value="Sign In">
-                            </div>
-                            <div class="mt-4">
-                                <label class="c_checkbox">
-                                    <input type="checkbox">
-                                    <span class="checkmark"></span>
-                                    <span class="ml-2">Keep me logged in</span>
-                                </label>
-                            </div>
-                        </form>
-                        <span>Don't have an account? <a href="dashboard" class="link">Explore Demo</a></span>
-                    </div>
-                </div>
+      <form action="login" method="post">
+        {% csrf_token %}
+        <div class="input-group mb-3">
+          <input type="username" class="form-control" placeholder="Username">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-envelope"></span>
             </div>
+          </div>
         </div>
-    </div>
-    
-</div>
+        <div class="input-group mb-3">
+          <input type="password" class="form-control" placeholder="Password">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-8">
+            <div class="icheck-primary">
+              <input type="checkbox" id="remember">
+              <label for="remember">
+                Remember Me
+              </label>
+            </div>
+          </div>
+          <!-- /.col -->
+          <div class="col-4">
+            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+          </div>
+          <!-- /.col -->
+        </div>
+      </form>
 
-<!-- Jquery Core Js -->
-<script src="{%static 'assets/bundles/libscripts.bundle.js' %}"></script>
-<script src="{%static 'assets/bundles/vendorscripts.bundle.js' %}"></script> <!-- Lib Scripts Plugin Js -->
+      
+      <!-- /.social-auth-links -->
+
+      
+    </div>
+    <!-- /.login-card-body -->
+  </div>
+</div>
+<!-- /.login-box -->
+
+<!-- jQuery -->
+<script src="{% static 'resources/plugins/jquery/jquery.min.js' %}"></script>
+<!-- Bootstrap 4 -->
+<script src="{% static 'resources/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'resources/dist/js/adminlte.min.js' %}"></script>
 </body>
 </html>
