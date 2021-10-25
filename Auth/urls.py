@@ -26,11 +26,13 @@ urlpatterns = [
 
     ###Tarrif Related#####
     path('pricing', views.responses.pricing_page, name='pricing_page'),
+    path('pricing/add', views.responses.pricing_page, name='add_tarrif'),
 
     ###Subcribers
     path('subscribers', views.responses.subscribers_page, name='subscribers_page'),
+    path('subscribers/add', views.responses.subscribers_page, name='add_subscriber'), 
 
     path('users', views.responses.user_page, name='user_page'),
-    path('users/enroll', views.responses.user_page, name='user_enroll_api'),
+    path('users/add', views.responses.user_page, name='add_user'),
     path('admin/', admin.site.urls)
 ]
