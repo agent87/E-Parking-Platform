@@ -1,155 +1,227 @@
-{% extends 'Auth/default.html' %}
+
+{% extends 'Auth/Base.html' %}
 {% load static %}
 
-{%block content%}
-
-    <!-- Main Content -->
-    <div class="body_area after_bg">
-
-
-        <div class="container pt-5">
-
-            <div class="row clearfix row-deck">
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="card top_widget">
-                        <div class="body">
-                            <div class="icon"><i class="zmdi zmdi-flag"></i> </div>
-                            <div class="content">
-                                <div class="text mb-2 text-uppercase">Today's Cars</div>
-                                <h4 class="number mb-0">{{Today.Cars}} Cars<span class="font-12 text-muted"><i class="fa fa-level-up"></i> 13%</span></h4>
-                                <small class="text-muted">Analytics for last week</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="card top_widget">
-                        <div class="body">
-                            <div class="icon"><i class="zmdi zmdi-accounts-alt"></i> </div>
-                            <div class="content">
-                                <div class="text mb-2 text-uppercase">Today's Revenue</div>
-                                <h4 class="number mb-0">{{Today.Revenue}} RWF<span class="font-12 text-muted"><i class="fa fa-level-down"></i> 7%</span></h4>
-                                <small class="text-muted">Analytics for last week</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="card top_widget">
-                        <div class="body">
-                            <div class="icon"><i class="zmdi zmdi-account"></i> </div>
-                            <div class="content">
-                                <div class="text mb-2 text-uppercase">Total Cars</div>
-                                <h4 class="number mb-0">{{History.Count}} Cars<span class="font-12 text-muted"><i class="fa fa-level-down"></i> 4%</span></h4>
-                                <small class="text-muted">Analytics for last week</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="card top_widget">
-                        <div class="body">
-                            <div class="icon"><i class="zmdi zmdi-thumb-up"></i> </div>
-                            <div class="content">
-                                <div class="text mb-2 text-uppercase">Parked Now</div>
-                                <h4 class="number mb-0">{{Parked.Now}} Cars<span class="font-12 text-muted"><i class="fa fa-level-up"></i> 15%</span></h4>
-                                <small class="text-muted">Analytics for last week</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row clearfix row-deck">
-                <div class="col-xl-6 col-lg-12">
-                    <div class="card">
-                        <div class="header">
-                            <h2>Sales overview <small>Do you know the latest update of 2021 </small></h2>
-                            <ul class="header-dropdown">
-                                <li class="dropdown"> <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <i class="zmdi zmdi-more"></i> </a>
-                                    <ul class="dropdown-menu dropdown-menu-right">
-                                        <li><a href="javascript:void(0);">Action</a></li>
-                                        <li><a href="javascript:void(0);">Another action</a></li>
-                                        <li><a href="javascript:void(0);">Something else</a></li>
-                                    </ul>
-                                </li>
-                                <li class="remove">
-                                    <a role="button" class="boxs-close"><i class="zmdi zmdi-close"></i></a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="body">
-                            <div id="apex-basic-column"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-6 col-lg-6 col-sm-12">
-                    <div class="card">
-                        <div class="header">
-                            <h2><strong>Sale</strong> Progress <small>latest update 2021-2021</small></h2>
-                            <ul class="header-dropdown">
-                                <li class="dropdown"> <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <i class="zmdi zmdi-more"></i> </a>
-                                    <ul class="dropdown-menu dropdown-menu-right">
-                                        <li><a href="javascript:void(0);">Action</a></li>
-                                        <li><a href="javascript:void(0);">Another action</a></li>
-                                        <li><a href="javascript:void(0);">Something else</a></li>
-                                    </ul>
-                                </li>
-                                <li class="remove">
-                                    <a role="button" class="boxs-close"><i class="zmdi zmdi-close"></i></a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="body">
-                            <span>Daily Income</span>
-                            <h3 class="mb-0">Rwf {{Today.Revenue}}</h3>
-                            <div class="bh_divider"></div>
-                            <div class="mb-3">
-                                <div>Kalisa<span class="float-right">89K</span></div>
-                                <div class="progress sm">
-                                    <div class="progress-bar progress-bar-success" role="progressbar" style="width:89%; " aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <div>Jean <span class="float-right">76K</span></div>
-                                <div class="progress sm">
-                                    <div class="progress-bar progress-bar-warning" role="progressbar" style="width:76%; " aria-valuenow="55" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <div>Hirwa<span class="float-right">52K</span></div>
-                                <div class="progress sm">
-                                    <div class="progress-bar progress-bar-danger" role="progressbar" style="width:52%; " aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <div>Mugisha<span class="float-right">46K</span></div>
-                                <div class="progress sm">
-                                    <div class="progress-bar progress-bar-primary" role="progressbar" style="width:46%; " aria-valuenow="62" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div>Emmanuel<span class="float-right">34K</span></div>
-                                <div class="progress sm">
-                                    <div class="progress-bar progress-bar-info" role="progressbar" style="width:34%; " aria-valuenow="62" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row clearfix">
-                <div class="col-md-12 col-lg-12">
-                    <div class="card">
-                        <div class="body">
-                            <p class="copyright mb-0">Copyright 2021 Ewawe Group © All Rights Reserved.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
+{% block sources %}
+  <link rel="stylesheet" href="{% static 'resources/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'resources/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'resources/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
 {% endblock %}
 
+{% block content %}
+<div class="content-wrapper">
+<!-- Main content -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <h4 class="text-center display-4">Dashboard</h4>
+      </div>
+      <!-- /.container-fluid -->
+    </section>
+
+    <section class="content">
+      <div class="container-fluid">
+        <!-- Info boxes -->
+        <div class="row">
+          <div class="col-12 col-sm-6 col-md-3">
+            <div class="info-box">
+              <span class="info-box-icon bg-info elevation-1"><i class="fas fa-cog"></i></span>
+
+              <div class="info-box-content">
+                <span class="info-box-text">CPU Traffic</span>
+                <span class="info-box-number">
+                  10
+                  <small>%</small>
+                </span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
+          <!-- /.col -->
+          <div class="col-12 col-sm-6 col-md-3">
+            <div class="info-box mb-3">
+              <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-thumbs-up"></i></span>
+
+              <div class="info-box-content">
+                <span class="info-box-text">Likes</span>
+                <span class="info-box-number">41,410</span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
+          <!-- /.col -->
+
+          <!-- fix for small devices only -->
+          <div class="clearfix hidden-md-up"></div>
+
+          <div class="col-12 col-sm-6 col-md-3">
+            <div class="info-box mb-3">
+              <span class="info-box-icon bg-success elevation-1"><i class="fas fa-shopping-cart"></i></span>
+
+              <div class="info-box-content">
+                <span class="info-box-text">Sales</span>
+                <span class="info-box-number">760</span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
+          <!-- /.col -->
+          <div class="col-12 col-sm-6 col-md-3">
+            <div class="info-box mb-3">
+              <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
+
+              <div class="info-box-content">
+                <span class="info-box-text">New Members</span>
+                <span class="info-box-number">2,000</span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="card-title">Monthly Recap Report</h5>
+
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
+                      <i class="fas fa-wrench"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right" role="menu">
+                      <a href="#" class="dropdown-item">Action</a>
+                      <a href="#" class="dropdown-item">Another action</a>
+                      <a href="#" class="dropdown-item">Something else here</a>
+                      <a class="dropdown-divider"></a>
+                      <a href="#" class="dropdown-item">Separated link</a>
+                    </div>
+                  </div>
+                  <button type="button" class="btn btn-tool" data-card-widget="remove">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-8">
+                    <p class="text-center">
+                      <strong>Traffic: 1 Jan, 2020 - 6 Nov, 2021</strong>
+                    </p>
+
+                    <div class="chart">
+                      <!-- Sales Chart Canvas -->
+                      <canvas id="salesChart" height="180" style="height: 180px;"></canvas>
+                    </div>
+                    <!-- /.chart-responsive -->
+                  </div>
+                  <!-- /.col -->
+                  <div class="col-md-4">
+                    <p class="text-center">
+                      <strong>Individual Gates</strong>
+                    </p>
+
+                    <div class="progress-group">
+                      North Gate
+                      <span class="float-right"><b>160</b>/200</span>
+                      <div class="progress progress-sm">
+                        <div class="progress-bar bg-primary" style="width: 80%"></div>
+                      </div>
+                    </div>
+                    <!-- /.progress-group -->
+
+                    <div class="progress-group">
+                      South Gate
+                      <span class="float-right"><b>310</b>/400</span>
+                      <div class="progress progress-sm">
+                        <div class="progress-bar bg-danger" style="width: 75%"></div>
+                      </div>
+                    </div>
+                    <!-- /.progress-group -->
+                  </div>
+                  <!-- /.col -->
+                </div>
+                <!-- /.row -->
+              </div>
+              <!-- ./card-body -->
+              <div class="card-footer">
+                <div class="row">
+                  <div class="col-sm-3 col-6">
+                    <div class="description-block border-right">
+                      <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>
+                      <h5 class="description-header">{{Today.Cars}}</h5>
+                      <span class="description-text">Total Cars Today</span>
+                    </div>
+                    <!-- /.description-block -->
+                  </div>
+                  <!-- /.col -->
+                  <div class="col-sm-3 col-6">
+                    <div class="description-block border-right">
+                      <span class="description-percentage text-warning"><i class="fas fa-caret-left"></i> 0%</span>
+                      <h5 class="description-header">{{Today.Revenue}} RWF</h5>
+                      <span class="description-text">Total Revenue Today</span>
+                    </div>
+                    <!-- /.description-block -->
+                  </div>
+                  <!-- /.col -->
+                  <div class="col-sm-3 col-6">
+                    <div class="description-block border-right">
+                      <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 20%</span>
+                      <h5 class="description-header">{{History.Count}}</h5>
+                      <span class="description-text">Last Week</span>
+                    </div>
+                    <!-- /.description-block -->
+                  </div>
+                  <!-- /.col -->
+                  <div class="col-sm-3 col-6">
+                    <div class="description-block">
+                      <span class="description-percentage text-danger"><i class="fas fa-caret-down"></i> 18%</span>
+                      <h5 class="description-header">{{Parked.Now}}</h5>
+                      <span class="description-text">Total Parked Cars</span>
+                    </div>
+                    <!-- /.description-block -->
+                  </div>
+                </div>
+                <!-- /.row -->
+              </div>
+              <!-- /.card-footer -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+
+        
+        <!-- /.row -->
+      </div><!--/. container-fluid -->
+    </section>
+</div>
+{% endblock %}
+
+{% block script %}
+<!-- ChartJS -->
+<script src="{% static 'resources/plugins/chart.js/Chart.min.js' %}"></script>
+<!-- jQuery -->
+<script src="{% static 'resources/plugins/jquery/jquery.min.js' %}"></script>
+<!-- Bootstrap 4 -->
+<script src="{% static 'resources/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="{% static 'resources/dist/js/demo.js' %}"></script>
+<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+<script src="{% static 'resources/dist/js/pages/dashboard2.js' %}"></script>
+
+
+
+
+{% endblock %}

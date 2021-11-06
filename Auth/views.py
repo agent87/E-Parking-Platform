@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 import os
 import psycopg2
 from . import engine
+from . import models
 
 try:
     DATABASE_URL = os.environ['DATABASE_URL']
@@ -21,14 +22,13 @@ class responses:
             password = request.POST.get('password')
             user = authenticate(request, username=username, password=password)
             if user is not None:
-                login(request, user)
-                return redirect(reverse('dashboard_page'))
+                return redirect(reverse('history_page'))
             else:
                 return render(request, 'Auth/login.html', {'code': 302})
         else:
             return render(request, 'Auth/login.html')
 
-    @login_required
+    
     def testing(request):
         return render(request, 'Auth/histor.html')
 
@@ -45,8 +45,8 @@ class responses:
 
     @login_required
     def pricing_page(request):
-        context = dict 
-        return render(request, 'Auth/pricing.html')
+        context = {'tarrifs' : models.Tarrif.objects.all()}
+        return render(request, 'Auth/pricing.html', context)
 
     @login_required
     def close_ticket(request, ticked_id):
@@ -77,4 +77,39 @@ class responses:
         logout(request)
         return redirect(reverse('logout_request'))
 
+class history:
+    @login_required
+    def add_ticket(request):
+        if request.method == "POST":
+            date = request.POST.get('date')            
+            time = request.POST.get('time')
+            platenumber = request.POST.get('platenumber')
+            models.Parkinglog.add(date, time, platenumber)
+            return redirect(reverse('parked_page'))
+        else:
+            return(reverse('parked_page'))
 
+    @login_required
+    def close_ticket(request, ticket_id):
+        pass
+
+    
+class pricing:
+    @login_required
+    def add_pricing(request):
+        if request.method == "POST":
+            fromtime = request.POST.get('fromtime')            
+            totime = request.POST.get('totime')
+            cost = request.POST.get('cost')
+            models.Tarrif.add_tarrif(fromtime, totime, cost)
+            return redirect(reverse('pricing_page'))
+        else:
+            return(reverse('pricing_page'))
+
+    @login_required
+    def edit_pricing(request):
+        pass
+
+    @login_required
+    def delete_pricing(request):
+        pass

@@ -19,6 +19,7 @@ urlpatterns = [
 
     ###Parking Logs Related#####
     path('history', views.responses.history_page, name='history_page'),
+    path('history/add', views.history.add_ticket, name='add_vehicle'),
     path('history/<str:ticketid>', views.responses.history_page, name='history_page'),
     path('history/<str:ticketid>/del', views.responses.close_ticket, name='history_page'),
     
@@ -26,7 +27,7 @@ urlpatterns = [
 
     ###Tarrif Related#####
     path('pricing', views.responses.pricing_page, name='pricing_page'),
-    path('pricing/add', views.responses.pricing_page, name='add_tarrif'),
+    path('pricing/add', views.pricing.add_pricing, name='add_tarrif'),
 
     ###Subcribers
     path('subscribers', views.responses.subscribers_page, name='subscribers_page'),

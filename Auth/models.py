@@ -6,6 +6,9 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
+import datetime
+from uuid import uuid4
+
 
 
 class Cameradef(models.Model):
@@ -63,9 +66,26 @@ class Parkinglog(models.Model):
     duration = models.FloatField(db_column='Duration', blank=True, null=True)  # Field name made lowercase.
     cash = models.FloatField(db_column='Cash', blank=True, null=True)  # Field name made lowercase.
 
+    @classmethod
+    def add(self, date, time, platenumber):
+        format_datetime = datetime.datetime.strptime(date + ' ' + time, '%Y-%m-%d %H:%M')
+        self.objects.create(platenum=platenumber, 
+                            date = format_datetime.date(),
+                            ticketid = uuid4(),
+                            customerid = 'EGPCI-AAA01-0001',
+                            checkintime= format_datetime.timestamp(),
+                            entrygateid='SouthGate',
+                            status = 'Parked')
+    
+    @classmethod
+    def delete(self, ticketid):
+        self.objects.filter(ticketid=ticketid).delete()
+
+
 
 
 class Tarrif(models.Model):
+    tarrifid = models.UUIDField(db_column='TarrifId', primary_key=True)  # Field name made lowercase.
     customerid = models.CharField(db_column='CustomerId', max_length=50)  # Field name made lowercase.
     fromtime = models.FloatField(db_column='FromTime', blank=True, null=True)  # Field name made lowercase.
     totime = models.FloatField(db_column='ToTime', blank=True, null=True)  # Field name made lowercase.
@@ -75,7 +95,20 @@ class Tarrif(models.Model):
     lastupdate = models.DateField(db_column='LastUpdate', blank=True, null=True)  # Field name made lowercase.
     updatelog = models.CharField(db_column='UpdateLog', max_length=50, blank=True, null=True)  # Field name made lowercase.
 
+    @classmethod
+    def add_tarrif(self, fromtime, totime, cost):
+        self.objects.create(
+            tarrifid = uuid4(),
+            customerid = 'EGPCI-AAA01-0001',
+            fromtime = fromtime,
+            totime = totime,
+            cost = cost,
+            date = datetime.datetime.now().date()
+        )
 
+    @classmethod
+    def remove_tarrif(self, tarrifid):
+        self.objects.filter(tarrifid=tarrifid).delete()
 
 
 class Subcription:
