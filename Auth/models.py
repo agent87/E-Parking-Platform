@@ -78,6 +78,10 @@ class Parkinglog(models.Model):
                             status = 'Parked')
     
     @classmethod
+    def close(self, ticketid, checkouttime, exitgateid, cash):
+        self.objects.filter(ticketid=ticketid).update(checkouttime=checkouttime, 
+                                                      exitgateid=exitgateid)
+    @classmethod
     def delete(self, ticketid):
         self.objects.filter(ticketid=ticketid).delete()
 

@@ -25,7 +25,7 @@
     <div class="card-body login-card-body">
       <p class="login-box-msg">Sign in to start your session</p>
 
-      <form action="login" method="POST">
+      <form action="auth/login" method="POST">
         {% csrf_token %}
         <div class="input-group mb-3">
           <input type="username" class="form-control" name="username" placeholder="Username">

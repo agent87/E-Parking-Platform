@@ -49,8 +49,8 @@ class responses:
         return render(request, 'Auth/pricing.html', context)
 
     @login_required
-    def close_ticket(request, ticked_id):
-        ticket = models.Ticket.objects.get(ticketid=ticked_id)
+    def close_ticket(request, ticketid):
+        ticket = models.Parkinglog.objects.get(ticketid=ticketid)
         print(ticket)
 
         return redirect(reverse('parked_page'))
@@ -76,6 +76,20 @@ class responses:
     def logout_request(request):
         logout(request)
         return redirect(reverse('logout_request'))
+
+class authentication:
+    def login(request):
+        if request.method == "POST":
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect(reverse('dashboard_page'))
+            else:
+                return render(request, 'Auth/login.html', {'code': 302})
+        else:
+            return render(request, 'Auth/login.html')
 
 class history:
     @login_required

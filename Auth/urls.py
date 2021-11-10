@@ -6,7 +6,7 @@ from django.contrib import admin
 urlpatterns = [    
     ###Auth Related#####
     path('', views.responses.login_page, name='login_page'),
-    path('login', views.responses.login_page, name='login_page'),
+    path('auth/login', views.authentication.login, name='login'),
     path('login/<slug:redirect_to>', views.responses.login_page, name='login_page'),
     path('reset', views.responses.login_page, name='reset_page'),
     path('logout', views.responses.logout_request, name='logout_request'),
@@ -21,7 +21,7 @@ urlpatterns = [
     path('history', views.responses.history_page, name='history_page'),
     path('history/add', views.history.add_ticket, name='add_vehicle'),
     path('history/<str:ticketid>', views.responses.history_page, name='history_page'),
-    path('history/<str:ticketid>/del', views.responses.close_ticket, name='history_page'),
+    path('history/<slug:ticketid>/close', views.responses.close_ticket, name='close_ticket'),
     
     path('parked', views.responses.parked_page, name='parked_page'),
 
