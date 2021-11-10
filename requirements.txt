@@ -3,3 +3,5 @@ django
 gunicorn
 whitenoise
 psycopg2
+pip
+
