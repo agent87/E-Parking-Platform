@@ -1,4 +1,4 @@
-from Auth import models
+from . import models
 from django.shortcuts import render, redirect, resolve_url
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
