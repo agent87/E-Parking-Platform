@@ -1,11 +1,10 @@
-from AuthenticationApp import models
+from SystemApp import models
 from django.shortcuts import render, redirect, resolve_url
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 import os
 import psycopg2
-from . import models
 
 try:
     DATABASE_URL = os.environ['DATABASE_URL']
@@ -23,9 +22,9 @@ class responses:
             if user is not None:
                 return redirect(reverse('history_page'))
             else:
-                return render(request, 'Auth/login.html', {'code': 302})
+                return render(request, 'DashboardApp/login.html', {'code': 302})
         else:
-            return render(request, 'Auth/login.html')
+            return render(request, 'DashboardApp/login.html')
 
     
     def testing(request):
@@ -35,17 +34,17 @@ class responses:
     def dashboard_page(request):
         #context = engine.ParkingLog.compile('EGPCI-AAA01-0001')
 
-        return render(request, 'Auth/dashboard.html')
+        return render(request, 'DashboardApp/dashboard.html')
 
     #login_required
     def history_page(request):
         #context = engine.ParkingLog.compile('EGPCI-AAA01-0001')['History']
-        return render(request, 'Auth/history.html')
+        return render(request, 'DashboardApp/history.html')
 
     #login_required
     def pricing_page(request):
         context = {'tarrifs' : models.Tarrif.objects.all()}
-        return render(request, 'Auth/pricing.html', context)
+        return render(request, 'DashboardApp/pricing.html', context)
 
     #login_required
     def close_ticket(request, ticketid):
@@ -57,19 +56,18 @@ class responses:
 
     #login_required
     def parked_page(request):
-        #context = engine.ParkingLog.compile('EGPCI-AAA01-0001')['Parked']
-        return render(request, 'Auth/parked.html')
+        parked_vehicles = models.Parkinglog.objects.filter(customer_id='EPMS-0001', status='Parked')
+        return render(request, 'DashboardApp/parked.html', context={'parked_vehicles': parked_vehicles})
 
     #login_required
     def subscribers_page(request):
         context = {}
-        return render(request, 'Auth/subscription.html')
+        return render(request, 'DashboardApp/subscription.html')
 
     #login_required
     def user_page(request):
-        if request.method == "POST":
-            print(request.POST.dict())
-        return render(request, 'Auth/user.html')
+        context = {'users': models.Users.objects.filter(customer_id = 'EPMS-0001')}
+        return render(request, 'DashboardApp/user.html', context)
 
     #login_required
     def logout_request(request):
@@ -79,16 +77,21 @@ class responses:
 class authentication:
     def login(request):
         if request.method == "POST":
-            username = request.POST.get('username')
+            email = request.POST.get('username')
             password = request.POST.get('password')
-            user = authenticate(request, username=username, password=password)
+            user = authenticate(request, username=email, password=password)
             if user is not None:
                 login(request, user)
                 return redirect(reverse('dashboard_page'))
             else:
-                return render(request, 'Auth/login.html', {'code': 302})
+                return redirect(reverse('LoginView'))
         else:
-            return render(request, 'Auth/login.html')
+            return redirect(reverse('LoginView'))
+
+class LoginView:
+    def LoginView(request):
+        return render(request, 'DashboardApp/login.html')
+
 
 class history:
     #login_required
@@ -126,3 +129,18 @@ class pricing:
     #login_required
     def delete_pricing(request):
         pass
+
+class Users:
+    @login_required
+    def add_user(request):
+        if request.method == "POST":
+            first_name = request.POST.get('first_name')
+            last_name = request.POST.get('last_name')
+            email = request.POST.get('email')
+            phonenum = request.POST.get('phonenum')
+            password = request.POST.get('password')
+            role = request.POST.get('role')
+            models.Users.add_user(first_name, last_name, email, phonenum, password, role)
+            return redirect(reverse('user_page'))
+        else:
+            return redirect(reverse('user_page'))

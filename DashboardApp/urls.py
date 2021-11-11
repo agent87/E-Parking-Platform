@@ -5,7 +5,7 @@ from django.contrib import admin
 
 urlpatterns = [    
     ###Auth Related#####
-    path('', views.responses.login_page, name='login_page'),
+    path('', views.LoginView.LoginView, name='LoginView'),
     path('auth/login', views.authentication.login, name='login'),
     path('login/<slug:redirect_to>', views.responses.login_page, name='login_page'),
     path('reset', views.responses.login_page, name='reset_page'),
@@ -34,6 +34,7 @@ urlpatterns = [
     path('subscribers/add', views.responses.subscribers_page, name='add_subscriber'), 
 
     path('users', views.responses.user_page, name='user_page'),
-    path('users/add', views.responses.user_page, name='add_user'),
-    path('admin/', admin.site.urls)
+    path('users/add', views.Users.add_user, name='Add_User'),
+
+    #path('admin/', admin.site.urls)
 ]

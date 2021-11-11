@@ -1,5 +1,5 @@
 
-{% extends 'Auth/Base.html' %}
+{% extends 'DashboardApp/Base.html' %}
 {% load static %}
 
 {% block sources %}
@@ -61,17 +61,17 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                    {% for Car in List %}
+                                    {% for Car in parked_vehicles %}
                                         <tr>
                                             <th scope="row">{{forloop.counter}}</th>
-                                            <td>{{Car.Date}}</td>
-                                            <td>{{Car.PlateNum}}</td>
-                                            <td>{{Car.EntryGate}}</td>
-                                            <td>{{Car.Checkin}}</td>
-                                            <td>{{Car.Duration}} Minutes</td>
+                                            <td>{{Car.date}}</td>
+                                            <td>{{Car.platenum}}</td>
+                                            <td>{{Car.entrygateid}}</td>
+                                            <td>{{Car.format_checkintime}}</td>
+                                            <td>{{Car.elapsed}} Minutes</td>
                                             <td>
                                                 {% comment %} <button class="btn btn-warning mb-3" data-toggle="modal" data-target="#closeTicket" style="color: #ffffff;"> <i class="zmdi zmdi-close"></i> Close Ticket</button>
-                                                {% endcomment %}<a href="history/{{Car.TicketId}}/close" class="btn-sm btn-warning" role="button" data-bs-toggle="button">Close Ticket</a>
+                                                {% endcomment %}<a href="history/{{Car.ticket_id}}/close" class="btn-sm btn-warning" role="button" data-bs-toggle="button">Close Ticket</a>
                                             </td>
                                         </tr>
                                     {% endfor %}

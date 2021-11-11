@@ -25,10 +25,10 @@
     <div class="card-body login-card-body">
       <p class="login-box-msg">Sign in to start your session</p>
 
-      <form action="auth/login" method="POST">
+      <form action="{% url 'login' %}" method="POST">
         {% csrf_token %}
         <div class="input-group mb-3">
-          <input type="username" class="form-control" name="username" placeholder="Username">
+          <input type="username" class="form-control" name="username" placeholder="username">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-envelope"></span>
