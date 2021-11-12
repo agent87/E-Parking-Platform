@@ -144,3 +144,18 @@ class Users:
             return redirect(reverse('user_page'))
         else:
             return redirect(reverse('user_page'))
+
+class Subscribers:
+    @login_required
+    def add_subscriber(request):
+        if request.method == "POST":
+            platenum = request.POST.get('platenum')
+            phonenum = request.POST.get('phonenum')
+            office = request.POST.get('office')
+            parklot = request.POST.get('parklot')
+            start_date = request.POST.get('start_date')
+            end_date = request.POST.get('end_date')
+            models.Subscribers.add_subscriber(platenum, phonenum, office, parklot, start_date, end_date)
+            return redirect(reverse('subscribers_page'))
+        else:
+            return redirect(reverse('subscribers_page'))

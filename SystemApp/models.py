@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.hashers import make_password
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from uuid import uuid4
@@ -42,15 +43,14 @@ class Users(AbstractUser):
     
     @classmethod
     def add_user(self, first_name, last_name, email, phonenum, password, role):
-        self.objects.create(email=email, 
-                            password=password, 
+        self.objects.create(email=email,  
                             customer_id=Customers.objects.get(customer_id='EPMS-0001'), 
                             first_name=first_name, 
                             last_name=last_name, 
                             role = role,
+                            password = make_password(password),
                             phonenum=phonenum)
-        return self.objects.get(email=email)
-
+        
     @classmethod
     def create_admin(self, email, password, customer_id, fname, lname, contact):
         self.objects.create(email=email, password=password, customer_id=customer_id, fname=fname, lname=lname, contact=contact, is_superuser=1)
@@ -158,15 +158,32 @@ class Tarrif(models.Model):
         self.objects.filter(tarrifid=tarrifid).delete()
 
 
-class Subcription:
-    customer_id = models.CharField(db_column='CustomerId', max_length=50)  # Field name made lowercase.
+class Subcriptions:
+    customer_id = models.ForeignKey(Customers, on_delete=models.CASCADE, blank=True, null=True)
     subscription_id = models.CharField(db_column='SubscriptionId', max_length=50)  # Field name made lowercase.
     platenumber = models.CharField(db_column='PlateNumber', max_length=50)  # Field name made lowercase.
-    subscription_date = models.DateField(db_column='SubscriptionDate')  # Field name made lowercase.
-    subscription_end_date = models.DateField(db_column='SubscriptionEndDate')  # Field name made lowercase.
-    subscription_type = models.CharField(db_column='SubscriptionType', max_length=50)  # Field name made lowercase.
-    subscription_status = models.CharField(db_column='SubscriptionStatus', max_length=50)  # Field name made lowercase.
-    subscription_amount = models.FloatField(db_column='SubscriptionAmount')  # Field name made lowercase.
-    contact_number = models.CharField(db_column='ContactNumber', max_length=50)  # Field name made lowercase.
-    office_location = models.CharField(db_column='OfficeLocation', max_length=50)  # Field name made lowercase.
-    parkingLot = models.CharField(db_column='ParkingLot', max_length=50)  # Field name made lowercase.
+    start_date = models.DateField(db_column='SubscriptionDate')  # Field name made lowercase.
+    end_date = models.DateField(db_column='SubscriptionEndDate')  # Field name made lowercase.
+    type = models.CharField(db_column='SubscriptionType', max_length=50)
+    amount = models.FloatField(db_column='SubscriptionAmount')  # Field name made lowercase.
+    phonenum = models.CharField(db_column='ContactNumber', max_length=50)  # Field name made lowercase.
+    office = models.CharField(db_column='OfficeLocation', max_length=50)  # Field name made lowercase.
+    parklot = models.CharField(db_column='ParkingLot', max_length=50)  # Field name made lowercase.
+
+    class Meta:
+        db_table = 'Subscription'
+
+    @classmethod
+    def add_subscription(self, customer_id, subscription_id, platenum, start_date, end_date, type, amount, phonenum, office, parklot):
+        self.objects.create(
+            customer_id = customer_id,
+            subscription_id = subscription_id,
+            platenumber = platenum,
+            start_date = start_date,
+            end_date = end_date,
+            type = type,
+            amount = amount,
+            phonenum = phonenum,
+            office = office,
+            parklot = parklot
+        )
