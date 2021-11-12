@@ -38,6 +38,9 @@ class Users(AbstractUser):
 
     objects = CustomUserManager()
 
+    class Meta:
+        db_table = 'Users'
+
     def __str__(self):
         return self.email
     
@@ -136,6 +139,9 @@ class Tarrif(models.Model):
     lastupdate = models.DateField(db_column='LastUpdate', blank=True, null=True)  # Field name made lowercase.
     updatelog = models.CharField(db_column='UpdateLog', max_length=50, blank=True, null=True)  # Field name made lowercase.
 
+    class Meta:
+        db_table = 'Tarrif'
+
     @classmethod
     def add_tarrif(self, fromtime, totime, cost):
         self.objects.create(
@@ -158,12 +164,12 @@ class Tarrif(models.Model):
         self.objects.filter(tarrifid=tarrifid).delete()
 
 
-class Subcriptions:
+class Subcriptions(models.Model):
     customer_id = models.ForeignKey(Customers, on_delete=models.CASCADE, blank=True, null=True)
-    subscription_id = models.CharField(db_column='SubscriptionId', max_length=50)  # Field name made lowercase.
+    subscription_id = models.BigAutoField(db_column='SubscriptionId', primary_key=True)  # Field name made lowercase.
     platenumber = models.CharField(db_column='PlateNumber', max_length=50)  # Field name made lowercase.
-    start_date = models.DateField(db_column='SubscriptionDate')  # Field name made lowercase.
-    end_date = models.DateField(db_column='SubscriptionEndDate')  # Field name made lowercase.
+    start_date = models.DateField(db_column='start')  # Field name made lowercase.
+    end_date = models.DateField(db_column='end')  # Field name made lowercase.
     type = models.CharField(db_column='SubscriptionType', max_length=50)
     amount = models.FloatField(db_column='SubscriptionAmount')  # Field name made lowercase.
     phonenum = models.CharField(db_column='ContactNumber', max_length=50)  # Field name made lowercase.
@@ -174,10 +180,9 @@ class Subcriptions:
         db_table = 'Subscription'
 
     @classmethod
-    def add_subscription(self, customer_id, subscription_id, platenum, start_date, end_date, type, amount, phonenum, office, parklot):
+    def add_subscription(self, customer_id, platenum, start_date, end_date, type, amount, phonenum, office, parklot):
         self.objects.create(
-            customer_id = customer_id,
-            subscription_id = subscription_id,
+            customer_id = Customers.objects.get(customer_id=customer_id),
             platenumber = platenum,
             start_date = start_date,
             end_date = end_date,
