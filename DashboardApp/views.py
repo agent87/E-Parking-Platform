@@ -61,8 +61,9 @@ class responses:
 
     #login_required
     def subscribers_page(request):
-        context = {}
-        return render(request, 'DashboardApp/subscription.html')
+        print(request.user.customer_id.customer_id)
+        context = {"subscription" : models.Subscriptions.objects.filter(customer_id = request.user.customer_id.customer_id)}
+        return render(request, 'DashboardApp/subscription.html', context)
 
     #login_required
     def user_page(request):
@@ -147,16 +148,18 @@ class Users:
 
 class Subscription:
     @login_required
-    def add_subscriber(request):
+    def add_subscription(request):
         if request.method == "POST":
+            customer_id = request.user.customer_id.customer_id
             platenum = request.POST.get('platenum')
             name = request.POST.get('name')
             phonenum = request.POST.get('phonenum')
             office = request.POST.get('office')
             parklot = request.POST.get('parklot')
+            amount = request.POST.get('amount')
             start_date = request.POST.get('start_date')
             end_date = request.POST.get('end_date')
-            models.Subscribers.add_subscriber(platenum, name, phonenum, office, parklot, start_date, end_date)
+            models.Subscriptions.add_subscription(customer_id, platenum, name, phonenum, office, parklot, amount, start_date, end_date)
             return redirect(reverse('subscribers_page'))
         else:
             return redirect(reverse('subscribers_page'))
