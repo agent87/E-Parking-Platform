@@ -96,12 +96,18 @@ class LoginView:
 
 class history:
     #login_required
+    def history_page(request):
+        context = {'history': models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id)}
+        return render(request, 'DashboardApp/history.html', context)
+
+    #login_required
     def add_ticket(request):
         if request.method == "POST":
+            customer_id = request.user.customer_id.customer_id
             date = request.POST.get('date')            
             time = request.POST.get('time')
             platenumber = request.POST.get('platenumber')
-            models.Parkinglog.add(date, time, platenumber)
+            models.Parkinglog.add(customer_id, date, time, platenumber, checkin_method='Manual')
             return redirect(reverse('parked_page'))
         else:
             return(reverse('parked_page'))
@@ -115,10 +121,11 @@ class pricing:
     #login_required
     def add_pricing(request):
         if request.method == "POST":
+            customer_id = request.user.customer_id.customer_id
             fromtime = request.POST.get('fromtime')            
             totime = request.POST.get('totime')
             cost = request.POST.get('cost')
-            models.Tarrif.add_tarrif(fromtime, totime, cost)
+            models.Tarrif.add_tarrif(customer_id, fromtime, totime, cost)
             return redirect(reverse('pricing_page'))
         else:
             return(reverse('pricing_page'))
@@ -131,22 +138,23 @@ class pricing:
     def delete_pricing(request):
         pass
 
-class Users:
+class users:
     @login_required
     def add_user(request):
         if request.method == "POST":
+            customer_id = request.user.customer_id.customer_id
             first_name = request.POST.get('first_name')
             last_name = request.POST.get('last_name')
             email = request.POST.get('email')
             phonenum = request.POST.get('phonenum')
             password = request.POST.get('password')
             role = request.POST.get('role')
-            models.Users.add_user(first_name, last_name, email, phonenum, password, role)
+            models.Users.add_user(customer_id, first_name, last_name, email, phonenum, password, role)
             return redirect(reverse('user_page'))
         else:
             return redirect(reverse('user_page'))
 
-class Subscription:
+class subscription:
     @login_required
     def add_subscription(request):
         if request.method == "POST":

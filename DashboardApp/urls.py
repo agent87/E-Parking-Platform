@@ -31,10 +31,10 @@ urlpatterns = [
 
     ###Subcribers
     path('subscribers', views.responses.subscribers_page, name='subscribers_page'),
-    path('subscribers/add', views.Subscription.add_subscription, name='add_subscription'), 
+    path('subscribers/add', views.subscription.add_subscription, name='add_subscription'), 
 
     path('users', views.responses.user_page, name='user_page'),
-    path('users/add', views.Users.add_user, name='Add_User'),
+    path('users/add', views.users.add_user, name='Add_User'),
 
     #path('admin/', admin.site.urls)
 ]

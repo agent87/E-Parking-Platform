@@ -45,9 +45,9 @@ class Users(AbstractUser):
         return self.email
     
     @classmethod
-    def add_user(self, first_name, last_name, email, phonenum, password, role):
+    def add_user(self, customer_id, first_name, last_name, email, phonenum, password, role):
         self.objects.create(email=email,  
-                            customer_id=Customers.objects.get(customer_id='EPMS-0001'), 
+                            customer_id=Customers.objects.get(customer_id=customer_id), 
                             first_name=first_name, 
                             last_name=last_name, 
                             role = role,
@@ -73,13 +73,16 @@ class Users(AbstractUser):
 
 
 
-# class Gatesdef(models.Model):
-#     gateid = models.CharField(db_column='GateId', max_length=50)  
-#     customerid = models.CharField(db_column='CustomerId', max_length=50)  
-#     flow = models.CharField(db_column='Flow', max_length=50)  
-#     description = models.CharField(db_column='Description', max_length=50, blank=True, null=True)  
-#     cashiername = models.CharField(db_column='CashierName', max_length=50, blank=True, null=True)  
-#     cameraid = models.CharField(db_column='CameraId', max_length=50, blank=True, null=True)  
+class Gates(models.Model):    
+    gate_id = models.AutoField(db_column='GateId', editable=False, primary_key=True)
+    customer_id = models.ForeignKey(Customers, on_delete=models.CASCADE, blank=True, null=True)
+    name = models.CharField(db_column='Name', max_length=50)
+    description = models.CharField(db_column='Description', max_length=50, blank=True, null=True)  
+    cameraid = models.CharField(db_column='CameraId', max_length=50, blank=True, null=True)  
+    cashiers = models.JSONField(db_column='Cashiers', blank=True, null=True)
+
+    class Meta:
+        db_table = 'Gates'
 
 
 class Parkinglog(models.Model):
@@ -88,25 +91,31 @@ class Parkinglog(models.Model):
     date = models.DateField(db_column='Date')  
     platenum = models.CharField(db_column='PlateNum', max_length=50)  
     entrygateid = models.CharField(db_column='EntryGateId', max_length=50)  
+    checkin_method = models.CharField(db_column='CheckInMethod', max_length=10)
     checkintime = models.BigIntegerField(db_column='CheckinTime')  
+    checkin_user = models.CharField(db_column='CheckinUser', max_length=50, blank=True, null=True)
     checkouttime = models.BigIntegerField(db_column='CheckoutTime', blank=True, null=True)  
     exitgateid = models.CharField(db_column='ExitGateId', max_length=50, blank=True, null=True)  
     status = models.CharField(db_column='Status', max_length=50, blank=True, null=True)  
     duration = models.FloatField(db_column='Duration', blank=True, null=True)  
     cash = models.FloatField(db_column='Cash', blank=True, null=True)  
     subcription_id = models.CharField(db_column='SubcriptionId', max_length=50, blank=True, null=True)  
+    checkout_method = models.CharField(db_column='CheckoutMethod', max_length=10, blank=True, null=True)
+    payment_method = models.CharField(db_column='PaymentMethod', max_length=10, blank=True, null=True)
+    checkout_user = models.CharField(db_column='CheckoutUser', max_length=50, blank=True, null=True)
 
     class Meta:
         db_table = 'ParkingLog'
 
     @classmethod
-    def add(self, date, time, platenumber):
+    def add(self, customer_id, date, time, platenumber, checkin_method):
         format_datetime = datetime.datetime.strptime(date + ' ' + time, '%Y-%m-%d %H:%M')
         self.objects.create(platenum=platenumber, 
                             date = format_datetime.date(),
                             ticket_id = uuid4(),
-                            customer_id = Customers.objects.get(customer_id='EPMS-0001'),
+                            customer_id = Customers.objects.get(customer_id=customer_id),
                             checkintime= format_datetime.timestamp(),
+                            checkin_method = checkin_method,
                             entrygateid='SouthGate',
                             status = 'Parked')
     
@@ -118,14 +127,18 @@ class Parkinglog(models.Model):
     def delete(self, ticket_id):
         self.objects.filter(ticket_id=ticket_id).delete()
 
+    # Count elapsed time in seconds between checkin and current time
+    # convert to minutes
     @property
     def elapsed(self):
         if self.checkintime:
-            return time.time() - self.checkintime
+            elapsed_seconds = time.time() - self.checkintime
+            elapsed_minutes = round(elapsed_seconds / 60)
+            return elapsed_minutes
         
     @property
     def format_checkintime(self):
-        return datetime.datetime.fromtimestamp(self.checkintime).strftime('%H:%M:%S')
+        return datetime.datetime.fromtimestamp(self.checkintime).strftime('%H:%M')
 
 
 class Tarrif(models.Model):
@@ -143,10 +156,10 @@ class Tarrif(models.Model):
         db_table = 'Tarrif'
 
     @classmethod
-    def add_tarrif(self, fromtime, totime, cost):
+    def add_tarrif(self, customer_id, fromtime, totime, cost):
         self.objects.create(
             tarrif_id = uuid4(),
-            customer_id = Customers.objects.get(customer_id='EPMS-0001'),
+            customer_id = Customers.objects.get(customer_id=customer_id),
             fromtime = fromtime,
             totime = totime,
             cost = cost,
