@@ -1,16 +1,10 @@
 from SystemApp import models
-from django.shortcuts import render, redirect, resolve_url
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
-import os
-import psycopg2
+import time
 
-try:
-    DATABASE_URL = os.environ['DATABASE_URL']
-    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-except:
-    conn = psycopg2.connect(database="d7pibsdo79jogi",host="ec2-52-86-25-51.compute-1.amazonaws.com",port=5432,user="cccbiffnldwfkf",password="605444bcd83d702da6e7f56cb2fba0ebb74fb3db14dc5a0c1555bbfa75a357a1")
 
 # Create your views here.
 class responses:
@@ -30,47 +24,42 @@ class responses:
     def testing(request):
         return render(request, 'Auth/histor.html')
 
-    #login_required
+    @login_required
     def dashboard_page(request):
         #context = engine.ParkingLog.compile('EGPCI-AAA01-0001')
 
         return render(request, 'DashboardApp/dashboard.html')
 
-    #login_required
+    @login_required
     def history_page(request):
         #context = engine.ParkingLog.compile('EGPCI-AAA01-0001')['History']
         return render(request, 'DashboardApp/history.html')
 
-    #login_required
+    @login_required
     def pricing_page(request):
         context = {'tarrifs' : models.Tarrif.objects.all()}
         return render(request, 'DashboardApp/pricing.html', context)
 
-    #login_required
-    def close_ticket(request, ticketid):
-        ticket = models.Parkinglog.objects.get(ticketid=ticketid)
-        print(ticket)
-
-        return redirect(reverse('parked_page'))
+    
 
 
-    #login_required
+    @login_required
     def parked_page(request):
-        parked_vehicles = models.Parkinglog.objects.filter(customer_id='EPMS-0001', status='Parked')
+        parked_vehicles = models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id, parked=True)
         return render(request, 'DashboardApp/parked.html', context={'parked_vehicles': parked_vehicles})
 
-    #login_required
+    @login_required
     def subscribers_page(request):
         print(request.user.customer_id.customer_id)
         context = {"subscription" : models.Subscriptions.objects.filter(customer_id = request.user.customer_id.customer_id)}
         return render(request, 'DashboardApp/subscription.html', context)
 
-    #login_required
+    @login_required
     def user_page(request):
-        context = {'users': models.Users.objects.filter(customer_id = 'EPMS-0001')}
+        context = {'users': models.Users.objects.filter(customer_id = request.user.customer_id.customer_id)}
         return render(request, 'DashboardApp/user.html', context)
 
-    #login_required
+    @login_required
     def logout_request(request):
         logout(request)
         return redirect(reverse('logout_request'))
@@ -95,30 +84,47 @@ class LoginView:
 
 
 class history:
-    #login_required
+    @login_required
     def history_page(request):
-        context = {'history': models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id)}
+        context = {'parking_logs': models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id)}
         return render(request, 'DashboardApp/history.html', context)
 
-    #login_required
+    @login_required
     def add_ticket(request):
         if request.method == "POST":
             customer_id = request.user.customer_id.customer_id
             date = request.POST.get('date')            
             time = request.POST.get('time')
-            platenumber = request.POST.get('platenumber')
-            models.Parkinglog.add(customer_id, date, time, platenumber, checkin_method='Manual')
+            plate_number = request.POST.get('platenumber')
+            models.Parkinglog.add(customer_id, date, time, plate_number, checkin_method='Manual')
             return redirect(reverse('parked_page'))
         else:
             return(reverse('parked_page'))
 
-    #login_required
+    @login_required
     def close_ticket(request, ticket_id):
-        pass
+        ticket = models.Parkinglog.objects.get(ticket_id=ticket_id)
+        if models.Subscriptions.is_subscribed(ticket.plate_number):
+            ticket.close(
+                ticket_id = ticket_id,
+                checkout_time = time.time(), 
+                exit_gate = 'SouthGate', 
+                cash = 0, 
+                subscription = models.Subscriptions.is_subscribed(ticket.plate_number).subscription_id
+            )
+            print("Vehicl subscribed")
+        else:
+            ticket.close(
+                ticket_id = ticket_id,
+                checkout_time = time.time(), 
+                exit_gate = 'SouthGate', 
+                cash = models.Tarrif.match_tarrif(ticket.elapsed)
+            ) 
+        return redirect(reverse('parked_page'))
 
     
 class pricing:
-    #login_required
+    @login_required
     def add_pricing(request):
         if request.method == "POST":
             customer_id = request.user.customer_id.customer_id
@@ -130,11 +136,11 @@ class pricing:
         else:
             return(reverse('pricing_page'))
 
-    #login_required
+    @login_required
     def edit_pricing(request):
         pass
 
-    #login_required
+    @login_required
     def delete_pricing(request):
         pass
 
@@ -155,6 +161,12 @@ class users:
             return redirect(reverse('user_page'))
 
 class subscription:
+    @login_required
+    def subscribers_page(request):
+        print(request.user.customer_id.customer_id)
+        context = {"subscriptions" : models.Subscriptions.objects.filter(customer_id = request.user.customer_id.customer_id)}
+        return render(request, 'DashboardApp/subscription.html', context)
+
     @login_required
     def add_subscription(request):
         if request.method == "POST":

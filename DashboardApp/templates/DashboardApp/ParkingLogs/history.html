@@ -54,45 +54,45 @@
                                             <th>#</th>
                                             <th>Date</th>
                                             <th>Plate Number</th>
-                                            <th>Entry Gate Supervisor</th>
+                                            <th>Entry Gate</th>
                                             <th>Checkin time</th>
                                             <th>Checkout Time</th>
-                                            <th>Exit Gate Supervisor</th>
+                                            <th>Exit Gate</th>
                                             <th>Duration</th>
                                             <th>Cash</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for ParkingLog in List %}
+                                        {% for parking_log in parking_logs %}
                                         <tr>
                                             <th scope="row">{{forloop.counter}}</th>
-                                            <td>{{ParkingLog.Date}}</td> 
-                                            <td>{{ParkingLog.PlateNum}}</td>
-                                            <td>{{ParkingLog.EntryGate}}</td>
-                                            <td>{{ParkingLog.Checkin}}</td>
+                                            <td>{{parking_log.date}}</td> 
+                                            <td>{{parking_log.plate_number}}</td>
+                                            <td>{{parking_log.entry_gate}}</td>
+                                            <td>{{parking_log.format_checkintime}}</td>
                                             <!-- Checkout Time Logic -->
-                                            {% if ParkingLog.Checkout == None %}
+                                            {% if parking_log.checkout_time == None %}
                                                 <td></td>
                                             {% else %}
-                                                <td>{{ParkingLog.Checkout}}</td>
+                                                <td>{{parking_log.checkout_time}}</td>
                                             {% endif %}
                                             <!-- Exit Gate Logic -->
-                                            {% if ParkingLog.ExitGate == None %}
+                                            {% if parking_log.exit_gate == None %}
                                                 <td></td>
                                             {% else %}
-                                                <td>{{ParkingLog.ExitGate}}</td>
+                                                <td>{{parking_log.exit_gate}}</td>
                                             {% endif %}
                                             <!-- Duration Logic -->
-                                            {% if ParkingLog.Duration == None %}
+                                            {% if parking_log.format_duration == None %}
                                                 <td></td>
                                             {% else %}
-                                                <td>{{ParkingLog.Duration}}</td>
+                                                <td>{{parking_log.format_duration}} Minutes</td>
                                             {% endif %}
                                             <!-- Cash Collected Logic -->
-                                            {% if ParkingLog.Cash == None %}
+                                            {% if parking_log.cash == None %}
                                                 <td></td>
                                             {% else %}
-                                                <td>{{ParkingLog.Cash}} RWF</td>
+                                                <td>{{parking_log.cash}} RWF</td>
                                             {% endif %}
                                         </tr>
                                         {% endfor %}

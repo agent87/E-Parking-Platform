@@ -35,7 +35,7 @@
                   <!--Entity Table-->
         <div class="card card-default">
             <div class="card-header">
-              <h3 class="card-title">Parked Cars</h3>
+              <h3 class="card-title">Parked Vehicles List</h3>
   
               <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -61,17 +61,17 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                    {% for Car in parked_vehicles %}
+                                    {% for parked_vehicle in parked_vehicles %}
                                         <tr>
                                             <th scope="row">{{forloop.counter}}</th>
-                                            <td>{{Car.date}}</td>
-                                            <td>{{Car.platenum}}</td>
-                                            <td>{{Car.entrygateid}}</td>
-                                            <td>{{Car.format_checkintime}}</td>
-                                            <td>{{Car.elapsed}} Minutes</td>
+                                            <td>{{parked_vehicle.date}}</td>
+                                            <td>{{parked_vehicle.plate_number}}</td>
+                                            <td>{{parked_vehicle.entry_gate}}</td>
+                                            <td>{{parked_vehicle.format_checkintime}}</td>
+                                            <td>{{parked_vehicle.elapsed}} Minutes</td>
                                             <td>
                                                 {% comment %} <button class="btn btn-warning mb-3" data-toggle="modal" data-target="#closeTicket" style="color: #ffffff;"> <i class="zmdi zmdi-close"></i> Close Ticket</button>
-                                                {% endcomment %}<a href="history/{{Car.ticket_id}}/close" class="btn-sm btn-warning" role="button" data-bs-toggle="button">Close Ticket</a>
+                                                {% endcomment %}<a href="history/{{parked_vehicle.ticket_id}}/close" class="btn-sm btn-warning" role="button" data-bs-toggle="button">Close Ticket</a>
                                             </td>
                                         </tr>
                                     {% endfor %}
@@ -81,7 +81,7 @@
             </div>
             <!-- /.card-body -->
             <div class="card-footer" style="display: block;">
-              TOTAL Parked Cars : {{ total_accounts }}
+              Total Parked Vehicles : {{ parked_vehicles.count }}
             </div>
         </div>
                   <!-- /.card -->

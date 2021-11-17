@@ -78,7 +78,7 @@ class Gates(models.Model):
     customer_id = models.ForeignKey(Customers, on_delete=models.CASCADE, blank=True, null=True)
     name = models.CharField(db_column='Name', max_length=50)
     description = models.CharField(db_column='Description', max_length=50, blank=True, null=True)  
-    cameraid = models.CharField(db_column='CameraId', max_length=50, blank=True, null=True)  
+    camera_id = models.CharField(db_column='CameraId', max_length=50, blank=True, null=True)  
     cashiers = models.JSONField(db_column='Cashiers', blank=True, null=True)
 
     class Meta:
@@ -89,17 +89,17 @@ class Parkinglog(models.Model):
     ticket_id = models.UUIDField(db_column='TicketId', primary_key=True)  
     customer_id = models.ForeignKey(Customers, on_delete=models.CASCADE, blank=True, null=True)
     date = models.DateField(db_column='Date')  
-    platenum = models.CharField(db_column='PlateNum', max_length=50)  
-    entrygateid = models.CharField(db_column='EntryGateId', max_length=50)  
+    plate_number = models.CharField(db_column='PlateNum', max_length=50)  
+    entry_gate = models.CharField(db_column='EntryGate', max_length=50)  
     checkin_method = models.CharField(db_column='CheckInMethod', max_length=10)
-    checkintime = models.BigIntegerField(db_column='CheckinTime')  
+    checkin_time = models.BigIntegerField(db_column='CheckinTime')  
     checkin_user = models.CharField(db_column='CheckinUser', max_length=50, blank=True, null=True)
-    checkouttime = models.BigIntegerField(db_column='CheckoutTime', blank=True, null=True)  
-    exitgateid = models.CharField(db_column='ExitGateId', max_length=50, blank=True, null=True)  
-    status = models.CharField(db_column='Status', max_length=50, blank=True, null=True)  
-    duration = models.FloatField(db_column='Duration', blank=True, null=True)  
+    checkout_time = models.BigIntegerField(db_column='CheckoutTime', blank=True, null=True)  
+    exit_gate = models.CharField(db_column='ExitGate', max_length=50, blank=True, null=True)  
+    parked = models.BooleanField(db_column='Parked', blank=True, null=True) 
+    duration = models.BigIntegerField(db_column='Duration', blank=True, null=True)  
     cash = models.FloatField(db_column='Cash', blank=True, null=True)  
-    subcription_id = models.CharField(db_column='SubcriptionId', max_length=50, blank=True, null=True)  
+    subcription = models.ForeignKey('Subscriptions', on_delete=models.CASCADE, blank=True, null=True)  
     checkout_method = models.CharField(db_column='CheckoutMethod', max_length=10, blank=True, null=True)
     payment_method = models.CharField(db_column='PaymentMethod', max_length=10, blank=True, null=True)
     checkout_user = models.CharField(db_column='CheckoutUser', max_length=50, blank=True, null=True)
@@ -110,19 +110,34 @@ class Parkinglog(models.Model):
     @classmethod
     def add(self, customer_id, date, time, platenumber, checkin_method):
         format_datetime = datetime.datetime.strptime(date + ' ' + time, '%Y-%m-%d %H:%M')
-        self.objects.create(platenum=platenumber, 
+        self.objects.create(plate_number=platenumber, 
                             date = format_datetime.date(),
                             ticket_id = uuid4(),
                             customer_id = Customers.objects.get(customer_id=customer_id),
-                            checkintime= format_datetime.timestamp(),
+                            checkin_time= format_datetime.timestamp(),
                             checkin_method = checkin_method,
-                            entrygateid='SouthGate',
-                            status = 'Parked')
+                            entry_gate='SouthGate',
+                            parked = True)
     
     @classmethod
-    def close(self, ticket_id, checkouttime, exitgateid, cash):
-        self.objects.filter(ticket_id=ticket_id).update(checkouttime=checkouttime, 
-                                                      exitgateid=exitgateid)
+    def close(self, ticket_id, checkout_time, exit_gate, cash, *subscription):
+        ticket = self.objects.get(ticket_id=ticket_id)
+        ticket.checkout_time = checkout_time
+        ticket.save()
+        ticket.duration = round(time.time() - ticket.checkin_time)
+        ticket.save()
+        ticket.parked = False
+        ticket.save()
+        ticket.cash = cash
+        ticket.save()
+        ticket.exit_gate = exit_gate
+        ticket.save()
+        try:
+            ticket.subscription = Subscriptions.objects.get(subscription_id = subscription)
+        except TypeError:
+            pass
+        ticket.save()
+
     @classmethod
     def delete(self, ticket_id):
         self.objects.filter(ticket_id=ticket_id).delete()
@@ -131,14 +146,21 @@ class Parkinglog(models.Model):
     # convert to minutes
     @property
     def elapsed(self):
-        if self.checkintime:
-            elapsed_seconds = time.time() - self.checkintime
+        if self.checkin_time:
+            elapsed_seconds = time.time() - self.checkin_time
             elapsed_minutes = round(elapsed_seconds / 60)
             return elapsed_minutes
-        
+
+    @property
+    def format_duration(self):
+        if self.duration:
+            return round(self.duration/60)
+        else:
+            return None
+     
     @property
     def format_checkintime(self):
-        return datetime.datetime.fromtimestamp(self.checkintime).strftime('%H:%M')
+        return datetime.datetime.fromtimestamp(self.checkin_time).strftime('%H:%M')
 
 
 class Tarrif(models.Model):
@@ -180,13 +202,13 @@ class Tarrif(models.Model):
 class Subscriptions(models.Model):
     customer_id = models.ForeignKey(Customers, on_delete=models.CASCADE, blank=True, null=True)
     subscription_id = models.BigAutoField(db_column='SubscriptionId', primary_key=True)  
-    platenumber = models.CharField(db_column='PlateNumber', max_length=50)  
+    plate_number = models.CharField(db_column='PlateNumber', max_length=50)  
     start_date = models.DateField(db_column='start')  
     end_date = models.DateField(db_column='end')  
     type = models.CharField(db_column='SubscriptionType', max_length=50)
     amount = models.FloatField(db_column='SubscriptionAmount')  
-    name= models.CharField(db_column='Name', max_length=50)  
-    phonenum = models.CharField(db_column='ContactNumber', max_length=50)  
+    name = models.CharField(db_column='Name', max_length=50)  
+    phone_number = models.CharField(db_column='ContactNumber', max_length=50)  
     office = models.CharField(db_column='OfficeLocation', max_length=50)  
     parklot = models.CharField(db_column='ParkingLot', max_length=50)  
 
@@ -197,13 +219,20 @@ class Subscriptions(models.Model):
     def add_subscription(self, customer_id, platenum, name, phonenum, office, parklot, amount, start_date, end_date):
         self.objects.create(
             customer_id = Customers.objects.get(customer_id=customer_id),
-            platenumber = platenum,
+            plate_number = platenum,
             start_date = start_date,
             end_date = end_date,
             type = type,
             amount = amount,
             name = name,
-            phonenum = phonenum,
+            phone_number = phonenum,
             office = office,
             parklot = parklot
         )
+
+    @classmethod
+    def is_subscribed(self, plate_number):
+        try:
+            return self.objects.get(plate_number=plate_number, end_date__gte=datetime.datetime.now())
+        except self.DoesNotExist:
+            return None

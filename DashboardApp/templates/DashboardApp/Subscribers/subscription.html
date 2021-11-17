@@ -53,23 +53,27 @@
                                         <tr>
                                             <th>#</th>
                                             <th>Plate Number</th>
-                                            <th>Type</th>
+                                            <th>Name</th>
+                                            <th>Contact</th>
+                                            <th>Office Space</th>
                                             <th>Parking Lot</th>
                                             <th>Expiry Date</th>
                                             <th>Close Ticket</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                    {% for Car in List %}
+                                    {% for subscription in subscriptions %}
                                         <tr>
                                             <th scope="row">{{forloop.counter}}</th>
-                                            <td>{{Car.PlateNum}}</td>
-                                            <td>{{Car.EntryGate}}</td>
-                                            <td>{{Car.Checkin}}</td>
-                                            <td>{{Car.Duration}} Minutes</td>
+                                            <td>{{subscription.plate_number}}</td>
+                                            <td>{{subscription.phone_number}}</td>
+                                            <td>{{subscription.name}}</td>
+                                            <td>{{subscription.office}}</td>
+                                            <td>{{subscription.parklot}}</td>
+                                            <td>{{subscription.end_date}}</td>
                                             <td>
                                                 {% comment %} <button class="btn btn-warning mb-3" data-toggle="modal" data-target="#closeTicket" style="color: #ffffff;"> <i class="zmdi zmdi-close"></i> Close Ticket</button>
-                                                {% endcomment %}<a href="history/{{Car.TicketId}}/close" class="btn btn-warning" role="button" data-bs-toggle="button">Close Ticket</a>
+                                                {% endcomment %}<a href="history/{{subscription.TicketId}}/close" class="btn-sm btn-primary" role="button" data-bs-toggle="button">more</a>
                                             </td>
                                         </tr>
                                     {% endfor %}
