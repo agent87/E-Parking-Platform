@@ -36,8 +36,7 @@ LOGIN_URL = '/login'
 # Application definition
 
 INSTALLED_APPS = [
-    'AuthenticationApp.apps.AuthenticationappConfig',
-    'API.apps.ApiConfig',    
+    'AuthenticationApp.apps.AuthenticationappConfig',  
     'DashboardApp.apps.DashboardappConfig',
     'SystemApp.apps.SystemappConfig',
     #Native Application

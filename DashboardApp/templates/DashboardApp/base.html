@@ -14,7 +14,6 @@
   <!-- Theme style -->
   <link rel="stylesheet" href="{% static 'resources/dist/css/adminlte.min.css' %}">
     {% block sources %}
-
     {% endblock %}
 
 </head>
@@ -43,51 +42,51 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="pricing" class="nav-link">
-              <i class="nav-icon far fa-circle text-warning"></i>
+            <a href="{% url 'pricing_page' %}" class="nav-link">
+              <i class="nav-icon fas fa-tags"></i>
               <p>Pricing</p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="parked" class="nav-link">
-              <i class="nav-icon far fa-circle text-info"></i>
+            <a href="{% url 'parked_page' %}" class="nav-link">
+              <i class="nav-icon fas fa-car-alt"></i>
               <p>Parked Vehicles</p>
             </a>
           </li>
           <li class="nav-item">
             <a href="history" class="nav-link">
-              <i class="nav-icon far fa-circle text-info"></i>
+              <i class="nav-icon fas fa-history"></i>
               <p>History</p>
             </a>
           </li>
           <li class="nav-item">
             <a href="subscribers" class="nav-link">
-              <i class="nav-icon far fa-circle text-info"></i>
+              <i class="nav-icon fas fa-address-book"></i>
               <p>Subcriptions</p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="users" class="nav-link">
-              <i class="nav-icon far fa-circle text-info"></i>
+            <a href="{% url 'accounts_page' %}" class="nav-link">
+              <i class="nav-icon fas fa-users"></i>
               <p>Accounts</p>
             </a>
           </li>
           <li class="nav-header">MISCELLANEOUS</li>
           <li class="nav-item">
             <a href="users" class="nav-link">
-              <i class="nav-icon far fa-circle text-info"></i>
+              <i class="nav-icon fas fa-user-cog"></i>
               <p>My Profile</p>
             </a>
           </li>
           <li class="nav-item">
             <a href="users" class="nav-link">
-              <i class="nav-icon far fa-circle text-info"></i>
+              <i class="nav-icon fas fa-paper-plane"></i>
               <p>Contact us</p>
             </a>
           </li>
           <li class="nav-item">
             <a href="users" class="nav-link">
-              <i class="nav-icon far fa-circle text-info"></i>
+              <i class="nav-icon fas fa-sign-out-alt"></i>
               <p>Sign Out</p>
             </a>
           </li>

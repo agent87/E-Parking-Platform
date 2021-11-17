@@ -1,3 +1,4 @@
+from django import db
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.hashers import make_password
 from django.db import models
@@ -11,8 +12,7 @@ from .managers import CustomUserManager
 
 class Customers(models.Model):
     customer_id = models.CharField(db_column='CustomerId', primary_key=True, max_length=50, editable=False)
-    client_type = models.CharField(db_column='ClientType', max_length=70, blank=True, null=True) 
-    administrator = models.ForeignKey('Users', on_delete=models.CASCADE, blank=True, null=True) 
+    #administrator = models.ForeignKey('Users', on_delete=models.CASCADE, blank=True, null=True) 
     company_name = models.CharField(db_column='CompanyName', max_length=50, blank=True, null=True) 
     email = models.CharField(db_column='CompanyMail', max_length=70, blank=True, null=True) 
     contact = models.CharField(db_column='CompanyId', max_length=30, blank=True, null=True) 
@@ -58,6 +58,10 @@ class Users(AbstractUser):
     def create_admin(self, email, password, customer_id, fname, lname, contact):
         self.objects.create(email=email, password=password, customer_id=customer_id, fname=fname, lname=lname, contact=contact, is_superuser=1)
         return self.objects.get(email=email)
+
+    @property
+    def full_names(self):
+        return self.first_name + ' ' + self.last_name
         
 
 
@@ -90,33 +94,35 @@ class Parkinglog(models.Model):
     customer_id = models.ForeignKey(Customers, on_delete=models.CASCADE, blank=True, null=True)
     date = models.DateField(db_column='Date')  
     plate_number = models.CharField(db_column='PlateNum', max_length=50)  
-    entry_gate = models.CharField(db_column='EntryGate', max_length=50)  
+    entry_gate = models.ForeignKey(Gates, related_name='entry_gate', on_delete=models.CASCADE, blank=True, null=True)  
     checkin_method = models.CharField(db_column='CheckInMethod', max_length=10)
     checkin_time = models.BigIntegerField(db_column='CheckinTime')  
-    checkin_user = models.CharField(db_column='CheckinUser', max_length=50, blank=True, null=True)
+    checkin_user = models.ForeignKey(Users, related_name='checkin_user', on_delete=models.CASCADE, blank=True, null=True)
     checkout_time = models.BigIntegerField(db_column='CheckoutTime', blank=True, null=True)  
-    exit_gate = models.CharField(db_column='ExitGate', max_length=50, blank=True, null=True)  
+    exit_gate = models.ForeignKey(Gates, related_name='exit_gate', on_delete=models.CASCADE, blank=True, null=True)  
     parked = models.BooleanField(db_column='Parked', blank=True, null=True) 
     duration = models.BigIntegerField(db_column='Duration', blank=True, null=True)  
-    cash = models.FloatField(db_column='Cash', blank=True, null=True)  
+    cost = models.FloatField(db_column='Cash', blank=True, null=True)  
+    amount_payed = models.BigIntegerField(db_column='AmountPayed', blank=True, null=True)
     subcription = models.ForeignKey('Subscriptions', on_delete=models.CASCADE, blank=True, null=True)  
     checkout_method = models.CharField(db_column='CheckoutMethod', max_length=10, blank=True, null=True)
     payment_method = models.CharField(db_column='PaymentMethod', max_length=10, blank=True, null=True)
-    checkout_user = models.CharField(db_column='CheckoutUser', max_length=50, blank=True, null=True)
+    checkout_user = models.ForeignKey(Users, related_name='checkout_user', on_delete=models.CASCADE, blank=True, null=True)
 
     class Meta:
         db_table = 'ParkingLog'
 
     @classmethod
-    def add(self, customer_id, date, time, platenumber, checkin_method):
+    def add(self, customer_id, date, time, plate_number, gate_id, user_id, checkin_method):
         format_datetime = datetime.datetime.strptime(date + ' ' + time, '%Y-%m-%d %H:%M')
-        self.objects.create(plate_number=platenumber, 
+        self.objects.create(plate_number=plate_number, 
                             date = format_datetime.date(),
                             ticket_id = uuid4(),
                             customer_id = Customers.objects.get(customer_id=customer_id),
                             checkin_time= format_datetime.timestamp(),
                             checkin_method = checkin_method,
-                            entry_gate='SouthGate',
+                            checkin_user = Users.objects.get(user_id=user_id),
+                            entry_gate= Gates.objects.get(gate_id=gate_id),
                             parked = True)
     
     @classmethod
@@ -190,7 +196,7 @@ class Tarrif(models.Model):
 
     @classmethod
     def match_tarrif(self, duration):
-        return self.objects.filter(fromtime__lte=duration, totime__gte=duration)
+        return self.objects.filter(fromtime__lte=duration, totime__gte=duration).first()
 
 
 

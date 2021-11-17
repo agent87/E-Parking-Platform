@@ -14,7 +14,7 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <div class="container-fluid">
-        <h4 class="text-center display-4">Parked Vehicles</h4>
+        <h4 class="text-center display-4">Parking History</h4>
       </div>
       <!-- /.container-fluid -->
     </section>
@@ -35,7 +35,7 @@
                   <!--Entity Table-->
         <div class="card card-default">
             <div class="card-header">
-              <h3 class="card-title">Parked Vehicles List</h3>
+              <h3 class="card-title">Parking Logs</h3>
   
               <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -48,40 +48,61 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body" style="display: block;" id="entities">
-                <table class="table" id="example1">
-                                    <thead>
+                <table id="example1" class="table table-sm">
+                    <thead>
                                         <tr>
                                             <th>#</th>
                                             <th>Date</th>
                                             <th>Plate Number</th>
                                             <th>Entry Gate</th>
                                             <th>Checkin time</th>
-                                            <th>Elapsed</th>
-                                            <th>Close Ticket</th>
+                                            <th>Checkout Time</th>
+                                            <th>Exit Gate</th>
+                                            <th>Duration</th>
+                                            <th>Cash</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                    {% for parked_vehicle in parked_vehicles %}
+                                        {% for parking_log in parking_logs %}
                                         <tr>
                                             <th scope="row">{{forloop.counter}}</th>
-                                            <td>{{parked_vehicle.date}}</td>
-                                            <td>{{parked_vehicle.plate_number}}</td>
-                                            <td>{{parked_vehicle.entry_gate}}</td>
-                                            <td>{{parked_vehicle.format_checkintime}}</td>
-                                            <td>{{parked_vehicle.elapsed}} Minutes</td>
-                                            <td>
-                                                {% comment %} <button class="btn btn-warning mb-3" data-toggle="modal" data-target="#closeTicket" style="color: #ffffff;"> <i class="zmdi zmdi-close"></i> Close Ticket</button>
-                                                {% endcomment %}<a href="history/{{parked_vehicle.ticket_id}}/close" class="btn-sm btn-warning" role="button" data-bs-toggle="button">Close Ticket</a>
-                                            </td>
+                                            <td>{{parking_log.date}}</td> 
+                                            <td>{{parking_log.plate_number}}</td>
+                                            <td>{{parking_log.entry_gate.name}}</td>
+                                            <td>{{parking_log.format_checkintime}}</td>
+                                            <!-- Checkout Time Logic -->
+                                            {% if parking_log.checkout_time == None %}
+                                                <td></td>
+                                            {% else %}
+                                                <td>{{parking_log.checkout_time}}</td>
+                                            {% endif %}
+                                            <!-- Exit Gate Logic -->
+                                            {% if parking_log.exit_gate == None %}
+                                                <td></td>
+                                            {% else %}
+                                                <td>{{parking_log.exit_gate}}</td>
+                                            {% endif %}
+                                            <!-- Duration Logic -->
+                                            {% if parking_log.format_duration == None %}
+                                                <td></td>
+                                            {% else %}
+                                                <td>{{parking_log.format_duration}} Minutes</td>
+                                            {% endif %}
+                                            <!-- Cash Collected Logic -->
+                                            {% if parking_log.cash == None %}
+                                                <td></td>
+                                            {% else %}
+                                                <td>{{parking_log.cash}} RWF</td>
+                                            {% endif %}
                                         </tr>
-                                    {% endfor %}
+                                        {% endfor %}
                                     </tbody>
-                                </table>
+                </table>
               <!-- /.row -->
             </div>
             <!-- /.card-body -->
             <div class="card-footer" style="display: block;">
-              Total Parked Vehicles : {{ parked_vehicles.count }}
+              TOTAL CARS : {{ total_accounts }}
             </div>
         </div>
                   <!-- /.card -->
@@ -92,36 +113,29 @@
 
         <!-- Modal Dialogs ========= --> 
     <!-- Default Size -->
-    <!-- Default Size -->
     <div class="modal fade" id="VehicleForm" tabindex="-1" role="dialog">
         <div class="modal-dialog " role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="title" id="defaultModalLabel"> Add New Vehicle</h4>
+                    <h5 class="title" id="defaultModalLabel"> View All Vehicles </h4>
                 </div>
-            <form action="history/add" method="POST">    
-            {% csrf_token %}
                 <div class="modal-body"> 
                     <div class="col-sm-12">
+                        
                         <div class="form-group col-sm-12">    
-                            <label>Date</label>                                  
-                            <input type="date" class="form-control" name="date" placeholder="Enter Plate Number">
+                            <label>Date From </label>                                  
+                            <input type="date" class="form-control" placeholder="Enter Plate Number">
                         </div>
                         <div class="form-group col-sm-12">    
-                            <label>Plate Number </label>                                  
-                            <input type="text" class="form-control" name="platenumber" placeholder="Enter Plate Number">
-                        </div>
-                        <div class="form-group col-sm-12">    
-                            <label>Entrace at</label>                                
-                            <input type="time" class="form-control" name="time" placeholder="Enter Time from">
+                            <label>Date to</label>                                
+                            <input type="date" class="form-control" placeholder="Enter Time from">
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary waves-effect">Save Changes</button>
+                    <button type="button" class="btn btn-primary waves-effect">Search </button>
                     <button type="button" class="btn btn-danger btn-simple waves-effect" data-dismiss="modal">Close</button>
                 </div>
-            </form>
             </div>
         </div>
     </div>    

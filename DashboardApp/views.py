@@ -16,9 +16,9 @@ class responses:
             if user is not None:
                 return redirect(reverse('history_page'))
             else:
-                return render(request, 'DashboardApp/login.html', {'code': 302})
+                return render(request, 'DashboardApp/Authentication/login.html', {'code': 302})
         else:
-            return render(request, 'DashboardApp/login.html')
+            return render(request, 'DashboardApp/Authentication/login.html')
 
     
     def testing(request):
@@ -28,36 +28,24 @@ class responses:
     def dashboard_page(request):
         #context = engine.ParkingLog.compile('EGPCI-AAA01-0001')
 
-        return render(request, 'DashboardApp/dashboard.html')
-
-    @login_required
-    def history_page(request):
-        #context = engine.ParkingLog.compile('EGPCI-AAA01-0001')['History']
-        return render(request, 'DashboardApp/history.html')
-
-    @login_required
-    def pricing_page(request):
-        context = {'tarrifs' : models.Tarrif.objects.all()}
-        return render(request, 'DashboardApp/pricing.html', context)
-
-    
-
+        return render(request, 'DashboardApp/Dashboard/dashboard.html')
 
     @login_required
     def parked_page(request):
-        parked_vehicles = models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id, parked=True)
-        return render(request, 'DashboardApp/parked.html', context={'parked_vehicles': parked_vehicles})
+        context = {'parked_vehicles' : models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id, parked=True)}
+        context['EntranceFormContext'] = {'gates' : models.Gates.objects.filter(customer_id=request.user.customer_id.customer_id)}
+        return render(request, 'DashboardApp/ParkingLogs/ParkedVehicles.html', context)
 
     @login_required
     def subscribers_page(request):
         print(request.user.customer_id.customer_id)
         context = {"subscription" : models.Subscriptions.objects.filter(customer_id = request.user.customer_id.customer_id)}
-        return render(request, 'DashboardApp/subscription.html', context)
+        return render(request, 'DashboardApp/Subscribers/subscription.html', context)
 
     @login_required
     def user_page(request):
         context = {'users': models.Users.objects.filter(customer_id = request.user.customer_id.customer_id)}
-        return render(request, 'DashboardApp/user.html', context)
+        return render(request, 'DashboardApp/Accounts/user.html', context)
 
     @login_required
     def logout_request(request):
@@ -80,14 +68,14 @@ class authentication:
 
 class LoginView:
     def LoginView(request):
-        return render(request, 'DashboardApp/login.html')
+        return render(request, 'DashboardApp/Authentication/login.html')
 
 
 class history:
     @login_required
     def history_page(request):
         context = {'parking_logs': models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id)}
-        return render(request, 'DashboardApp/history.html', context)
+        return render(request, 'DashboardApp/ParkingLogs/HistoryPage.html', context)
 
     @login_required
     def add_ticket(request):
@@ -96,10 +84,20 @@ class history:
             date = request.POST.get('date')            
             time = request.POST.get('time')
             plate_number = request.POST.get('platenumber')
-            models.Parkinglog.add(customer_id, date, time, plate_number, checkin_method='Manual')
+            gate_id = request.POST.get('gate')
+            user_id = request.user.user_id
+            models.Parkinglog.add(customer_id, date, time, plate_number, gate_id, user_id, checkin_method='Manual')
             return redirect(reverse('parked_page'))
         else:
             return(reverse('parked_page'))
+
+    @login_required
+    def checkout(request, ticket_id):
+        context = {'ticket' : models.Parkinglog.objects.get(ticket_id=ticket_id)}
+        context['gates'] = models.Gates.objects.filter(customer_id=context['ticket'].customer_id.customer_id)
+        context['user'] = request.user
+        context['cost'] = models.Tarrif.match_tarrif(context['ticket'].elapsed).cost
+        return render(request, 'DashboardApp/ParkingLogs/CheckoutForm.html', context)
 
     @login_required
     def close_ticket(request, ticket_id):
@@ -124,6 +122,11 @@ class history:
 
     
 class pricing:
+    @login_required
+    def pricing_page(request):
+        context = {'tarrifs' : models.Tarrif.objects.all()}
+        return render(request, 'DashboardApp/Pricing/PricingPage.html', context)
+
     @login_required
     def add_pricing(request):
         if request.method == "POST":
@@ -165,7 +168,7 @@ class subscription:
     def subscribers_page(request):
         print(request.user.customer_id.customer_id)
         context = {"subscriptions" : models.Subscriptions.objects.filter(customer_id = request.user.customer_id.customer_id)}
-        return render(request, 'DashboardApp/subscription.html', context)
+        return render(request, 'DashboardApp/Subscribers/subscription.html', context)
 
     @login_required
     def add_subscription(request):
@@ -183,3 +186,4 @@ class subscription:
             return redirect(reverse('subscribers_page'))
         else:
             return redirect(reverse('subscribers_page'))
+
