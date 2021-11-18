@@ -126,17 +126,17 @@ class Parkinglog(models.Model):
                             parked = True)
     
     @staticmethod
-    def close(ticket_id, checkin_time, checkout_time, checkout_method, checkout_user, exit_gate, duration, amount_payed, payment_method, *subscription):
-        checkin_unix_time = datetime.datetime.strptime(checkin_time, '%m/%d/%Y %H:%M %p')
-        checkout_unix_time = datetime.datetime.strptime(checkout_time, '%m/%d/%Y %H:%M %p')
+    def close(ticket_id, checkin_time, checkout_time, checkout_method, checkout_user, exit_gate, amount_payed, payment_method, *subscription):
+        checkin_unix_time = datetime.datetime.strptime(checkin_time, '%m/%d/%Y %H:%M')
+        checkout_unix_time = datetime.datetime.strptime(checkout_time, '%m/%d/%Y %H:%M')
         Parkinglog.objects.filter(ticket_id=ticket_id).update(
             checkin_time = checkin_unix_time.timestamp(),
             checkout_time = checkout_unix_time.timestamp(),
             checkout_method = checkout_method,
             checkout_user = Users.objects.get(user_id=checkout_user),
             exit_gate = Gates.objects.get(gate_id=exit_gate),
-            cost = Tarrif.match_tarrif((checkout_unix_time - checkin_unix_time)/60).cost,
-            duration = (checkout_unix_time - checkin_unix_time),
+            cost = Tarrif.match_tarrif((checkout_unix_time - checkin_unix_time).seconds/60).cost,
+            duration = (checkout_unix_time - checkin_unix_time).seconds,
             amount_payed = amount_payed,
             payment_method = payment_method,
             parked = False
@@ -162,18 +162,20 @@ class Parkinglog(models.Model):
         else:
             return None
      
+    #Yep it's specially crafted function for checkout form check in field( Read it slow G/Don't get it twisted)
+    #such an egoistical input right!
     @property
-    def format_checkintime(self):
-        return datetime.datetime.fromtimestamp(self.checkin_time).strftime('%H:%M')
+    def format_checkin_datetime(self):
+        return datetime.datetime.fromtimestamp(self.checkin_time).strftime('%m/%d/%Y %H:%M')
 
     @property
     def checkin_datetime(self):
-        print(datetime.datetime.fromtimestamp(self.checkin_time).strftime("%m/%d/%Y %H:%M %p"))
-        return datetime.datetime.fromtimestamp(self.checkin_time).strftime("%m/%d/%Y %H:%M %p")
+        print(datetime.datetime.fromtimestamp(self.checkin_time).strftime("%m/%d/%Y %H:%M"))
+        return datetime.datetime.fromtimestamp(self.checkin_time).strftime("%m/%d/%Y %H:%M")
 
     @property
     def checkout_datetime(self):
-        return datetime.datetime.fromtimestamp(self.checkout_time).strftime("%m/%d/%Y %H:%M %p")
+        return datetime.datetime.fromtimestamp(self.checkout_time).strftime("%m/%d/%Y %H:%M")
  
 
 

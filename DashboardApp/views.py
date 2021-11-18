@@ -112,8 +112,6 @@ class history:
                                 checkout_method='Manual',
                                 checkout_user = request.user.user_id,
                                 exit_gate = request.POST.get('exit_gate'), 
-                                #cost = request.POST.get('cost'),
-                                duration = request.POST.get('duration'), 
                                 amount_payed = request.POST.get('amount_payed'),
                                 payment_method = request.POST.get('payment_method')
                                 )

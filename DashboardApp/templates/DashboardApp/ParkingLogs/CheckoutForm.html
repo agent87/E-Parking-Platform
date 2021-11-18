@@ -219,25 +219,27 @@
 <script type="text/javascript">
     $(function () {
         $("#datetimepicker7").datetimepicker({
-            locale: "en",
+            locale: "eu",
             useCurrent: false,
-            defaultDate: "{{ticket.checkin_datetime}}",
+            defaultDate: "{{ ticket.checkin_datetime }}",
+            format: 'MM/DD/YYYY H:mm',
             icons: {
-                time: "fa fa-clock-o",
-                date: "fa fa-calendar",
-                up: "fa fa-arrow-up",
-                down: "fa fa-arrow-down",
+                time: "fas fa-clock-o",
+                date: "fas fa-calendar",
+                up: "fas fa-arrow-up",
+                down: "fas fa-arrow-down",
             },
         });
         $("#datetimepicker8").datetimepicker({
-            locale: "en",
+            locale: "eu",
             useCurrent: false,
             defaultDate: new Date(),
+            format: 'MM/DD/YYYY H:mm',
             icons: {
-                time: "fa fa-clock-o",
-                date: "fa fa-calendar",
-                up: "fa fa-arrow-up",
-                down: "fa fa-arrow-down",
+                time: "fas fa-clock-o",
+                date: "fas fa-calendar",
+                up: "fas fa-arrow-up",
+                down: "fas fa-arrow-down",
             },
         });
         $("#datetimepicker7").on("change.datetimepicker", function (e) {
