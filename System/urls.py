@@ -22,4 +22,4 @@ urlpatterns = [
     #path('auth', include('AuthenticationApp.urls')),
     path('', include('DashboardApp.urls')),
     #path('api', include('API.urls'))
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+] #+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

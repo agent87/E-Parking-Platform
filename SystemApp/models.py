@@ -177,6 +177,38 @@ class Parkinglog(models.Model):
     def checkout_datetime(self):
         return datetime.datetime.fromtimestamp(self.checkout_time).strftime("%m/%d/%Y %H:%M")
  
+    ###################### Dashboard Properties ##############################
+    @property
+    #todays total cars
+    def todays_total_cars(self):
+        return self.objects.filter(date=datetime.date.today()).count()
+
+    @property
+    def total_revenue(self):
+        revenue = 0
+        for log in self.objects.all():
+            revenue += log.amount_payed
+        return revenue
+    
+    @property
+    def total_parked(self):
+        return Parkinglog.objects.filter(parked=True).count()
+
+    @property
+    #todays revenue
+    def todays_revenue(self):
+        todays_revenue = 0
+        for logs in Parkinglog.objects.filter(date=datetime.date.today()):
+            todays_revenue += logs.amount_payed
+        return todays_revenue
+
+    #Total revenue last week
+    @property
+    def last_week_revenue(self):
+        last_week_revenue = 0
+        for logs in Parkinglog.objects.filter(date__range=[datetime.date.today() - datetime.timedelta(days=7), datetime.date.today()]):
+            last_week_revenue += logs.amount_payed
+        return last_week_revenue
 
 
 class Tarrif(models.Model):
@@ -265,3 +297,7 @@ class Subscriptions(models.Model):
     @classmethod
     def remove_subscription(self, subscription_id):
         self.objects.filter(subscription_id=subscription_id).delete()
+
+    @property
+    def count(self):
+        self.objects.count()

@@ -3,9 +3,9 @@
 {% load static %}
 
 {% block sources %}
-  <link rel="stylesheet" href="{% static 'resources/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
-  <link rel="stylesheet" href="{% static 'resources/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
-  <link rel="stylesheet" href="{% static 'resources/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -40,11 +40,11 @@
           <!-- /.col -->
           <div class="col-12 col-sm-6 col-md-3">
             <div class="info-box mb-3">
-              <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-thumbs-up"></i></span>
+              <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-car-alt"></i></span>
 
               <div class="info-box-content">
                 <span class="info-box-text">Total Traffic</span>
-                <span class="info-box-number">23</span>
+                <span class="info-box-number">{{ parking_logs.count }}</span>
               </div>
               <!-- /.info-box-content -->
             </div>
@@ -61,7 +61,7 @@
 
               <div class="info-box-content">
                 <span class="info-box-text">Sales</span>
-                <span class="info-box-number">760</span>
+                <span class="info-box-number">{{ parking_logs.total_revenue }} RWF</span>
               </div>
               <!-- /.info-box-content -->
             </div>
@@ -74,7 +74,7 @@
 
               <div class="info-box-content">
                 <span class="info-box-text">Vehicle Subcription</span>
-                <span class="info-box-number">54</span>
+                <span class="info-box-number">{{ subscription.count }}</span>
               </div>
               <!-- /.info-box-content -->
             </div>
@@ -116,7 +116,7 @@
                 <div class="row">
                   <div class="col-md-8">
                     <p class="text-center">
-                      <strong>Traffic: 1 Jan, 2020 - 6 Nov, 2021</strong>
+                      <strong>Traffic: 1 Jan, 2020 - 12 Dec, 2021</strong>
                     </p>
 
                     <div class="chart">
@@ -133,18 +133,18 @@
 
                     <div class="progress-group">
                       North Gate
-                      <span class="float-right"><b>160</b>/200</span>
+                      <span class="float-right"><b>1</b>/1</span>
                       <div class="progress progress-sm">
-                        <div class="progress-bar bg-primary" style="width: 80%"></div>
+                        <div class="progress-bar bg-primary" style="width: 100%"></div>
                       </div>
                     </div>
                     <!-- /.progress-group -->
 
                     <div class="progress-group">
                       South Gate
-                      <span class="float-right"><b>310</b>/400</span>
+                      <span class="float-right"><b>1</b>/1</span>
                       <div class="progress progress-sm">
-                        <div class="progress-bar bg-danger" style="width: 75%"></div>
+                        <div class="progress-bar bg-danger" style="width: 100%"></div>
                       </div>
                     </div>
                     <!-- /.progress-group -->
@@ -159,7 +159,7 @@
                   <div class="col-sm-3 col-6">
                     <div class="description-block border-right">
                       <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>
-                      <h5 class="description-header">{{Today.Cars}}</h5>
+                      <h5 class="description-header">{{parking_logs.todays_total_cars}}</h5>
                       <span class="description-text">Total Cars Today</span>
                     </div>
                     <!-- /.description-block -->
@@ -168,7 +168,7 @@
                   <div class="col-sm-3 col-6">
                     <div class="description-block border-right">
                       <span class="description-percentage text-warning"><i class="fas fa-caret-left"></i> 0%</span>
-                      <h5 class="description-header">{{Today.Revenue}} RWF</h5>
+                      <h5 class="description-header">{{parking_logs.todays_revenue}} RWF</h5>
                       <span class="description-text">Total Revenue Today</span>
                     </div>
                     <!-- /.description-block -->
@@ -177,8 +177,8 @@
                   <div class="col-sm-3 col-6">
                     <div class="description-block border-right">
                       <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 20%</span>
-                      <h5 class="description-header">{{History.Count}}</h5>
-                      <span class="description-text">Last Week</span>
+                      <h5 class="description-header">{{ parking_logs.last_week_revenue }}</h5>
+                      <span class="description-text">Last Week Revenue</span>
                     </div>
                     <!-- /.description-block -->
                   </div>
@@ -211,13 +211,13 @@
 
 {% block script %}
 <!-- ChartJS -->
-<script src="{% static 'resources/plugins/chart.js/Chart.min.js' %}"></script>
+<script src="{% static 'plugins/chart.js/Chart.min.js' %}"></script>
 <!-- jQuery -->
-<script src="{% static 'resources/plugins/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
 <!-- Bootstrap 4 -->
-<script src="{% static 'resources/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-<script src="{% static 'resources/dist/js/pages/dashboard2.js' %}"></script>
+<script src="{% static 'dist/js/pages/dashboard2.js' %}"></script>
 
 
 

@@ -74,8 +74,10 @@ class authentication:
 class DashboardView:
     @login_required
     def dashboard_page(request):
-        #context = {'parking_logs' : managers.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id)}
-        return render(request, 'DashboardApp/Dashboard/dashboard.html')
+        context = {'parking_logs' : models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id)}
+        context['gates'] = models.Gates.objects.filter(customer_id=request.user.customer_id.customer_id)
+        context['subscription'] = models.Subscriptions.objects.filter(customer_id = request.user.customer_id.customer_id)
+        return render(request, 'DashboardApp/Dashboard/dashboard.html', context)
 
 class LoginView:
     def LoginView(request):
