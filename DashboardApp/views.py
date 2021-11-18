@@ -1,4 +1,5 @@
 from SystemApp import models
+from SystemApp import managers
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
@@ -69,6 +70,12 @@ class authentication:
     def logout(request):
         logout(request)
         return redirect(reverse('LoginView'))
+
+class DashboardView:
+    @login_required
+    def dashboard_page(request):
+        context = {'parking_logs' : managers.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id)}
+        return render(request, 'DashboardApp/Dashboard/dashboard.html')
 
 class LoginView:
     def LoginView(request):

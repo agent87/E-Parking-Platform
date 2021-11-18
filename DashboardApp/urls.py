@@ -15,7 +15,7 @@ urlpatterns = [
     path('test', views.responses.testing),
 
     ###Dashboard Related #####
-    path('dashboard', views.responses.dashboard_page, name='dashboard_page'),
+    path('dashboard', views.DashboardView.dashboard_page, name='dashboard_page'),
 
     ###Parking Logs Related#####
     path('history', views.history.history_page, name='history_page'),
