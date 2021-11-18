@@ -134,7 +134,7 @@ WHITENOISE_USE_FINDERS = True
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static/Resources'),]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static/resources'),]
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 

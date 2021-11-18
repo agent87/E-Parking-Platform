@@ -36,5 +36,7 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 class DashboardManager(models.Manager):
-
     pass
+
+class ParkingLogsManager(models.Model):
+    SystemApp.models.ParkingLogs.manne
