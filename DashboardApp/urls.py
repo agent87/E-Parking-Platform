@@ -7,9 +7,9 @@ urlpatterns = [
     ###Auth Related#####
     path('', views.LoginView.LoginView, name='LoginView'),
     path('auth/login', views.authentication.login, name='login'),
-    path('login/<slug:redirect_to>', views.responses.login_page, name='login_page'),
+    #path('login/<slug:redirect_to>', views.responses.login_page, name='login_page'),
     path('reset', views.responses.login_page, name='reset_page'),
-    path('logout', views.responses.logout_request, name='logout_request'),
+    path('logout', views.authentication.logout, name='logout_request'),
 
     ###Testing####
     path('test', views.responses.testing),
@@ -36,7 +36,9 @@ urlpatterns = [
     path('subscribers/add', views.subscription.add_subscription, name='add_subscription'), 
 
     path('accounts', views.responses.user_page, name='accounts_page'),
-    path('accounts/add', views.users.add_user, name='Add_User'),
+    path('accounts/add', views.users.add_user, name='add_account'),
+
+    path('contact-us', views.contact_us.contact_us_page, name='contact_us_page'),
 
     #path('admin/', admin.site.urls)
 ]

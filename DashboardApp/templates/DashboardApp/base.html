@@ -36,7 +36,7 @@
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <li class="nav-item">
-            <a href="dashboard" class="nav-link">
+            <a href="{% url 'dashboard_page' %}" class="nav-link">
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>Dashboard</p>
             </a>
@@ -54,13 +54,13 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="history" class="nav-link">
+            <a href="{% url 'history_page' %}" class="nav-link">
               <i class="nav-icon fas fa-history"></i>
               <p>History</p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="subscribers" class="nav-link">
+            <a href="{% url 'subscribers_page' %}" class="nav-link">
               <i class="nav-icon fas fa-address-book"></i>
               <p>Subcriptions</p>
             </a>
@@ -79,13 +79,13 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="users" class="nav-link">
+            <a href="{% url 'contact_us_page' %}" class="nav-link">
               <i class="nav-icon fas fa-paper-plane"></i>
               <p>Contact us</p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="users" class="nav-link">
+            <a href="{% url 'logout_request' %}" class="nav-link">
               <i class="nav-icon fas fa-sign-out-alt"></i>
               <p>Sign Out</p>
             </a>
@@ -124,8 +124,6 @@
 <script src="{% static 'resources/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 <!-- AdminLTE App -->
 <script src="{% static 'resources/dist/js/adminlte.min.js' %}"></script>
-<!-- AdminLTE for demo purposes -->
-<script src="{% static 'resources/dist/js/demo.js' %}"></script>
 {% block script %}
 
 {% endblock %}

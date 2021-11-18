@@ -66,6 +66,10 @@ class authentication:
         else:
             return redirect(reverse('LoginView'))
 
+    def logout(request):
+        logout(request)
+        return redirect(reverse('LoginView'))
+
 class LoginView:
     def LoginView(request):
         return render(request, 'DashboardApp/Authentication/login.html')
@@ -97,27 +101,29 @@ class history:
         context['gates'] = models.Gates.objects.filter(customer_id=context['ticket'].customer_id.customer_id)
         context['user'] = request.user
         context['cost'] = models.Tarrif.match_tarrif(context['ticket'].elapsed).cost
+        context['subscription'] = models.Subscriptions.is_subscribed(plate_number = context['ticket'].plate_number)
         return render(request, 'DashboardApp/ParkingLogs/CheckoutForm.html', context)
 
     @login_required
     def close_ticket(request, ticket_id):
-        ticket = models.Parkinglog.objects.get(ticket_id=ticket_id)
-        if models.Subscriptions.is_subscribed(ticket.plate_number):
-            ticket.close(
-                ticket_id = ticket_id,
-                checkout_time = time.time(), 
-                exit_gate = 'SouthGate', 
-                cash = 0, 
-                subscription = models.Subscriptions.is_subscribed(ticket.plate_number).subscription_id
-            )
-            print("Vehicl subscribed")
-        else:
-            ticket.close(
-                ticket_id = ticket_id,
-                checkout_time = time.time(), 
-                exit_gate = 'SouthGate', 
-                cash = models.Tarrif.match_tarrif(ticket.elapsed)
-            ) 
+        # ticket = models.Parkinglog.objects.get(ticket_id=ticket_id)
+        # if models.Subscriptions.is_subscribed(ticket.plate_number):
+        #     ticket.close(
+        #         ticket_id = ticket_id,
+        #         checkout_time = time.time(), 
+        #         exit_gate = 'SouthGate', 
+        #         cash = 0, 
+        #         subscription = models.Subscriptions.is_subscribed(ticket.plate_number).subscription_id
+        #     )
+        #     print("Vehicl subscribed")
+        # else:
+        #     ticket.close(
+        #         ticket_id = ticket_id,
+        #         checkout_time = time.time(), 
+        #         exit_gate = 'SouthGate', 
+        #         cash = models.Tarrif.match_tarrif(ticket.elapsed)
+        #    ) 
+        print(request.POST)
         return redirect(reverse('parked_page'))
 
     
@@ -159,9 +165,9 @@ class users:
             password = request.POST.get('password')
             role = request.POST.get('role')
             models.Users.add_user(customer_id, first_name, last_name, email, phonenum, password, role)
-            return redirect(reverse('user_page'))
+            return redirect(reverse('accounts_page'))
         else:
-            return redirect(reverse('user_page'))
+            return redirect(reverse('accounts_page'))
 
 class subscription:
     @login_required
@@ -187,3 +193,17 @@ class subscription:
         else:
             return redirect(reverse('subscribers_page'))
 
+
+class contact_us:
+    def contact_us_page(request):
+        return render(request, 'DashboardApp/Accounts/contact-us.html')
+
+    def send_message(request):
+        if request.method == "POST":
+            name = request.POST.get('name')
+            email = request.POST.get('email')
+            message = request.POST.get('message')
+            #models.ContactUs.add_message(name, email, message)
+            return redirect(reverse('contact_us_page'))
+        else:
+            return redirect(reverse('contact_us_page'))

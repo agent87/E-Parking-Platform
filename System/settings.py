@@ -30,7 +30,7 @@ AUTH_USER_MODEL = 'SystemApp.Users'
 
 ALLOWED_HOSTS = ['127.0.0.1','ewawe-pms-dashboard.herokuapp.com']
 
-LOGIN_URL = '/login'
+LOGIN_URL = '/'
 
 
 # Application definition

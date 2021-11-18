@@ -168,10 +168,16 @@ class Parkinglog(models.Model):
     def format_checkintime(self):
         return datetime.datetime.fromtimestamp(self.checkin_time).strftime('%H:%M')
 
+    @property
+    def checkin_datetime(self):
+        return datetime.datetime.fromtimestamp(self.checkin_time).strftime("%m/%d/%Y %I:%M %p")
+ 
+
 
 class Tarrif(models.Model):
     tarrif_id = models.UUIDField(db_column='TarrifId', primary_key=True)  
     customer_id = models.ForeignKey(Customers, on_delete=models.CASCADE, blank=True, null=True)
+    name = models.CharField(db_column='Name', max_length=50)
     fromtime = models.FloatField(db_column='FromTime', blank=True, null=True)  
     totime = models.FloatField(db_column='ToTime', blank=True, null=True)  
     cost = models.FloatField(db_column='Cost', blank=True, null=True)  
@@ -242,3 +248,15 @@ class Subscriptions(models.Model):
             return self.objects.get(plate_number=plate_number, end_date__gte=datetime.datetime.now())
         except self.DoesNotExist:
             return None
+
+    @property
+    def format_end_date(self):
+        return datetime.datetime.strftime(self.end_date, '%m/%d/%Y')
+
+    @property
+    def format_end_date(self):
+        return datetime.datetime.strftime(self.end_date, '%m/%d/%Y')
+
+    @classmethod
+    def remove_subscription(self, subscription_id):
+        self.objects.filter(subscription_id=subscription_id).delete()
