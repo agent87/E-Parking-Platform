@@ -74,7 +74,7 @@ class authentication:
 class DashboardView:
     @login_required
     def dashboard_page(request):
-        context = {'parking_logs' : managers.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id)}
+        #context = {'parking_logs' : managers.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id)}
         return render(request, 'DashboardApp/Dashboard/dashboard.html')
 
 class LoginView:
