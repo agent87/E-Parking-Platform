@@ -90,10 +90,10 @@
                                                 <td>{{parking_log.format_duration}} Minutes</td>
                                             {% endif %}
                                             <!-- Cash Collected Logic -->
-                                            {% if parking_log.cash == None %}
+                                            {% if parking_log.amount_payed == None %}
                                                 <td>0 RWF</td>
                                             {% else %}
-                                                <td>{{parking_log.cash}} RWF</td>
+                                                <td>{{parking_log.amount_payed}} RWF</td>
                                             {% endif %}
                                             <!-- Subscription Status -->
                                             {% if parking_log.subcription %}
