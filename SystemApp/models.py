@@ -1,5 +1,5 @@
 from django import db
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, User
 from django.contrib.auth.hashers import make_password
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -102,11 +102,11 @@ class Parkinglog(models.Model):
     exit_gate = models.ForeignKey(Gates, related_name='exit_gate', on_delete=models.CASCADE, blank=True, null=True)  
     parked = models.BooleanField(db_column='Parked', blank=True, null=True) 
     duration = models.BigIntegerField(db_column='Duration', blank=True, null=True)  
-    cost = models.FloatField(db_column='Cash', blank=True, null=True)  
+    cost = models.BigIntegerField(db_column='Cost', blank=True, null=True)  
     amount_payed = models.BigIntegerField(db_column='AmountPayed', blank=True, null=True)
     subcription = models.ForeignKey('Subscriptions', on_delete=models.CASCADE, blank=True, null=True)  
     checkout_method = models.CharField(db_column='CheckoutMethod', max_length=10, blank=True, null=True)
-    payment_method = models.CharField(db_column='PaymentMethod', max_length=10, blank=True, null=True)
+    payment_method = models.CharField(db_column='PaymentMethod', max_length=50, blank=True, null=True)
     checkout_user = models.ForeignKey(Users, related_name='checkout_user', on_delete=models.CASCADE, blank=True, null=True)
 
     class Meta:
@@ -116,7 +116,7 @@ class Parkinglog(models.Model):
     def add(self, customer_id, date, time, plate_number, gate_id, user_id, checkin_method):
         format_datetime = datetime.datetime.strptime(date + ' ' + time, '%Y-%m-%d %H:%M')
         self.objects.create(plate_number=plate_number, 
-                            date = format_datetime.date(),
+                            date = datetime.datetime.now(),
                             ticket_id = uuid4(),
                             customer_id = Customers.objects.get(customer_id=customer_id),
                             checkin_time= format_datetime.timestamp(),
@@ -125,24 +125,22 @@ class Parkinglog(models.Model):
                             entry_gate= Gates.objects.get(gate_id=gate_id),
                             parked = True)
     
-    @classmethod
-    def close(self, ticket_id, checkout_time, exit_gate, cash, *subscription):
-        ticket = self.objects.get(ticket_id=ticket_id)
-        ticket.checkout_time = checkout_time
-        ticket.save()
-        ticket.duration = round(time.time() - ticket.checkin_time)
-        ticket.save()
-        ticket.parked = False
-        ticket.save()
-        ticket.cash = cash
-        ticket.save()
-        ticket.exit_gate = exit_gate
-        ticket.save()
-        try:
-            ticket.subscription = Subscriptions.objects.get(subscription_id = subscription)
-        except TypeError:
-            pass
-        ticket.save()
+    @staticmethod
+    def close(ticket_id, checkin_time, checkout_time, checkout_method, checkout_user, exit_gate, duration, amount_payed, payment_method, *subscription):
+        checkin_unix_time = datetime.datetime.strptime(checkin_time, '%m/%d/%Y %H:%M %p')
+        checkout_unix_time = datetime.datetime.strptime(checkout_time, '%m/%d/%Y %H:%M %p')
+        Parkinglog.objects.filter(ticket_id=ticket_id).update(
+            checkin_time = checkin_unix_time.timestamp(),
+            checkout_time = checkout_unix_time.timestamp(),
+            checkout_method = checkout_method,
+            checkout_user = Users.objects.get(user_id=checkout_user),
+            exit_gate = Gates.objects.get(gate_id=exit_gate),
+            cost = Tarrif.match_tarrif((checkout_unix_time - checkin_unix_time)/60).cost,
+            duration = (checkout_unix_time - checkin_unix_time),
+            amount_payed = amount_payed,
+            payment_method = payment_method,
+            parked = False
+        )
 
     @classmethod
     def delete(self, ticket_id):
@@ -155,7 +153,7 @@ class Parkinglog(models.Model):
         if self.checkin_time:
             elapsed_seconds = time.time() - self.checkin_time
             elapsed_minutes = round(elapsed_seconds / 60)
-            return elapsed_minutes
+            return abs(elapsed_minutes)
 
     @property
     def format_duration(self):
@@ -170,7 +168,12 @@ class Parkinglog(models.Model):
 
     @property
     def checkin_datetime(self):
-        return datetime.datetime.fromtimestamp(self.checkin_time).strftime("%m/%d/%Y %I:%M %p")
+        print(datetime.datetime.fromtimestamp(self.checkin_time).strftime("%m/%d/%Y %H:%M %p"))
+        return datetime.datetime.fromtimestamp(self.checkin_time).strftime("%m/%d/%Y %H:%M %p")
+
+    @property
+    def checkout_datetime(self):
+        return datetime.datetime.fromtimestamp(self.checkout_time).strftime("%m/%d/%Y %H:%M %p")
  
 
 

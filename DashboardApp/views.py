@@ -106,24 +106,17 @@ class history:
 
     @login_required
     def close_ticket(request, ticket_id):
-        # ticket = models.Parkinglog.objects.get(ticket_id=ticket_id)
-        # if models.Subscriptions.is_subscribed(ticket.plate_number):
-        #     ticket.close(
-        #         ticket_id = ticket_id,
-        #         checkout_time = time.time(), 
-        #         exit_gate = 'SouthGate', 
-        #         cash = 0, 
-        #         subscription = models.Subscriptions.is_subscribed(ticket.plate_number).subscription_id
-        #     )
-        #     print("Vehicl subscribed")
-        # else:
-        #     ticket.close(
-        #         ticket_id = ticket_id,
-        #         checkout_time = time.time(), 
-        #         exit_gate = 'SouthGate', 
-        #         cash = models.Tarrif.match_tarrif(ticket.elapsed)
-        #    ) 
-        print(request.POST)
+        models.Parkinglog.close(ticket_id = ticket_id, 
+                                checkin_time = request.POST.get('checkin_datetime'),
+                                checkout_time = request.POST.get('checkout_datetime'),
+                                checkout_method='Manual',
+                                checkout_user = request.user.user_id,
+                                exit_gate = request.POST.get('exit_gate'), 
+                                #cost = request.POST.get('cost'),
+                                duration = request.POST.get('duration'), 
+                                amount_payed = request.POST.get('amount_payed'),
+                                payment_method = request.POST.get('payment_method')
+                                )
         return redirect(reverse('parked_page'))
 
     

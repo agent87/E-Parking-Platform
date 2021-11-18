@@ -52,14 +52,15 @@
                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Date</th>
+                                            <th>Ticket Date</th>
                                             <th>Plate Number</th>
                                             <th>Entry Gate</th>
                                             <th>Checkin time</th>
                                             <th>Checkout Time</th>
                                             <th>Exit Gate</th>
                                             <th>Duration</th>
-                                            <th>Cash</th>
+                                            <th>Payed</th>
+                                            <th>Subscription</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -69,18 +70,18 @@
                                             <td>{{parking_log.date}}</td> 
                                             <td>{{parking_log.plate_number}}</td>
                                             <td>{{parking_log.entry_gate.name}}</td>
-                                            <td>{{parking_log.format_checkintime}}</td>
+                                            <td>{{parking_log.checkin_datetime}}</td>
                                             <!-- Checkout Time Logic -->
                                             {% if parking_log.checkout_time == None %}
                                                 <td></td>
                                             {% else %}
-                                                <td>{{parking_log.checkout_time}}</td>
+                                                <td>{{parking_log.checkout_datetime}}</td>
                                             {% endif %}
                                             <!-- Exit Gate Logic -->
                                             {% if parking_log.exit_gate == None %}
                                                 <td></td>
                                             {% else %}
-                                                <td>{{parking_log.exit_gate}}</td>
+                                                <td>{{parking_log.exit_gate.name}}</td>
                                             {% endif %}
                                             <!-- Duration Logic -->
                                             {% if parking_log.format_duration == None %}
@@ -90,9 +91,15 @@
                                             {% endif %}
                                             <!-- Cash Collected Logic -->
                                             {% if parking_log.cash == None %}
-                                                <td></td>
+                                                <td>0 RWF</td>
                                             {% else %}
                                                 <td>{{parking_log.cash}} RWF</td>
+                                            {% endif %}
+                                            <!-- Subscription Status -->
+                                            {% if parking_log.subcription %}
+                                                <td><span class="badge badge-success">Active</span></td>
+                                            {% else %}
+                                                <td></td>
                                             {% endif %}
                                         </tr>
                                         {% endfor %}
