@@ -1,11 +1,12 @@
-from django import db
 from django.contrib.auth.models import AbstractUser, User
 from django.contrib.auth.hashers import make_password
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.core.exceptions import ObjectDoesNotExist
 from uuid import uuid4
 import time
 import datetime
+
 
 from .managers import CustomUserManager
 
@@ -60,6 +61,31 @@ class Users(AbstractUser):
         return self.objects.get(email=email)
 
     @property
+    def total_entries(self):
+        return Parkinglog.objects.filter(checkin_user=self.user_id).count()
+
+    @property
+    def total_entries_today(self):
+        return Parkinglog.objects.filter(checkin_user = self.user_id, date_created__date=datetime.date.today()).count()
+
+    @property
+    def total_entries_this_month(self):
+        return Parkinglog.objects.filter(checkin_user=self.user_id, date_created__month=datetime.date.today().month).count()
+
+    @property
+    def total_exits(self):
+        return Parkinglog.objects.filter(checkout_user=self.user_id).count()
+
+    @property
+    def total_exits_today(self):
+        return Parkinglog.objects.filter(checkout_user=self.user_id, exit_time__date=datetime.date.today()).count()
+
+    @property
+    def total_subscriptions(self):
+        return Subscriptions.objects.filter(user=self.user_id).count()
+        
+
+    @property
     def full_names(self):
         return self.first_name + ' ' + self.last_name
         
@@ -89,6 +115,103 @@ class Gates(models.Model):
         db_table = 'Gates'
 
 
+class Tarrif(models.Model):
+    tarrif_id = models.UUIDField(db_column='TarrifId', primary_key=True)  
+    customer_id = models.ForeignKey(Customers, on_delete=models.CASCADE, blank=True, null=True)
+    name = models.CharField(db_column='Name', max_length=50)
+    fromtime = models.FloatField(db_column='FromTime', blank=True, null=True)  
+    totime = models.FloatField(db_column='ToTime', blank=True, null=True)  
+    cost = models.FloatField(db_column='Cost', blank=True, null=True)  
+    initiatedby = models.CharField(db_column='Initiatedby', max_length=50, blank=True, null=True)  
+    date = models.DateField(db_column='Date', blank=True, null=True)  
+    lastupdate = models.DateField(db_column='LastUpdate', blank=True, null=True)  
+    updatelog = models.CharField(db_column='UpdateLog', max_length=50, blank=True, null=True)  
+
+    class Meta:
+        db_table = 'Tarrif'
+
+    @classmethod
+    def add_tarrif(self, customer_id, fromtime, totime, cost):
+        self.objects.create(
+            tarrif_id = uuid4(),
+            customer_id = Customers.objects.get(customer_id=customer_id),
+            fromtime = fromtime,
+            totime = totime,
+            cost = cost,
+            date = datetime.datetime.now().date()
+        )
+
+    @classmethod
+    def match_tarrif(self, duration):
+        return self.objects.filter(fromtime__lte=duration, totime__gte=duration).first()
+
+
+
+    @classmethod
+    def remove_tarrif(self, tarrifid):
+        self.objects.filter(tarrifid=tarrifid).delete()
+
+
+class Subscriptions(models.Model):
+    customer_id = models.ForeignKey(Customers, on_delete=models.CASCADE, blank=True, null=True)
+    date = models.DateField(db_column='Date', blank=True, null=True)
+    subscription_id = models.BigAutoField(db_column='SubscriptionId', primary_key=True)  
+    plate_number = models.CharField(db_column='PlateNumber', max_length=50)  
+    start_date = models.DateField(db_column='start')  
+    end_date = models.DateField(db_column='end')  
+    type = models.CharField(db_column='SubscriptionType', max_length=50)
+    amount = models.FloatField(db_column='SubscriptionAmount')  
+    name = models.CharField(db_column='Name', max_length=50)  
+    phone_number = models.CharField(db_column='ContactNumber', max_length=50)  
+    office = models.CharField(db_column='OfficeLocation', max_length=50)  
+    parklot = models.CharField(db_column='ParkingLot', max_length=50)  
+    user = models.ForeignKey(Users, on_delete=models.CASCADE, blank=True, null=True)
+
+    class Meta:
+        db_table = 'Subscriptions'
+
+    @classmethod
+    def add_subscription(self, user_id, customer_id, platenum, name, phonenum, office, parklot, amount, start_date, end_date):
+        self.objects.create(
+            customer_id = Customers.objects.get(customer_id=customer_id),
+            date = datetime.datetime.now().date(),
+            plate_number = platenum,
+            start_date = start_date,
+            end_date = end_date,
+            type = type,
+            amount = amount,
+            name = name,
+            phone_number = phonenum,
+            office = office,
+            parklot = parklot,
+            user = User.objects.get(user_id = user_id)
+        )
+
+    @classmethod
+    def is_subscribed(self, plate_number):
+        try:
+            return self.objects.get(plate_number=plate_number, end_date__gte=datetime.datetime.now())
+        except self.DoesNotExist:
+            return None
+
+    @property
+    def format_end_date(self):
+        return datetime.datetime.strftime(self.end_date, '%m/%d/%Y')
+
+    @property
+    def format_end_date(self):
+        return datetime.datetime.strftime(self.end_date, '%m/%d/%Y')
+
+    @classmethod
+    def remove_subscription(self, subscription_id):
+        self.objects.filter(subscription_id=subscription_id).delete()
+
+    @property
+    def count(self):
+        self.objects.count()
+
+
+
 class Parkinglog(models.Model):
     ticket_id = models.UUIDField(db_column='TicketId', primary_key=True)  
     customer_id = models.ForeignKey(Customers, on_delete=models.CASCADE, blank=True, null=True)
@@ -104,7 +227,7 @@ class Parkinglog(models.Model):
     duration = models.BigIntegerField(db_column='Duration', blank=True, null=True)  
     cost = models.BigIntegerField(db_column='Cost', blank=True, null=True)  
     amount_payed = models.BigIntegerField(db_column='AmountPayed', blank=True, null=True)
-    subcription = models.ForeignKey('Subscriptions', on_delete=models.CASCADE, blank=True, null=True)  
+    subscription = models.ForeignKey(Subscriptions, on_delete=models.CASCADE, blank=True, null=True)  
     checkout_method = models.CharField(db_column='CheckoutMethod', max_length=10, blank=True, null=True)
     payment_method = models.CharField(db_column='PaymentMethod', max_length=50, blank=True, null=True)
     checkout_user = models.ForeignKey(Users, related_name='checkout_user', on_delete=models.CASCADE, blank=True, null=True)
@@ -114,16 +237,25 @@ class Parkinglog(models.Model):
 
     @classmethod
     def add(self, customer_id, date, time, plate_number, gate_id, user_id, checkin_method):
+        ticket_id = uuid4()
         format_datetime = datetime.datetime.strptime(date + ' ' + time, '%Y-%m-%d %H:%M')
         self.objects.create(plate_number=plate_number, 
                             date = datetime.datetime.now(),
-                            ticket_id = uuid4(),
+                            ticket_id = ticket_id,
                             customer_id = Customers.objects.get(customer_id=customer_id),
                             checkin_time= format_datetime.timestamp(),
                             checkin_method = checkin_method,
                             checkin_user = Users.objects.get(user_id=user_id),
                             entry_gate= Gates.objects.get(gate_id=gate_id),
                             parked = True)
+        
+        try:
+            self.objects.filter(ticket_id=ticket_id).update(subscription=Subscriptions.objects.get(plate_number=plate_number))
+        except ObjectDoesNotExist:
+            pass
+        
+        return ticket_id
+            
     
     @staticmethod
     def close(ticket_id, checkin_time, checkout_time, checkout_method, checkout_user, exit_gate, amount_payed, payment_method, *subscription):
@@ -209,95 +341,3 @@ class Parkinglog(models.Model):
         for logs in Parkinglog.objects.filter(date__range=[datetime.date.today() - datetime.timedelta(days=7), datetime.date.today()]):
             last_week_revenue += logs.amount_payed
         return last_week_revenue
-
-
-class Tarrif(models.Model):
-    tarrif_id = models.UUIDField(db_column='TarrifId', primary_key=True)  
-    customer_id = models.ForeignKey(Customers, on_delete=models.CASCADE, blank=True, null=True)
-    name = models.CharField(db_column='Name', max_length=50)
-    fromtime = models.FloatField(db_column='FromTime', blank=True, null=True)  
-    totime = models.FloatField(db_column='ToTime', blank=True, null=True)  
-    cost = models.FloatField(db_column='Cost', blank=True, null=True)  
-    initiatedby = models.CharField(db_column='Initiatedby', max_length=50, blank=True, null=True)  
-    date = models.DateField(db_column='Date', blank=True, null=True)  
-    lastupdate = models.DateField(db_column='LastUpdate', blank=True, null=True)  
-    updatelog = models.CharField(db_column='UpdateLog', max_length=50, blank=True, null=True)  
-
-    class Meta:
-        db_table = 'Tarrif'
-
-    @classmethod
-    def add_tarrif(self, customer_id, fromtime, totime, cost):
-        self.objects.create(
-            tarrif_id = uuid4(),
-            customer_id = Customers.objects.get(customer_id=customer_id),
-            fromtime = fromtime,
-            totime = totime,
-            cost = cost,
-            date = datetime.datetime.now().date()
-        )
-
-    @classmethod
-    def match_tarrif(self, duration):
-        return self.objects.filter(fromtime__lte=duration, totime__gte=duration).first()
-
-
-
-    @classmethod
-    def remove_tarrif(self, tarrifid):
-        self.objects.filter(tarrifid=tarrifid).delete()
-
-
-class Subscriptions(models.Model):
-    customer_id = models.ForeignKey(Customers, on_delete=models.CASCADE, blank=True, null=True)
-    subscription_id = models.BigAutoField(db_column='SubscriptionId', primary_key=True)  
-    plate_number = models.CharField(db_column='PlateNumber', max_length=50)  
-    start_date = models.DateField(db_column='start')  
-    end_date = models.DateField(db_column='end')  
-    type = models.CharField(db_column='SubscriptionType', max_length=50)
-    amount = models.FloatField(db_column='SubscriptionAmount')  
-    name = models.CharField(db_column='Name', max_length=50)  
-    phone_number = models.CharField(db_column='ContactNumber', max_length=50)  
-    office = models.CharField(db_column='OfficeLocation', max_length=50)  
-    parklot = models.CharField(db_column='ParkingLot', max_length=50)  
-
-    class Meta:
-        db_table = 'Subscriptions'
-
-    @classmethod
-    def add_subscription(self, customer_id, platenum, name, phonenum, office, parklot, amount, start_date, end_date):
-        self.objects.create(
-            customer_id = Customers.objects.get(customer_id=customer_id),
-            plate_number = platenum,
-            start_date = start_date,
-            end_date = end_date,
-            type = type,
-            amount = amount,
-            name = name,
-            phone_number = phonenum,
-            office = office,
-            parklot = parklot
-        )
-
-    @classmethod
-    def is_subscribed(self, plate_number):
-        try:
-            return self.objects.get(plate_number=plate_number, end_date__gte=datetime.datetime.now())
-        except self.DoesNotExist:
-            return None
-
-    @property
-    def format_end_date(self):
-        return datetime.datetime.strftime(self.end_date, '%m/%d/%Y')
-
-    @property
-    def format_end_date(self):
-        return datetime.datetime.strftime(self.end_date, '%m/%d/%Y')
-
-    @classmethod
-    def remove_subscription(self, subscription_id):
-        self.objects.filter(subscription_id=subscription_id).delete()
-
-    @property
-    def count(self):
-        self.objects.count()
