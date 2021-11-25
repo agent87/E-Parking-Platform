@@ -173,12 +173,13 @@ class users:
 
     @login_required
     def self_profile(request):
-        context = {'user': request.user}
+        context = {'user_profile': request.user}
         return render(request, 'DashboardApp/Accounts/Profile.html', context)
 
     @login_required
     def user_profile(request, user_id):
-        context = {'user': models.Users.objects.get(user_id=user_id)}
+        context = {'user_profile': models.Users.objects.get(user_id=user_id)}
+        context['user'] = request.user
         return render(request, 'DashboardApp/Accounts/Profile.html', context)
 
     

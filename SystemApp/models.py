@@ -84,11 +84,13 @@ class Users(AbstractUser):
     
     @classmethod
     def add_user(self, customer_id, first_name, last_name, email, phonenum, password, role):
+        is_superuser = True if role == 'Admin' else False
         self.objects.create(email=email,  
                             customer_id=Customers.objects.get(customer_id=customer_id), 
                             first_name=first_name, 
                             last_name=last_name, 
                             role = role,
+                            is_superuser = is_superuser,
                             password = make_password(password),
                             phonenum=phonenum)
         
@@ -105,21 +107,32 @@ class Users(AbstractUser):
     def total_entries_today(self):
         return Parkinglog.objects.filter(checkin_user = self.user_id, date_created__date=datetime.date.today()).count()
 
-    @property
-    def total_entries_this_month(self):
-        return Parkinglog.objects.filter(checkin_user=self.user_id, date_created__month=datetime.date.today().month).count()
-
+    
     @property
     def total_exits(self):
         return Parkinglog.objects.filter(checkout_user=self.user_id).count()
 
     @property
-    def total_exits_today(self):
-        return Parkinglog.objects.filter(checkout_user=self.user_id, exit_time__date=datetime.date.today()).count()
-
-    @property
     def total_subscriptions(self):
         return Subscriptions.objects.filter(user=self.user_id).count()
+
+    @property
+    def subscriptions_sales(self):
+        sales =  Subscriptions.objects.filter(user=self.user_id).aggregate(Sum('amount'))['amount__sum']
+        if sales is None:
+            return 0
+        else:
+            return 0
+
+    @property
+    def todays_sales(self):
+        today_datetime = datetime.datetime.now()
+        today_date_unix = datetime.datetime(today_datetime.year, today_datetime.month, today_datetime.day).timestamp()
+        sales =  Parkinglog.objects.filter(checkin_user = self.user_id, checkout_time__gte = today_date_unix).aggregate(Sum('cost'))['cost__sum']
+        if sales is None:
+            return 0
+        else:
+            return 0
 
     @property
     def format_date_joined(self):
@@ -167,7 +180,7 @@ class Gates(models.Model):
     def traffic_ratio(self):
         return (self.total_exits / self.total_entries) * 100
 
-
+   
 class Tarrif(models.Model):
     tarrif_id = models.UUIDField(db_column='TarrifId', primary_key=True)  
     customer_id = models.ForeignKey(Customers, on_delete=models.CASCADE, blank=True, null=True)
@@ -237,7 +250,7 @@ class Subscriptions(models.Model):
             phone_number = phonenum,
             office = office,
             parklot = parklot,
-            user = User.objects.get(user_id = user_id)
+            user = Users.objects.get(user_id = user_id)
         )
 
     @classmethod
@@ -322,7 +335,7 @@ class Parkinglog(models.Model):
             exit_gate = Gates.objects.get(gate_id=exit_gate),
             cost = Tarrif.match_tarrif((checkout_unix_time - checkin_unix_time).seconds/60).cost,
             duration = (checkout_unix_time - checkin_unix_time).seconds,
-            amount_payed = amount_payed,
+            amount_payed = int(amount_payed),
             payment_method = payment_method,
             parked = False
         )
@@ -402,17 +415,8 @@ class Parkinglog(models.Model):
         return Parkinglog.objects.filter(parked=True).count()
 
     @property
-    #todays revenue
-    def todays_revenue(self):
-        todays_revenue = 0
-        for logs in Parkinglog.objects.filter(date=datetime.date.today()):
-            todays_revenue += logs.amount_payed
-        return todays_revenue
-
-    #Total revenue last week
-    @property
-    def last_week_revenue(self):
-        last_week_revenue = 0
-        for logs in Parkinglog.objects.filter(date__range=[datetime.date.today() - datetime.timedelta(days=7), datetime.date.today()]):
-            last_week_revenue += logs.amount_payed
-        return last_week_revenue
+    def is_subscribed(self):
+        if self.subscription != None:
+            return True
+        else:
+            return False

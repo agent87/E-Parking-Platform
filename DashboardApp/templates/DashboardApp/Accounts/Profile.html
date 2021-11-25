@@ -44,35 +44,39 @@
                        alt="User profile picture">
                 </div>
 
-                <h3 class="profile-username text-center">{{user.full_names}}</h3>
+                <h3 class="profile-username text-center">{{user_profile.full_names}}</h3>
                 <ul class="list-group list-group-unbordered mb-3">
                   <li class="list-group-item">
-                    <b>Role</b> <a class="float-right"><strong>{{user.role}}</strong></a>
+                    <b>Role</b> <a class="float-right"><strong>{{user_profile.role}}</strong></a>
                   </li>
                   <li class="list-group-item">
-                    <b>Date Joined</b> <a class="float-right"><strong>{{user.format_date_joined}}</strong></a>
+                    <b>Date Joined</b> <a class="float-right"><strong>{{user_profile.format_date_joined}}</strong></a>
                   </li>
                   <li class="list-group-item">
-                    <b>Entries Added</b> <a class="float-right">{{user.total_entries}}</a>
+                    <b>Entries Added</b> <a class="float-right">{{user_profile.total_entries}}</a>
                   </li>
                   <li class="list-group-item">
-                    <b>Exits Added</b> <a class="float-right">{{user.total_exits}}</a>
+                    <b>Exits Added</b> <a class="float-right">{{user_profile.total_exits}}</a>
                   </li>
                   <li class="list-group-item">
-                    <b>Subcriptions Added</b> <a class="float-right">{{user.total_subscriptions}}</a>
+                    <b>Subcriptions Added</b> <a class="float-right">{{user_profile.total_subscriptions}}</a>
                   </li>
                   <li class="list-group-item">
-                    <b>Todays Sales</b> <a class="float-right">{{user.total_subscriptions}} RWF</a>
+                    <b>Todays Sales</b> <a class="float-right">{{user_profile.todays_sales}} RWF</a>
                   </li>
                   <li class="list-group-item">
-                    <b>Subscriptions Sales</b> <a class="float-right">{{user.total_subscriptions}} RWF</a>
+                    <b>Subscriptions Sales</b> <a class="float-right">{{user_profile.subscriptions_sales}} RWF</a>
                   </li>
                   <li class="list-group-item">
-                    <b>Overall Sales</b> <a class="float-right">{{user.total_subscriptions}} RWF</a>
+                    <b>Overall Sales</b> <a class="float-right">{{user_profile.total_subscriptions}} RWF</a>
                   </li>
-                </ul>
               </div>
               <!-- /.card-body -->
+              {% if user.is_superuser %}
+                  <li class="list-group-item">
+                    <a href="#" class="btn btn-danger btn-sm">Deactivate User</a>
+                  </li>
+              {% endif %}
             </div>
             <!-- /.card -->
 
@@ -85,7 +89,9 @@
               <div class="card-header p-2">
                 <ul class="nav nav-pills">
                   <li class="nav-item"><a class="nav-link active" href="#timeline" data-toggle="tab">Recent Acitivity</a></li>
+                  {% if user.user_id == user_profile.user_id %}
                   <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">My Profile Settings</a></li>
+                  {% endif %}
                 </ul>
               </div><!-- /.card-header -->
               <div class="card-body">
@@ -186,7 +192,7 @@
                     </div>
                   </div>
                   <!-- /.tab-pane -->
-
+                  {% if user.user_id == user_profile.user_id %}
                   <div class="tab-pane" id="settings">
                     <form class="form-horizontal">
                       <div class="form-group row">
@@ -235,6 +241,7 @@
                       </div>
                     </form>
                   </div>
+                  {% endif %}
                   <!-- /.tab-pane -->
                 </div>
                 <!-- /.tab-content -->

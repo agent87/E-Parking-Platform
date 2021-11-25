@@ -134,8 +134,8 @@
                       <div class="progress-group">
                         {{ gate.name }}
                         <span class="float-right"><b>{{ gate.total_entries }}</b>/{{ gate.total_exits }}</span>
-                        <div class="progress progress-sm">
-                          <div class="progress-bar bg-primary" style="width: {{ gate.traffic_ratio }}%"></div>
+                        <div class="progress progress-sm" style="background-color: #ffaab2;">
+                          <div class="progress-bar bg-primary" style ="width: {{ gate.traffic_ratio }}%"></div>
                         </div>
                       </div>
                     {% endfor %}

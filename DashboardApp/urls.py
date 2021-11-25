@@ -38,6 +38,7 @@ urlpatterns = [
     path('accounts', views.responses.user_page, name='accounts_page'),
     path('accounts/add', views.users.add_user, name='add_account'),
     path('accounts/profile', views.users.self_profile, name='self_profile'),
+    path('accounts/<int:user_id>/profile', views.users.user_profile, name='user_profile'),
 
 
     path('contact-us', views.contact_us.contact_us_page, name='contact_us_page'),

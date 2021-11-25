@@ -22,7 +22,7 @@
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
-            {% if user.role != "Cashier" %}
+            {% if user.is_superuser %}
             <div class="row">
                 <div class="col-md-12 offset-md-0">
                     <button type="button" class="btn btn-default" data-toggle="modal" data-target="#AccountForm">
@@ -72,7 +72,7 @@
                                         <td>{{ user.role}}</td>
                                         <td><span class="badge badge-success">Active</span></td>
                                         <td>
-                                          <a href="history/138cfbf5-d637-42d4-a313-dda36a2642cb/close" class="btn-sm btn-primary" role="button" data-bs-toggle="button">View Profile</a>
+                                          <a href="{% url 'user_profile' user.user_id %}" class="btn-sm btn-primary" role="button" data-bs-toggle="button">View Profile</a>
                                         </td>
                                         
                                     </tr>

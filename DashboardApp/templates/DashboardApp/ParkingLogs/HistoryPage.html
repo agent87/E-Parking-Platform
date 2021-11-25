@@ -96,10 +96,10 @@
                                                 <td>{{parking_log.amount_payed}} RWF</td>
                                             {% endif %}
                                             <!-- Subscription Status -->
-                                            {% if parking_log.subcription %}
+                                            {% if parking_log.is_subscribed %}
                                                 <td><span class="badge badge-success text-center">Active</span></td>
                                             {% else %}
-                                                <td></td>
+                                                <td><span class="badge badge-danger text-center">None</span></td>
                                             {% endif %}
                                         </tr>
                                         {% endfor %}
