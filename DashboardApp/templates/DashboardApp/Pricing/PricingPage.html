@@ -22,6 +22,7 @@
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
+            {% if user.role != "Cashier" %}
             <div class="row">
                 <div class="col-md-12 offset-md-0">
                     <button type="button" class="btn btn-default" data-toggle="modal" data-target="#TariffForm">
@@ -29,6 +30,7 @@
                     </button>
                 </div>
             </div> 
+            {% endif %}
             <!-- List of Accounts-->
             <div class="row mt-2">
                 <div class="col-md-12 offset-md-0">

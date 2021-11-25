@@ -1,5 +1,6 @@
 from django.contrib.auth.base_user import BaseUserManager
 from django.utils.translation import ugettext_lazy as _
+from django.db import models
 
 
 class CustomUserManager(BaseUserManager):
@@ -32,3 +33,7 @@ class CustomUserManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError(_('Superuser must have is_superuser=True.'))
         return self.create_user(email, password, **extra_fields)
+
+class CustomerDashboard(models.Manager):
+    def get_queryset(self):
+        return super(CustomerDashboard, self).get_queryset().filter(customer_id=self.customer_id)

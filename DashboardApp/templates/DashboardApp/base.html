@@ -65,12 +65,22 @@
               <p>Subcriptions</p>
             </a>
           </li>
-          <li class="nav-item">
-            <a href="{% url 'accounts_page' %}" class="nav-link">
-              <i class="nav-icon fas fa-users"></i>
-              <p>Accounts</p>
-            </a>
-          </li>
+          {% if user.role != 'Cashier' %}
+              <li class="nav-item">
+                <a href="{% url 'accounts_page' %}" class="nav-link">
+                  <i class="nav-icon fas fa-users"></i>
+                  <p>Accounts</p>
+                </a>
+              </li>
+          {% endif %}
+          {% if user.role != 'Cashier' %}
+              <li class="nav-item">
+                <a href="{% url 'accounts_page' %}" class="nav-link">
+                  <i class="nav-icon fas fa-cog"></i>
+                  <p>Settings</p>
+                </a>
+              </li>
+          {% endif %}
           <li class="nav-header">MISCELLANEOUS</li>
           <li class="nav-item">
             <a href="{% url 'self_profile' %}" class="nav-link">

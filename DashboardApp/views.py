@@ -25,11 +25,7 @@ class responses:
     def testing(request):
         return render(request, 'Auth/histor.html')
 
-    @login_required
-    def dashboard_page(request):
-        #context = engine.ParkingLog.compile('EGPCI-AAA01-0001')
-
-        return render(request, 'DashboardApp/Dashboard/dashboard.html')
+    
 
     @login_required
     def parked_page(request):
@@ -41,11 +37,13 @@ class responses:
     def subscribers_page(request):
         print(request.user.customer_id.customer_id)
         context = {"subscription" : models.Subscriptions.objects.filter(customer_id = request.user.customer_id.customer_id)}
+        context['user'] = request.user
         return render(request, 'DashboardApp/Subscribers/subscription.html', context)
 
     @login_required
     def user_page(request):
         context = {'users': models.Users.objects.filter(customer_id = request.user.customer_id.customer_id)}
+        context['user'] = request.user
         return render(request, 'DashboardApp/Accounts/user.html', context)
 
     @login_required
@@ -77,6 +75,8 @@ class DashboardView:
         context = {'parking_logs' : models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id)}
         context['gates'] = models.Gates.objects.filter(customer_id=request.user.customer_id.customer_id)
         context['subscription'] = models.Subscriptions.objects.filter(customer_id = request.user.customer_id.customer_id)
+        context['user'] = request.user
+        context['customer'] = request.user.customer_id
         return render(request, 'DashboardApp/Dashboard/dashboard.html', context)
 
 class LoginView:
@@ -88,6 +88,7 @@ class history:
     @login_required
     def history_page(request):
         context = {'parking_logs': models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id)}
+        context['user'] = request.user
         return render(request, 'DashboardApp/ParkingLogs/HistoryPage.html', context)
 
     @login_required
@@ -131,6 +132,7 @@ class pricing:
     @login_required
     def pricing_page(request):
         context = {'tarrifs' : models.Tarrif.objects.all()}
+        context['user'] = request.user
         return render(request, 'DashboardApp/Pricing/PricingPage.html', context)
 
     @login_required

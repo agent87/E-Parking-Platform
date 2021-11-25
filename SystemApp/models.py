@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser, User
 from django.contrib.auth.hashers import make_password
 from django.db import models
+from django.db.models import Count, Avg, Sum, Max, Min
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
 from uuid import uuid4
@@ -25,6 +26,42 @@ class Customers(models.Model):
 
     class Meta:
         db_table = 'Customers'
+
+    @property
+    def cars_today(self):
+        return Parkinglog.objects.filter(customer_id=self.customer_id, date=datetime.date.today()).count()
+
+    @property
+    def cars_total(self):
+        return Parkinglog.objects.filter(customer_id=self.customer_id).count()
+
+    @property
+    def revenue_today(self):
+        revenue = Parkinglog.objects.filter(customer_id=self.customer_id, date=datetime.date.today()).aggregate(Sum('cost'))['cost__sum']
+        if revenue is None:
+            return 0
+        else:
+            return revenue
+
+    @property
+    def revenue_total(self):
+        revenue = Parkinglog.objects.filter(customer_id=self.customer_id).aggregate(Sum('cost'))['cost__sum']
+        if revenue is None:
+            return 0
+        else:
+            return revenue
+
+    @property
+    def revenue_this_week(self):
+        revenue = Parkinglog.objects.filter(customer_id=self.customer_id, date__gte=datetime.date.today()-datetime.timedelta(days=7)).aggregate(Sum('cost'))['cost__sum']
+        if revenue is None:
+            return 0
+        else:
+            return revenue
+
+    @property
+    def cars_parked(self):
+        return Parkinglog.objects.filter(customer_id=self.customer_id, parked=True).count()
 
 class Users(AbstractUser):
     user_id = models.SmallAutoField(primary_key=True, unique=True, editable=False)
@@ -59,7 +96,7 @@ class Users(AbstractUser):
     def create_admin(self, email, password, customer_id, fname, lname, contact):
         self.objects.create(email=email, password=password, customer_id=customer_id, fname=fname, lname=lname, contact=contact, is_superuser=1)
         return self.objects.get(email=email)
-
+    
     @property
     def total_entries(self):
         return Parkinglog.objects.filter(checkin_user=self.user_id).count()
@@ -83,6 +120,10 @@ class Users(AbstractUser):
     @property
     def total_subscriptions(self):
         return Subscriptions.objects.filter(user=self.user_id).count()
+
+    @property
+    def format_date_joined(self):
+        return self.date_joined.strftime('%b %d, %Y')
         
 
     @property
@@ -113,6 +154,18 @@ class Gates(models.Model):
 
     class Meta:
         db_table = 'Gates'
+
+    @property
+    def total_entries(self):
+        return Parkinglog.objects.filter(customer_id = self.customer_id.customer_id, entry_gate = self.gate_id).count()
+
+    @property
+    def total_exits(self):
+        return Parkinglog.objects.filter(customer_id = self.customer_id.customer_id, exit_gate = self.gate_id).count()
+
+    @property
+    def traffic_ratio(self):
+        return (self.total_exits / self.total_entries) * 100
 
 
 class Tarrif(models.Model):
@@ -145,11 +198,11 @@ class Tarrif(models.Model):
     def match_tarrif(self, duration):
         return self.objects.filter(fromtime__lte=duration, totime__gte=duration).first()
 
-
-
     @classmethod
     def remove_tarrif(self, tarrifid):
         self.objects.filter(tarrifid=tarrifid).delete()
+
+    #pyhton script to turn elapsed into verbal time
 
 
 class Subscriptions(models.Model):
@@ -281,11 +334,33 @@ class Parkinglog(models.Model):
     # Count elapsed time in seconds between checkin and current time
     # convert to minutes
     @property
+    def format_elapsed(self):
+        intervals = (
+        ('weeks', 604800),  # 60 * 60 * 24 * 7
+        ('days', 86400),    # 60 * 60 * 24
+        ('hours', 3600),    # 60 * 60
+        ('minutes', 60),
+        ('seconds', 1),)
+
+        result = []
+        granularity=1
+        elapsed_seconds = round(abs(time.time() - self.checkin_time))
+        for name, count in intervals:
+            value = round(elapsed_seconds // count)
+            if value:
+                elapsed_seconds -= value * count
+                if value == 1:
+                    name = name.rstrip('s')
+                result.append("{} {}".format(value, name))
+        return f'{result[0]} ago '
+
+    @property
     def elapsed(self):
         if self.checkin_time:
             elapsed_seconds = time.time() - self.checkin_time
             elapsed_minutes = round(elapsed_seconds / 60)
             return abs(elapsed_minutes)
+
 
     @property
     def format_duration(self):

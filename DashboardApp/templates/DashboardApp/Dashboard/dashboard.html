@@ -61,7 +61,7 @@
 
               <div class="info-box-content">
                 <span class="info-box-text">Sales</span>
-                <span class="info-box-number">{{ parking_logs.total_revenue }} RWF</span>
+                <span class="info-box-number">{{ customer.revenue_total }} RWF</span>
               </div>
               <!-- /.info-box-content -->
             </div>
@@ -116,7 +116,7 @@
                 <div class="row">
                   <div class="col-md-8">
                     <p class="text-center">
-                      <strong>Traffic: 1 Jan, 2020 - 12 Dec, 2021</strong>
+                      <strong>Traffic:</strong>
                     </p>
 
                     <div class="chart">
@@ -130,23 +130,15 @@
                     <p class="text-center">
                       <strong>Individual Gates</strong>
                     </p>
-
-                    <div class="progress-group">
-                      North Gate
-                      <span class="float-right"><b>1</b>/1</span>
-                      <div class="progress progress-sm">
-                        <div class="progress-bar bg-primary" style="width: 100%"></div>
+                    {% for gate in gates %}
+                      <div class="progress-group">
+                        {{ gate.name }}
+                        <span class="float-right"><b>{{ gate.total_entries }}</b>/{{ gate.total_exits }}</span>
+                        <div class="progress progress-sm">
+                          <div class="progress-bar bg-primary" style="width: {{ gate.traffic_ratio }}%"></div>
+                        </div>
                       </div>
-                    </div>
-                    <!-- /.progress-group -->
-
-                    <div class="progress-group">
-                      South Gate
-                      <span class="float-right"><b>1</b>/1</span>
-                      <div class="progress progress-sm">
-                        <div class="progress-bar bg-danger" style="width: 100%"></div>
-                      </div>
-                    </div>
+                    {% endfor %}
                     <!-- /.progress-group -->
                   </div>
                   <!-- /.col -->
@@ -159,7 +151,7 @@
                   <div class="col-sm-3 col-6">
                     <div class="description-block border-right">
                       <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>
-                      <h5 class="description-header">{{parking_logs.todays_total_cars}}</h5>
+                      <h5 class="description-header">{{customer.cars_today}}</h5>
                       <span class="description-text">Total Cars Today</span>
                     </div>
                     <!-- /.description-block -->
@@ -168,7 +160,7 @@
                   <div class="col-sm-3 col-6">
                     <div class="description-block border-right">
                       <span class="description-percentage text-warning"><i class="fas fa-caret-left"></i> 0%</span>
-                      <h5 class="description-header">{{parking_logs.todays_revenue}} RWF</h5>
+                      <h5 class="description-header">{{customer.revenue_today}} RWF</h5>
                       <span class="description-text">Total Revenue Today</span>
                     </div>
                     <!-- /.description-block -->
@@ -177,8 +169,8 @@
                   <div class="col-sm-3 col-6">
                     <div class="description-block border-right">
                       <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 20%</span>
-                      <h5 class="description-header">{{ parking_logs.last_week_revenue }}</h5>
-                      <span class="description-text">Last Week Revenue</span>
+                      <h5 class="description-header">{{ customer.revenue_this_week }} RWF</h5>
+                      <span class="description-text">This Week Revenue</span>
                     </div>
                     <!-- /.description-block -->
                   </div>
@@ -186,7 +178,7 @@
                   <div class="col-sm-3 col-6">
                     <div class="description-block">
                       <span class="description-percentage text-danger"><i class="fas fa-caret-down"></i> 18%</span>
-                      <h5 class="description-header">{{Parked.Now}}</h5>
+                      <h5 class="description-header">{{ customer.cars_parked }}</h5>
                       <span class="description-text">Total Parked Cars</span>
                     </div>
                     <!-- /.description-block -->
