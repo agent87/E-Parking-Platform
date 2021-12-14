@@ -73,16 +73,6 @@
                 </a>
               </li>
           {% endif %}
-          <!--
-          {% if user.is_superuser %}
-              <li class="nav-item">
-                <a href="{% url 'accounts_page' %}" class="nav-link">
-                  <i class="nav-icon fas fa-cog"></i>
-                  <p>Settings</p>
-                </a>
-              </li>
-          {% endif %}
-          /-->
           <li class="nav-header">MISCELLANEOUS</li>
           <li class="nav-item">
             <a href="{% url 'self_profile' %}" class="nav-link">
@@ -90,6 +80,14 @@
               <p>My Profile</p>
             </a>
           </li>
+          {% if user.is_superuser %}
+              <li class="nav-item">
+                <a href="{% url 'accounts_page' %}" class="nav-link">
+                  <i class="nav-icon fas fa-cog"></i>
+                  <p>Systems Settings</p>
+                </a>
+              </li>
+          {% endif %}
           <li class="nav-item">
             <a href="{% url 'contact_us_page' %}" class="nav-link">
               <i class="nav-icon fas fa-paper-plane"></i>
@@ -119,7 +117,7 @@
     <div class="float-right d-none d-sm-block">
       <b>Version</b> 2.1.0
     </div>
-    <strong>Copyright &copy; 2021 <a href="https://adminlte.io">Ewawe Property</a>.</strong> All rights reserved.
+    <strong>Copyright &copy; 2021 <a href="https://adminlte.io">Ewawe E-Parking</a>.</strong> All rights reserved.
   </footer>
 
   <!-- Control Sidebar -->

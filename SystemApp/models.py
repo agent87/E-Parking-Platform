@@ -41,7 +41,7 @@ class Customers(models.Model):
         if revenue is None:
             return 0
         else:
-            return revenue
+            return "{:,.0f}".format(revenue)
 
     @property
     def revenue_total(self):
@@ -49,7 +49,7 @@ class Customers(models.Model):
         if revenue is None:
             return 0
         else:
-            return revenue
+            return "{:,.0f}".format(revenue)
 
     @property
     def revenue_this_week(self):
@@ -57,7 +57,7 @@ class Customers(models.Model):
         if revenue is None:
             return 0
         else:
-            return revenue
+            return "{:,.0f}".format(revenue)
 
     @property
     def cars_parked(self):
@@ -300,6 +300,7 @@ class Parkinglog(models.Model):
 
     class Meta:
         db_table = 'ParkingLog'
+        ordering = ('-checkin_time',)
 
     @classmethod
     def add(self, customer_id, date, time, plate_number, gate_id, user_id, checkin_method):
