@@ -28,7 +28,7 @@ DEBUG = True
 
 AUTH_USER_MODEL = 'SystemApp.Users'
 
-ALLOWED_HOSTS = ['127.0.0.1','ewawe-pms-dashboard.herokuapp.com', 'localhost']
+ALLOWED_HOSTS = ['127.0.0.1','ewawe-parking.herokuapp.com', 'localhost']
 
 LOGIN_URL = '/'
 
