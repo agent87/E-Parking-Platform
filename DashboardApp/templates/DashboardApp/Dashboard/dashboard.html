@@ -150,7 +150,6 @@
                 <div class="row">
                   <div class="col-sm-3 col-6">
                     <div class="description-block border-right">
-                      <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>
                       <h5 class="description-header">{{customer.cars_today}}</h5>
                       <span class="description-text">Total Cars Today</span>
                     </div>
@@ -159,7 +158,6 @@
                   <!-- /.col -->
                   <div class="col-sm-3 col-6">
                     <div class="description-block border-right">
-                      <span class="description-percentage text-warning"><i class="fas fa-caret-left"></i> 0%</span>
                       <h5 class="description-header">{{customer.revenue_today}} RWF</h5>
                       <span class="description-text">Total Revenue Today</span>
                     </div>
@@ -168,7 +166,6 @@
                   <!-- /.col -->
                   <div class="col-sm-3 col-6">
                     <div class="description-block border-right">
-                      <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 20%</span>
                       <h5 class="description-header">{{ customer.revenue_this_week }} RWF</h5>
                       <span class="description-text">This Week Revenue</span>
                     </div>
@@ -177,7 +174,6 @@
                   <!-- /.col -->
                   <div class="col-sm-3 col-6">
                     <div class="description-block">
-                      <span class="description-percentage text-danger"><i class="fas fa-caret-down"></i> 18%</span>
                       <h5 class="description-header">{{ customer.cars_parked }}</h5>
                       <span class="description-text">Total Parked Cars</span>
                     </div>
@@ -193,8 +189,73 @@
           <!-- /.col -->
         </div>
         <!-- /.row -->
-
-        
+      
+      <div class='row'>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Account Payments</h3>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body p-0">
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th style="width: 10px">#</th>
+                  <th>Account</th>
+                  <th>Progress</th>
+                  <th style="width: 40px">Label</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1.</td>
+                  <td>Cash</td>
+                  <td>
+                    <div class="progress progress-xs">
+                      <div class="progress-bar progress-bar-danger" style="width: 55%"></div>
+                    </div>
+                  </td>
+                  <td><span class="badge bg-danger">55%</span></td>
+                </tr>
+                <tr>
+                  <td>2.</td>
+                  <td>Mobile Money</td>
+                  <td>
+                    <div class="progress progress-xs">
+                      <div class="progress-bar bg-warning" style="width: 70%"></div>
+                    </div>
+                  </td>
+                  <td><span class="badge bg-warning">70%</span></td>
+                </tr>
+                <tr>
+                  <td>3.</td>
+                  <td>Subscription</td>
+                  <td>
+                    <div class="progress progress-xs progress-striped active">
+                      <div class="progress-bar bg-primary" style="width: 30%"></div>
+                    </div>
+                  </td>
+                  <td><span class="badge bg-primary">30%</span></td>
+                </tr>
+                <tr>
+                  <td>4.</td>
+                  <td>Card</td>
+                  <td>
+                    <div class="progress progress-xs progress-striped active">
+                      <div class="progress-bar bg-success" style="width: 90%"></div>
+                    </div>
+                  </td>
+                  <td><span class="badge bg-success">90%</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+      </div>
+      <!-- /.col -->
+      
         <!-- /.row -->
       </div><!--/. container-fluid -->
     </section>

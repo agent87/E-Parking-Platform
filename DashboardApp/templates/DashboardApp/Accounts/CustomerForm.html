@@ -1,0 +1,134 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ewawe Systems | Log in</title>
+  <!-- Ewawe Logo Icon-->
+  <link rel="icon" href="{% static 'icon.png' %}">
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="{% static 'plugins/fontawesome-free/css/all.min.css' %}">
+  <!-- icheck bootstrap -->
+  <link rel="stylesheet" href="{% static 'plugins/icheck-bootstrap/icheck-bootstrap.min.css' %}">
+  <!-- BS Stepper -->
+  <link rel="stylesheet" href="{% static 'plugins/bs-stepper/css/bs-stepper.min.css' %}">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{% static 'dist/css/adminlte.min.css' %}">
+</head>
+<body class="hold-transition login-page">
+<div class="text-center">
+<img class="profile-user-img img-fluid " src="{% static 'logo.png' %}" alt="User profile picture">
+</div>
+
+  <div class="login-logo">
+    <a href="."><b>Ewawe Systems</b>LTE</a>
+  </div>
+  <div class="card card-default">
+    <div class="card-header">
+      <h3 class="card-title">Customer Sign Up Form</h3>
+    </div>
+    <div class="card-body p-0">
+      <div class="bs-stepper">
+        <div class="bs-stepper-header" role="tablist">
+          <!-- your steps here -->
+          <div class="step" data-target="#logins-part">
+            <button type="button" class="step-trigger" role="tab" aria-controls="logins-part" id="logins-part-trigger">
+              <span class="bs-stepper-circle">1</span>
+              <span class="bs-stepper-label">Customer Info</span>
+            </button>
+          </div>
+          <div class="line"></div>
+          <div class="step" data-target="#information-part">
+            <button type="button" class="step-trigger" role="tab" aria-controls="information-part" id="information-part-trigger">
+              <span class="bs-stepper-circle">2</span>
+              <span class="bs-stepper-label">Account Admin</span>
+            </button>
+          </div>
+          <div class="line"></div>
+          <div class="step" data-target="#setup-part">
+            <button type="button" class="step-trigger" role="tab" aria-controls="setup-part" id="setup-part-trigger">
+              <span class="bs-stepper-circle">2</span>
+              <span class="bs-stepper-label">General Settings</span>
+            </button>
+          </div>
+        </div>
+        <div class="bs-stepper-content">
+          <!-- your steps content here -->
+          <div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
+            <div class="form-group">
+                <label for="exampleInputEmail1">Customer Name</label>
+                <input type="text" class="form-control" id="exampleInputEmail1" placeholder="CustomerName">
+            </div>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Customer Email</label>
+                <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Customer Email">
+            </div>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Customer Tin Number</label>
+                <input type="number" class="form-control" id="exampleInputEmail1" placeholder="TIN Number">
+            </div>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Address</label>
+                <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter Address">
+            </div>
+            <button class="btn btn-primary" onclick="stepper.next()">Next</button>
+          </div>
+          <div id="information-part" class="content" role="tabpanel" aria-labelledby="information-part-trigger">
+            <div class="form-group">
+              <label for="exampleInputFile">File input</label>
+              <div class="input-group">
+                <div class="custom-file">
+                  <input type="file" class="custom-file-input" id="exampleInputFile">
+                  <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                </div>
+                <div class="input-group-append">
+                  <span class="input-group-text">Upload</span>
+                </div>
+              </div>
+            </div>
+            <button class="btn btn-primary" onclick="stepper.previous()">Previous</button>
+            <button class="btn btn-primary" onclick="stepper.next()">Next</button>
+          </div>
+          <div id="setup-part" class="content" role="tabpanel" aria-labelledby="setup-part-trigger">
+            <div class="form-group">
+                <label for="exampleInputEmail1">Customer Name</label>
+                <input type="text" class="form-control" id="exampleInputEmail1" placeholder="CustomerName">
+            </div>
+            <button class="btn btn-primary" onclick="stepper.previous()">Previous</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /.card-body -->
+    <div class="card-footer">
+      Visit <a href="https://ewawe.com">Ewawe Parking</a> for more information & tutorial about the system.
+    </div>
+  </div>
+  <!-- /.card -->
+
+
+<!-- /.login-box -->
+
+<!-- jQuery -->
+<script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+<!-- Bootstrap 4 -->
+<script src="{% static 'plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'dist/js/adminlte.min.js' %}"></script>
+<!-- Bootstrap Switch -->
+<script src="{% static 'plugins/bootstrap-switch/js/bootstrap-switch.min.js' %}"></script>
+<!-- BS-Stepper -->
+<script src="{% static 'plugins/bs-stepper/js/bs-stepper.min.js' %}"></script>
+<script>
+    $(function () {
+        $('input[name="switch"]').bootstrapSwitch();})
+        // BS-Stepper Init
+    document.addEventListener('DOMContentLoaded', function () {
+    window.stepper = new Stepper(document.querySelector('.bs-stepper'))})
+</script>
+</body>
+</html>

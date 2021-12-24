@@ -69,6 +69,11 @@ class authentication:
         logout(request)
         return redirect(reverse('LoginView'))
 
+class RegisterView:
+    def RegisterView(request):
+        return render(request, 'DashboardApp/Accounts/CustomerForm.html')
+
+
 class DashboardView:
     @login_required
     def dashboard_page(request):

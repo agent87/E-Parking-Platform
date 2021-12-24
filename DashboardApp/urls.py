@@ -11,6 +11,9 @@ urlpatterns = [
     path('reset', views.responses.login_page, name='reset_page'),
     path('logout', views.authentication.logout, name='logout_request'),
 
+    ###Register Customer#####
+    path('register', views.RegisterView.RegisterView, name='RegisterView'),
+
     ###Testing####
     path('test', views.responses.testing),
 

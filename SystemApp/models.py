@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser, User
 from django.contrib.auth.hashers import make_password
 from django.db import models
 from django.db.models import Count, Avg, Sum, Max, Min
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
 from uuid import uuid4
 import time
@@ -279,7 +279,7 @@ class Subscriptions(models.Model):
 
 
 class Parkinglog(models.Model):
-    ticket_id = models.UUIDField(db_column='TicketId', primary_key=True)  
+    ticket_id = models.CharField(db_column='TicketId', max_length=20, primary_key=True)  
     customer_id = models.ForeignKey(Customers, on_delete=models.CASCADE, blank=True, null=True)
     date = models.DateField(db_column='Date')  
     plate_number = models.CharField(db_column='PlateNum', max_length=50)  
