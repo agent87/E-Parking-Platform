@@ -7,6 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from uuid import uuid4
 import time
 import datetime
+from System import utilities
 
 
 from .managers import CustomUserManager
@@ -195,7 +196,7 @@ class Tarrif(models.Model):
 
     class Meta:
         db_table = 'Tarrif'
-        ordering = ('-fromtime','-totime')
+        ordering = ('fromtime','totime')
 
 
     @classmethod
@@ -219,11 +220,15 @@ class Tarrif(models.Model):
 
     @property
     def fromtime_formatted(self):
-        return str(self.fromtime) + ':00'
+        return utilities.time_str(self.fromtime * 60)
 
     @property
     def totime_formatted(self):
-        return str(self.totime) + ':00'
+        return utilities.time_str(self.totime * 60)
+
+    @property
+    def cost_formated(self):
+        return '{:,.0f}'.format(int(self.cost))
 
     #pyhton script to turn elapsed into verbal time
 

@@ -57,18 +57,22 @@
                                             <th>Time From (Minutes)</th>
                                             <th>Time To (Minutes)</th>
                                             <th>Cost (RWF)</th>
-                                            <th>Action</th>
+                                            <th>Actions</th>
+                                            <th>Remove</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {% for tarrif in tarrifs%}
                                         <tr>
                                             <th scope="row">{{forloop.counter}}</th>
-                                            <td>{{ tarrif.fromtime }} Min</td>
-                                            <td>{{ tarrif.totime }} Min</td>
-                                            <td>{{ tarrif.cost }} RWF</td>
+                                            <td>{{ tarrif.fromtime_formatted }}</td>
+                                            <td>{{ tarrif.totime_formatted }}</td>
+                                            <td>{{ tarrif.cost_formated }} RWF</td>
                                             <td>
                                               <a href="history/{{parked_vehicle.ticket_id}}/checkout" class="btn-sm btn-primary" role="button" data-bs-toggle="button">Review</a>
+                                            </td>
+                                            <td>
+                                              <a href="history/{{parked_vehicle.ticket_id}}/checkout" class="btn-sm btn-danger" role="button" data-bs-toggle="button">Review</a>
                                             </td>
                                         </tr>
                                         {% endfor %}
