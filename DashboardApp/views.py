@@ -69,9 +69,14 @@ class authentication:
         logout(request)
         return redirect(reverse('LoginView'))
 
-class RegisterView:
+class Customers:
     def RegisterView(request):
         return render(request, 'DashboardApp/Accounts/CustomerForm.html')
+
+
+    def register(request):
+        variable = request.POST
+        return redirect(reverse('RegisterView'))
 
 
 class DashboardView:

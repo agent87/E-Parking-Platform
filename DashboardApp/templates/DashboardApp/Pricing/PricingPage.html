@@ -57,6 +57,7 @@
                                             <th>Time From (Minutes)</th>
                                             <th>Time To (Minutes)</th>
                                             <th>Cost (RWF)</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -66,6 +67,9 @@
                                             <td>{{ tarrif.fromtime }} Min</td>
                                             <td>{{ tarrif.totime }} Min</td>
                                             <td>{{ tarrif.cost }} RWF</td>
+                                            <td>
+                                              <a href="history/{{parked_vehicle.ticket_id}}/checkout" class="btn-sm btn-primary" role="button" data-bs-toggle="button">Review</a>
+                                            </td>
                                         </tr>
                                         {% endfor %}
                                     </tbody>

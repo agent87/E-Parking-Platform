@@ -1,0 +1,16 @@
+1.Update & Delete Tarrifs(1hr)
+2.Dashboard Gates Traffic Ratio 
+3.C̶u̶r̶r̶e̶n̶c̶y̶ F̶o̶r̶m̶a̶t̶i̶n̶g̶(̶5̶m̶i̶n̶)̶
+4.Tarrif User friendly formatting(15min)
+5.Remove Entry DateTime on ParkingForm(1min) 
+6.S̶o̶r̶t̶i̶n̶g̶ D̶e̶s̶c̶e̶n̶d̶i̶n̶g̶ C̶a̶r̶s̶(̶1̶ m̶i̶n̶)̶
+7.Sorting Descending Tarrifs(1 min)
+8.User friendly ticket Id(2 min)
+9.ParkingExit Form Subscription Form(
+10.Dashboard Payment Mode Summary(Daily)
+10.Edit (Update & Delete)
+11.Advanced History Search(Datetime, Platenumber)
+12.Payed Through line/underline History
+13.Dashboard Subscription/Cost Summary
+14.Subscription Reminder API/SMS
+1̶5̶.̶C̶u̶s̶t̶o̶m̶e̶r̶ S̶i̶g̶n̶U̶p̶ F̶o̶r̶m̶

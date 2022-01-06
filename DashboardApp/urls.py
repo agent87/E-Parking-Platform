@@ -12,7 +12,8 @@ urlpatterns = [
     path('logout', views.authentication.logout, name='logout_request'),
 
     ###Register Customer#####
-    path('register', views.RegisterView.RegisterView, name='RegisterView'),
+    path('sign-up', views.Customers.RegisterView, name='RegisterView'),
+    path('sign-up/submit', views.Customers.register, name='SubmitCustomerForm'),
 
     ###Testing####
     path('test', views.responses.testing),

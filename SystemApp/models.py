@@ -195,6 +195,8 @@ class Tarrif(models.Model):
 
     class Meta:
         db_table = 'Tarrif'
+        ordering = ('-fromtime','-totime')
+
 
     @classmethod
     def add_tarrif(self, customer_id, fromtime, totime, cost):
@@ -214,6 +216,14 @@ class Tarrif(models.Model):
     @classmethod
     def remove_tarrif(self, tarrifid):
         self.objects.filter(tarrifid=tarrifid).delete()
+
+    @property
+    def fromtime_formatted(self):
+        return str(self.fromtime) + ':00'
+
+    @property
+    def totime_formatted(self):
+        return str(self.totime) + ':00'
 
     #pyhton script to turn elapsed into verbal time
 
