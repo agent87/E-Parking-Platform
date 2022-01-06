@@ -1,4 +1,6 @@
-
+import requests
+from django.core.mail import send_mail
+import os
 
 
 def time_str(time_int):
@@ -23,3 +25,15 @@ def time_str(time_int):
                     name = name.rstrip('s')
                 result.append("{} {}".format(value, name))
         return f'{result[0]}'
+
+
+class mail_server:
+    def send(subject, message, email_from, recipient_list):
+        send_mail(subject, message, email_from, recipient_list)
+
+class sms_server:
+    def send_sms(message, recipient_list):
+        data= {'recipients':f'{recipient_list}', 'message':'Hello World', 'sender':f'{os.environ.get("SMS_SENDER_NUMBER")}'}
+        r = requests.post('https://www.intouchsms.co.rw/api/sendsms/.json',  data,  auth=(os.environ.get('SMS_API_USERNAME'), os.environ.get('SMS_API_PASSWORD')))
+
+        return r.status_code

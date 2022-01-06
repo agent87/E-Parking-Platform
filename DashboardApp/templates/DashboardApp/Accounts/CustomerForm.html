@@ -53,7 +53,7 @@
           <div class="step" data-target="#setup-part">
             <button type="button" class="step-trigger" role="tab" aria-controls="setup-part" id="setup-part-trigger">
               <span class="bs-stepper-circle">2</span>
-              <span class="bs-stepper-label">General Settings</span>
+              <span class="bs-stepper-label">Plan</span>
             </button>
           </div>
         </div>
@@ -74,32 +74,42 @@
             </div>
             <div class="form-group">
                 <label for="exampleInputEmail1">Address</label>
-                <input type="email" class="form-control" id="address" name='address' placeholder="Enter Address">
+                <input type="text" class="form-control" id="address" name='address' placeholder="Enter Address">
             </div>
-            <button class="btn btn-primary" onclick="stepper.next()">Next</button>
+            <button class="btn btn-primary" type="button" onclick="stepper.next()">Next</button>
           </div>
           <div id="information-part" class="content" role="tabpanel" aria-labelledby="information-part-trigger">
-            <div class="form-group">
-              <label for="exampleInputFile">File input</label>
-              <div class="input-group">
-                <div class="custom-file">
-                  <input type="file" class="custom-file-input" id="exampleInputFile">
-                  <label class="custom-file-label" for="exampleInputFile">Choose file</label>
-                </div>
-                <div class="input-group-append">
-                  <span class="input-group-text">Upload</span>
-                </div>
+            <div class="col-sm-12">
+              <label for="sel1">First Name</label>
+              <div class="form-group col-sm-12">                                    
+                  <input id="FirstNameField" name="first_name" type="text" class="form-control" placeholder="First Name">
+              </div>
+              <label for="sel1">Last Name</label>
+              <div class="form-group col-sm-12">                                    
+                  <input id="LastNameField" name="last_name" type="text" class="form-control" placeholder="Last Name">
+              </div>
+              <label for="sel1">Email</label>
+              <div class="form-group col-sm-12">                                   
+                  <input id="EmailField" name="email" type="text" class="form-control" placeholder="E-mail">
+              </div>
+              <label for="sel1">Password</label>
+              <div class="form-group col-sm-12">                                   
+                  <input id="PasswordField" name="password" type="password" class="form-control" placeholder="Password">
+              </div>
+              <label for="phone_num">Phone Number</label>
+              <div class="form-group col-sm-12">                                   
+                  <input id="PhoneNumField" name="phonenum" type="number" class="form-control" placeholder="Phone">
               </div>
             </div>
-            <button class="btn btn-primary" onclick="stepper.previous()">Previous</button>
-            <button class="btn btn-primary" onclick="stepper.next()">Next</button>
+            <button class="btn btn-primary" type="button" onclick="stepper.previous()">Previous</button>
+            <button class="btn btn-primary" type="button" onclick="stepper.next()">Next</button>
           </div>
           <div id="setup-part" class="content" role="tabpanel" aria-labelledby="setup-part-trigger">
             <div class="form-group">
-                <label for="exampleInputEmail1">Customer Name</label>
+                <label for="exampleInputEmail1">Choose Plan</label>
                 <input type="text" class="form-control" id="exampleInputEmail1" placeholder="CustomerName">
             </div>
-            <button class="btn btn-primary" onclick="stepper.previous()">Previous</button>
+            <button class="btn btn-primary" type="button" onclick="stepper.previous()">Previous</button>
             <button type="submit" class="btn btn-primary">Submit</button>
           </div>
         </div>

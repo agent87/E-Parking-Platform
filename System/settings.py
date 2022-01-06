@@ -145,3 +145,11 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.environ.get('SMTP_HOST')
+EMAIL_USE_TLS = True
+EMAIL_PORT = os.environ.get('SMTP_PORT')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USR')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PSWRD')
