@@ -20,13 +20,27 @@ class Customers(models.Model):
     email = models.CharField(db_column='CompanyMail', max_length=70, blank=True, null=True) 
     contact = models.CharField(db_column='CompanyId', max_length=30, blank=True, null=True) 
     address = models.CharField(db_column='Address', max_length=50, blank=True, null=True)
-    geolocation = models.CharField(db_column='GeoLocation', max_length=50, blank=True, null=True)
     country = models.CharField(db_column='Country', max_length=30, blank=True, null=True)  
     comments = models.CharField(db_column='Comments', max_length=500, blank=True, null=True)  
     enrollment_date = models.DateField(blank=True, null=True)
 
     class Meta:
         db_table = 'Customers'
+
+    @classmethod
+    def enroll_customer(self, company_name, email, contact, address, country, comments):
+        customer_id = self.Customers.objects.aggregate(Max('customer_id'))['customer_id__max']
+        if customer_id is None:
+            id = 'EPMS-CUST-0001'
+            self.objects.create(customer_id=id, 
+                                company_name=company_name, 
+                                email=email, contact=contact, 
+                                address=address, country=country, 
+                                comments=comments)
+        else:
+            id = None
+
+
 
     @property
     def cars_today(self):
