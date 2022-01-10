@@ -34,7 +34,7 @@ class mail_server:
 
 class sms_server:
     def send_sms(message, recipient_list):
-        data= {'recipients':f'{recipient_list}', 'message':'Hello World', 'sender':f'{os.environ.get("SMS_SENDER_NUMBER")}'}
+        data= {'recipients':f'{recipient_list}', 'message':message, 'sender':f'{os.environ.get("SMS_SENDER_NUMBER")}'}
         r = requests.post('https://www.intouchsms.co.rw/api/sendsms/.json',  data,  auth=(os.environ.get('SMS_API_USERNAME'), os.environ.get('SMS_API_PASSWORD')))
 
         return r.status_code
