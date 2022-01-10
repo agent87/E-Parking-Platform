@@ -44,6 +44,9 @@ urlpatterns = [
     path('accounts/profile', views.users.self_profile, name='self_profile'),
     path('accounts/<int:user_id>/profile', views.users.user_profile, name='user_profile'),
 
+    ###Settings
+    path('settings', views.settings.settings_page, name='settings_page'),
+
 
     path('contact-us', views.contact_us.contact_us_page, name='contact_us_page'),
 

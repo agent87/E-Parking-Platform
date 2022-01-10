@@ -44,7 +44,7 @@
           <li class="nav-item">
             <a href="{% url 'pricing_page' %}" class="nav-link">
               <i class="nav-icon fas fa-tags"></i>
-              <p>Pricing</p>
+              <p>Pricing & Gates</p>
             </a>
           </li>
           <li class="nav-item">
@@ -80,14 +80,16 @@
               <p>My Profile</p>
             </a>
           </li>
+          {% comment "" %}
           {% if user.is_superuser %}
               <li class="nav-item">
-                <a href="{% url 'accounts_page' %}" class="nav-link">
+                <a href="{% url 'settings_page' %}" class="nav-link">
                   <i class="nav-icon fas fa-cog"></i>
                   <p>Systems Settings</p>
                 </a>
               </li>
           {% endif %}
+          {% endcomment %}
           <li class="nav-item">
             <a href="{% url 'contact_us_page' %}" class="nav-link">
               <i class="nav-icon fas fa-paper-plane"></i>

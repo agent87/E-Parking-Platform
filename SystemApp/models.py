@@ -67,6 +67,17 @@ class Customers(models.Model):
     def cars_parked(self):
         return Parkinglog.objects.filter(customer_id=self.customer_id, parked=True).count()
 
+    @property
+    def payements_summary(self):
+        payements = []
+        for account in list(Parkinglog.objects.filter(customer_id=self.customer_id).order_by().values('payment_method').distinct()):
+            account_summary = {'name': account['payment_method']}
+            account_summary['count'] =  Parkinglog.objects.filter(customer_id=self.customer_id, payment_method=account['payment_method']).count()
+            account_summary['sum'] = "{:,.0f}".format(Parkinglog.objects.filter(customer_id=self.customer_id, payment_method=account['payment_method']).aggregate(Sum('cost'))['cost__sum'])
+            payements.append(account_summary)
+        return payements
+    
+
 class Users(AbstractUser):
     user_id = models.SmallAutoField(primary_key=True, unique=True, editable=False)
     customer_id = models.ForeignKey(Customers, on_delete=models.CASCADE, blank=True, null=True)
@@ -182,7 +193,10 @@ class Gates(models.Model):
 
     @property
     def traffic_ratio(self):
-        return (self.total_exits / self.total_entries) * 100
+        try:
+            return (self.total_exits / self.total_entries) * 100
+        except ZeroDivisionError:
+            return 0
 
    
 class Tarrif(models.Model):
@@ -215,7 +229,10 @@ class Tarrif(models.Model):
 
     @classmethod
     def match_tarrif(self, duration):
-        return self.objects.filter(fromtime__lte=duration, totime__gte=duration).first()
+        try:
+            return self.objects.filter(fromtime__lte=duration, totime__gte=duration).first()
+        except AttributeError:
+            return 0
 
     @classmethod
     def remove_tarrif(self, tarrifid):
@@ -271,6 +288,8 @@ class Subscriptions(models.Model):
             user = Users.objects.get(user_id = user_id)
         )
 
+        return True, phonenum, name, platenum, end_date, amount, Customers.objects.get(customer_id=customer_id).company_name
+
     @classmethod
     def is_subscribed(self, plate_number):
         try:
@@ -293,6 +312,8 @@ class Subscriptions(models.Model):
     @property
     def count(self):
         self.objects.count()
+
+    
 
 
 

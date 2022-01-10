@@ -38,3 +38,8 @@ class sms_server:
         r = requests.post('https://www.intouchsms.co.rw/api/sendsms/.json',  data,  auth=(os.environ.get('SMS_API_USERNAME'), os.environ.get('SMS_API_PASSWORD')))
 
         return r.status_code
+
+    def subscription_reciept(recipient, recipient_name, plate_number, valid_until, amount, parking_operator_name):
+        message = f'Hello {recipient_name}, your parking subscription for vehicle with {plate_number} is valid until {valid_until}. Amount paid is {amount} Rwf. Thank you for using our service. Ewawe-parking'
+        r =  sms_server.send_sms(message, recipient)
+        return r

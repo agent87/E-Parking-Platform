@@ -86,16 +86,14 @@ class Customers:
                         utilities.mail_server.send('E-parking email verification', 
                                         f'Hello {request.POST.get("first_name")}, \n Please the following link to verify your email with us this is a test.', 
                                         [request.POST.get('email')])
-                        return redirect(reverse('RegisterView'))
+                        return redirect(reverse('LoginView'))
                     else:
                         return redirect(reverse('RegisterView'))
                 except ObjectDoesNotExist:
                     return redirect(reverse('RegisterView'))
         
         except ObjectDoesNotExist:
-            pass
-
-        return redirect(reverse('RegisterView'))
+            return redirect(reverse('RegisterView'))
 
 
 class DashboardView:
@@ -106,6 +104,7 @@ class DashboardView:
         context['subscription'] = models.Subscriptions.objects.filter(customer_id = request.user.customer_id.customer_id)
         context['user'] = request.user
         context['customer'] = request.user.customer_id
+        context['payements_summary'] = models.Customers.objects.get(customer_id = request.user.customer_id.customer_id).payements_summary
         return render(request, 'DashboardApp/Dashboard/dashboard.html', context)
 
 class LoginView:
@@ -233,11 +232,19 @@ class subscription:
             amount = request.POST.get('amount')
             start_date = request.POST.get('start_date')
             end_date = request.POST.get('end_date')
-            models.Subscriptions.add_subscription(user_id, customer_id, platenum, name, phonenum, office, parklot, amount, start_date, end_date)
-            return redirect(reverse('subscribers_page'))
+            status = models.Subscriptions.add_subscription(user_id, customer_id, platenum, name, phonenum, office, parklot, amount, start_date, end_date)
+            if status[0]:
+                utilities.sms_server.subscription_reciept(status[1],status[2],status[3],status[4],status[5],status[6])
+                return redirect(reverse('subscribers_page'))
+            else:
+                return redirect(reverse('subscribers_page'))
         else:
             return redirect(reverse('subscribers_page'))
 
+
+class settings:
+    def settings_page(request):
+        return render(request, 'DashboardApp/Settings/settings.html')
 
 class contact_us:
     def contact_us_page(request):
