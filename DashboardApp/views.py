@@ -4,6 +4,8 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
+from django.core.exceptions import ObjectDoesNotExist
+from System import utilities
 import time
 
 
@@ -75,7 +77,24 @@ class Customers:
 
 
     def register(request):
-        variable = request.POST
+        try:
+            customer = models.Customers.enroll_customer(company_name=request.POST.get('customer_name'), address = request.POST.get('address'), comments=None)
+            if customer[0]:
+                try:
+                    User = models.Users.add_user(customer[1].customer_id, request.POST.get('first_name'), request.POST.get('last_name'), request.POST.get('email'), request.POST.get('phonenum'), request.POST.get('password'), 'Admin')
+                    if User[0]:
+                        utilities.mail_server.send('E-parking email verification', 
+                                        f'Hello {request.POST.get("first_name")}, \n Please the following link to verify your email with us this is a test.', 
+                                        [request.POST.get('email')])
+                        return redirect(reverse('RegisterView'))
+                    else:
+                        return redirect(reverse('RegisterView'))
+                except ObjectDoesNotExist:
+                    return redirect(reverse('RegisterView'))
+        
+        except ObjectDoesNotExist:
+            pass
+
         return redirect(reverse('RegisterView'))
 
 

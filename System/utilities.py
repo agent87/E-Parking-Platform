@@ -1,5 +1,6 @@
 import requests
 from django.core.mail import send_mail
+from django.conf import settings
 import os
 
 
@@ -28,8 +29,8 @@ def time_str(time_int):
 
 
 class mail_server:
-    def send(subject, message, email_from, recipient_list):
-        send_mail(subject, message, email_from, recipient_list)
+    def send(subject, message, recipient_list):
+        send_mail(subject, message, settings.EMAIL_HOST_USER, recipient_list)
 
 class sms_server:
     def send_sms(message, recipient_list):

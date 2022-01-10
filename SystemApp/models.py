@@ -4,6 +4,7 @@ from django.db import models
 from django.db.models import Count, Avg, Sum, Max, Min
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.utils import IntegrityError
 from uuid import uuid4
 import time
 import datetime
@@ -14,13 +15,10 @@ from .managers import CustomUserManager
 
 
 class Customers(models.Model):
-    customer_id = models.CharField(db_column='CustomerId', primary_key=True, max_length=50, editable=False)
+    customer_id = models.SmallAutoField(db_column='CustomerId', primary_key=True, editable=False)
     #administrator = models.ForeignKey('Users', on_delete=models.CASCADE, blank=True, null=True) 
     company_name = models.CharField(db_column='CompanyName', max_length=50, blank=True, null=True) 
-    email = models.CharField(db_column='CompanyMail', max_length=70, blank=True, null=True) 
-    contact = models.CharField(db_column='CompanyId', max_length=30, blank=True, null=True) 
     address = models.CharField(db_column='Address', max_length=50, blank=True, null=True)
-    country = models.CharField(db_column='Country', max_length=30, blank=True, null=True)  
     comments = models.CharField(db_column='Comments', max_length=500, blank=True, null=True)  
     enrollment_date = models.DateField(blank=True, null=True)
 
@@ -28,18 +26,9 @@ class Customers(models.Model):
         db_table = 'Customers'
 
     @classmethod
-    def enroll_customer(self, company_name, email, contact, address, country, comments):
-        customer_id = self.Customers.objects.aggregate(Max('customer_id'))['customer_id__max']
-        if customer_id is None:
-            id = 'EPMS-CUST-0001'
-            self.objects.create(customer_id=id, 
-                                company_name=company_name, 
-                                email=email, contact=contact, 
-                                address=address, country=country, 
-                                comments=comments)
-        else:
-            id = None
-
+    def enroll_customer(self, company_name, address, comments):
+        self.objects.create(company_name=company_name, address=address, comments=comments, enrollment_date=datetime.date.today())
+        return True, self.objects.latest('customer_id')
 
 
     @property
@@ -99,8 +88,9 @@ class Users(AbstractUser):
     
     @classmethod
     def add_user(self, customer_id, first_name, last_name, email, phonenum, password, role):
-        is_superuser = True if role == 'Admin' else False
-        self.objects.create(email=email,  
+        try:
+            is_superuser = True if role == 'Admin' else False
+            self.objects.create(email=email,  
                             customer_id=Customers.objects.get(customer_id=customer_id), 
                             first_name=first_name, 
                             last_name=last_name, 
@@ -108,11 +98,10 @@ class Users(AbstractUser):
                             is_superuser = is_superuser,
                             password = make_password(password),
                             phonenum=phonenum)
-        
-    @classmethod
-    def create_admin(self, email, password, customer_id, fname, lname, contact):
-        self.objects.create(email=email, password=password, customer_id=customer_id, fname=fname, lname=lname, contact=contact, is_superuser=1)
-        return self.objects.get(email=email)
+
+            return True, self.objects.latest('user_id')
+        except IntegrityError:
+            return False, 'Email already exists'
     
     @property
     def total_entries(self):
@@ -308,7 +297,7 @@ class Subscriptions(models.Model):
 
 
 class Parkinglog(models.Model):
-    ticket_id = models.CharField(db_column='TicketId', max_length=20, primary_key=True)  
+    ticket_id = models.BigAutoField(db_column='TicketId',  primary_key=True)  
     customer_id = models.ForeignKey(Customers, on_delete=models.CASCADE, blank=True, null=True)
     date = models.DateField(db_column='Date')  
     plate_number = models.CharField(db_column='PlateNum', max_length=50)  
@@ -333,11 +322,9 @@ class Parkinglog(models.Model):
 
     @classmethod
     def add(self, customer_id, date, time, plate_number, gate_id, user_id, checkin_method):
-        ticket_id = uuid4()
         format_datetime = datetime.datetime.strptime(date + ' ' + time, '%Y-%m-%d %H:%M')
         self.objects.create(plate_number=plate_number, 
                             date = datetime.datetime.now(),
-                            ticket_id = ticket_id,
                             customer_id = Customers.objects.get(customer_id=customer_id),
                             checkin_time= format_datetime.timestamp(),
                             checkin_method = checkin_method,
@@ -345,12 +332,7 @@ class Parkinglog(models.Model):
                             entry_gate= Gates.objects.get(gate_id=gate_id),
                             parked = True)
         
-        try:
-            self.objects.filter(ticket_id=ticket_id).update(subscription=Subscriptions.objects.get(plate_number=plate_number))
-        except ObjectDoesNotExist:
-            pass
-        
-        return ticket_id
+        return self.objects.latest('ticket_id')
             
     
     @staticmethod

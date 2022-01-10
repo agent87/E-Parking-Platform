@@ -62,11 +62,7 @@
           <div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
             <div class="form-group">
                 <label for="exampleInputEmail1">Customer Name</label>
-                <input type="text" class="form-control" id="CustomerName" name='CustomerName' placeholder="CustomerName">
-            </div>
-            <div class="form-group">
-                <label for="exampleInputEmail1">Customer Email</label>
-                <input type="email" class="form-control" id="CustomerEmail" name='CustomerEmail' placeholder="Customer Email">
+                <input type="text" class="form-control" id="customer_name" name='customer_name' placeholder="Customer Name">
             </div>
             <div class="form-group">
                 <label for="exampleInputEmail1">Customer Tin Number</label>
@@ -97,8 +93,8 @@
                   <input id="PasswordField" name="password" type="password" class="form-control" placeholder="Password">
               </div>
               <label for="phone_num">Phone Number</label>
-              <div class="form-group col-sm-12">                                   
-                  <input id="PhoneNumField" name="phonenum" type="number" class="form-control" placeholder="Phone">
+              <div class="form-group col-sm-12">
+                <input type="text" class="form-control" data-inputmask='"mask": "(999) 999-999999"' id="PhoneNum" name="phonenum" data-mask>
               </div>
             </div>
             <button class="btn btn-primary" type="button" onclick="stepper.previous()">Previous</button>
@@ -107,7 +103,14 @@
           <div id="setup-part" class="content" role="tabpanel" aria-labelledby="setup-part-trigger">
             <div class="form-group">
                 <label for="exampleInputEmail1">Choose Plan</label>
-                <input type="text" class="form-control" id="exampleInputEmail1" placeholder="CustomerName">
+                <select class="form-control" style="width: 100%;">
+                  <option selected="selected">Trial</option>
+                  <option>Monthly 20,000 RWF</option>
+                  <option>Monthly 30,000 RWF</option>
+                  <option>Monthly 40,000 RWF</option>
+                  <option>Monthly 60,000 RWF</option>
+                  <option>Monthly 40,000 RWF</option>
+                </select>
             </div>
             <button class="btn btn-primary" type="button" onclick="stepper.previous()">Previous</button>
             <button type="submit" class="btn btn-primary">Submit</button>
