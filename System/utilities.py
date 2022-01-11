@@ -40,6 +40,6 @@ class sms_server:
         return r.status_code
 
     def subscription_reciept(recipient, recipient_name, plate_number, valid_until, amount, parking_operator_name):
-        message = f'Hello {recipient_name}, your parking subscription for vehicle with {plate_number} is valid until {valid_until}. Amount paid is {amount} Rwf. Thank you for using our service. Ewawe-parking'
+        message = f'Hello {recipient_name}, your parking subscription for vehicle with plate number {plate_number} has been activate and is valid until {valid_until}. Amount paid is {amount} Rwf. Thank you for using our service. Ewawe-parking'
         r =  sms_server.send_sms(message, recipient)
         return r
