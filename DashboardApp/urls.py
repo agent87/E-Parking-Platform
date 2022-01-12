@@ -15,6 +15,7 @@ urlpatterns = [
     path('sign-up', views.Customers.RegisterView, name='RegisterView'),
     path('sign-up/submit', views.Customers.register, name='SubmitCustomerForm'),
 
+
     ###Testing####
     path('test', views.responses.testing),
 
@@ -43,6 +44,10 @@ urlpatterns = [
     path('accounts/add', views.users.add_user, name='add_account'),
     path('accounts/profile', views.users.self_profile, name='self_profile'),
     path('accounts/<int:user_id>/profile', views.users.user_profile, name='user_profile'),
+
+    path('sign-up/verify-mail', views.users.verify_email_view, name='VerifyEmail'),
+    path('sign-up/verify-mail/<slug:token>', views.users.verify_email_token, name='VerifyEmailToken'),
+    path('sign-up/verify-mail/success', views.users.verify_email_success, name='VerifyEmailSuccess'),
 
     ###Settings
     path('settings', views.settings.settings_page, name='settings_page'),
