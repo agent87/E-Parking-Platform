@@ -219,9 +219,9 @@ class users:
             verify_mail = models.Users.objects.get(mail_verified=token)
             verify_mail.mail_verified = True
             verify_mail.save()
-            return redirect(reverse('accounts_page'))
-        except models.Users.DoesNotExist:
             return redirect(reverse('VerifyEmailSuccess'))
+        except models.Users.DoesNotExist:
+            return redirect(reverse('VerifyEmail'))
 
     def verify_email_success(request):
         return render(request, 'DashboardApp/Accounts/success-mail.html')
