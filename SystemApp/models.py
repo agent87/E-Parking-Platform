@@ -85,6 +85,7 @@ class Users(AbstractUser):
     phonenum = models.CharField(db_column='PhoneNum', max_length=30, blank=True, null=True)
     role = models.CharField(max_length=50, blank=True, null=True)
     username = None
+    mail_verified = models.CharField(max_length=50)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -101,6 +102,7 @@ class Users(AbstractUser):
     def add_user(self, customer_id, first_name, last_name, email, phonenum, password, role):
         try:
             is_superuser = True if role == 'Admin' else False
+            mail_verification_token = utilities.mail_server.generate_mail_verification_token()
             self.objects.create(email=email,  
                             customer_id=Customers.objects.get(customer_id=customer_id), 
                             first_name=first_name, 
@@ -108,7 +110,8 @@ class Users(AbstractUser):
                             role = role,
                             is_superuser = is_superuser,
                             password = make_password(password),
-                            phonenum=phonenum)
+                            phonenum=phonenum,
+                            mail_verified=mail_verification_token)
 
             return True, self.objects.latest('user_id')
         except IntegrityError:

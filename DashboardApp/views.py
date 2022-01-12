@@ -60,8 +60,11 @@ class authentication:
             password = request.POST.get('password')
             user = authenticate(request, username=email, password=password)
             if user is not None:
-                login(request, user)
-                return redirect(reverse('dashboard_page'))
+                if user.mail_verified == 'True':
+                    login(request, user)
+                    return redirect(reverse('dashboard_page'))
+                else:
+                    return redirect(reverse('VerifyEmail'))
             else:
                 return redirect(reverse('LoginView'))
         else:
@@ -86,7 +89,7 @@ class Customers:
                         utilities.mail_server.send('E-parking email verification', 
                                         f'Hello {request.POST.get("first_name")}, \n Please the following link to verify your email with us this is a test.', 
                                         [request.POST.get('email')])
-                        return redirect(reverse('LoginView'))
+                        return redirect(reverse('VerifyEmail'))
                     else:
                         return redirect(reverse('RegisterView'))
                 except ObjectDoesNotExist:
@@ -94,6 +97,7 @@ class Customers:
         
         except ObjectDoesNotExist:
             return redirect(reverse('RegisterView'))
+    
 
 
 class DashboardView:
@@ -210,6 +214,20 @@ class users:
         context['user'] = request.user
         return render(request, 'DashboardApp/Accounts/Profile.html', context)
 
+    def verify_email_view(request):
+        return render(request, 'DashboardApp/Accounts/verify-mail.html')
+
+    def verify_email_token(request, token):
+        try:
+            verify_mail = models.Users.objects.get(mail_verified=token)
+            verify_mail.mail_verified = True
+            verify_mail.save()
+            return redirect(reverse('accounts_page'))
+        except models.Users.DoesNotExist:
+            return redirect(reverse('VerifyEmailSuccess'))
+
+    def verify_email_success(request):
+        return render(request, 'DashboardApp/Accounts/success-mail.html')
     
 
 class subscription:

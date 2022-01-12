@@ -1,3 +1,4 @@
+import uuid
 import requests
 from django.core.mail import send_mail
 from django.conf import settings
@@ -31,6 +32,9 @@ def time_str(time_int):
 class mail_server:
     def send(subject, message, recipient_list):
         send_mail(subject, message, settings.EMAIL_HOST_USER, recipient_list)
+
+    def generate_mail_verification_token():
+        return uuid.uuid4()
 
 class sms_server:
     def send_sms(message, recipient_list):
