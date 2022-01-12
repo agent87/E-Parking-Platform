@@ -34,7 +34,7 @@ class mail_server:
         send_mail(subject, message, settings.EMAIL_HOST_USER, recipient_list)
 
     def generate_mail_verification_token():
-        return uuid.uuid4()
+        return str(uuid.uuid4())
 
 class sms_server:
     def send_sms(message, recipient_list):
