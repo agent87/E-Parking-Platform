@@ -112,8 +112,17 @@ class Users(AbstractUser):
                             password = make_password(password),
                             phonenum=phonenum,
                             mail_verified=mail_verification_token)
+            utilities.mail_server.send('Ewawe-parking user account verification', 
+                                        f'''Hello {first_name}, 
+                                        \n To continue using the platform, use the following link to verify your account.
+                                        \n link : https://ewawe-parking.herokuapp.com/sign-up/verify-mail/{mail_verification_token}
+                                        \n
+                                        \n Thank you for using our services.
+                                        \n Ewawe Parking
 
-            return True, self.objects.latest('user_id')
+                                        ''',  [email])
+
+            return True, self.objects.latest('user_id'), mail_verification_token
         except IntegrityError:
             return False, 'Email already exists'
     

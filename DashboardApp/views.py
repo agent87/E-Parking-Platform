@@ -86,9 +86,6 @@ class Customers:
                 try:
                     User = models.Users.add_user(customer[1].customer_id, request.POST.get('first_name'), request.POST.get('last_name'), request.POST.get('email'), request.POST.get('phonenum'), request.POST.get('password'), 'Admin')
                     if User[0]:
-                        utilities.mail_server.send('E-parking email verification', 
-                                        f'Hello {request.POST.get("first_name")}, \n Please the following link to verify your email with us this is a test.', 
-                                        [request.POST.get('email')])
                         return redirect(reverse('VerifyEmail'))
                     else:
                         return redirect(reverse('RegisterView'))
