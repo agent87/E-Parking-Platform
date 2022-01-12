@@ -122,7 +122,7 @@ class Users(AbstractUser):
 
                                         ''',  [email])
 
-            return True, self.objects.latest('user_id'), mail_verification_token
+            return True, self.objects.latest('user_id')
         except IntegrityError:
             return False, 'Email already exists'
     
