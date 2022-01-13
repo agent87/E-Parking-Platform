@@ -474,3 +474,17 @@ class Parkinglog(models.Model):
             return True
         else:
             return False
+
+
+def delete_customer(customer_id):
+    Parkinglog.objects.filter(customer_id=customer_id).delete()
+    Gates.objects.filter(customer_id=customer_id).delete()
+    Users.objects.filter(customer_id=customer_id).delete()
+    Subscriptions.objects.filter(customer_id=customer_id).delete()
+    Tarrif.objects.filter(customer_id=customer_id).delete()
+    Customers.objects.filter(customer_id=customer_id).delete()
+
+def view_customer_users(customer_id):
+    users =  Users.objects.filter(customer_id=customer_id)
+    for user in users:
+        print(user.email)
