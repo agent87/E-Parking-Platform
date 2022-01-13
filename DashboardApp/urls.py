@@ -35,7 +35,6 @@ urlpatterns = [
     ###Tarrif Related#####
     path('pricing', views.pricing.pricing_page, name='pricing_page'),
     path('pricing/add', views.pricing.add_pricing, name='add_tarrif'),
-    path('pricing/<slug:tarrif_id>/edit', views.pricing.edit_pricing, name='edit_tarrif'),
     path('pricing/<slug:tarrif_id>/delete', views.pricing.delete_pricing, name='delete_tarrif'),
 
     ###Subcribers
