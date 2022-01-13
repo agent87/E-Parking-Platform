@@ -24,13 +24,13 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12 offset-md-0">
-                  {% if EntranceFormContext.gates > 0 %}
+                  {% if EntranceFormContext.gates|length == 0 %}
                     <button type="button" class="btn btn-default" data-toggle="modal" data-target="#EntranceForm">
                         Add Car
                     </button>
                   {% else %}
-                    <button type="button" class="btn btn-warning toastsDefaultWarning">
-                      Please add a gate first
+                    <button type="button" class="btn btn-default toastsDefaultWarning">
+                      Add Car
                     </button>
                   {% endif %}
                 </div>
