@@ -24,7 +24,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12 offset-md-0">
-                  {% if EntranceFormContext.gates|length == 0 %}
+                  {% if EntranceFormContext.gates|length > 0 %}
                     <button type="button" class="btn btn-default" data-toggle="modal" data-target="#EntranceForm">
                         Add Car
                     </button>
