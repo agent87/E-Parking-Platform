@@ -181,8 +181,11 @@ class pricing:
         pass
 
     @login_required
-    def delete_pricing(request):
-        pass
+    def delete_pricing(request, tarrif_id):
+        pricing = models.Tarrif.objects.get(tarrif_id=request.POST.get('tarrif_id'))
+        if pricing.customer_id.customer_id == request.user.customer_id.customer_id:
+            pricing.delete()
+        return redirect(reverse('pricing_page'))
 
 class users:
     @login_required
