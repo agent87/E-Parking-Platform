@@ -32,6 +32,7 @@
                     <div class="nav flex-column nav-tabs h-100" id="vert-tabs-tab" role="tablist" aria-orientation="vertical">
                         <a class="nav-link active" id="vert-tabs-home-tab" data-toggle="pill" href="#vert-tabs-home" role="tab" aria-controls="vert-tabs-home" aria-selected="true">General</a>
                         <a class="nav-link" id="vert-tabs-profile-tab" data-toggle="pill" href="#vert-tabs-profile" role="tab" aria-controls="vert-tabs-profile" aria-selected="false">Dashboard</a>
+                        <a class="nav-link" id="vert-tabs-gates-tab" data-toggle="pill" href="#vert-tabs-gates" role="tab" aria-controls="vert-tabs-gates" aria-selected="false">Gates</a>
                         <a class="nav-link" id="vert-tabs-messages-tab" data-toggle="pill" href="#vert-tabs-messages" role="tab" aria-controls="vert-tabs-messages" aria-selected="false">Notifications</a>
                         <a class="nav-link" id="vert-tabs-settings-tab" data-toggle="pill" href="#vert-tabs-settings" role="tab" aria-controls="vert-tabs-settings" aria-selected="false">Permissions</a>
                     </div>
@@ -39,16 +40,66 @@
                     <div class="col-7 col-sm-9">
                     <div class="tab-content" id="vert-tabs-tabContent">
                         <div class="tab-pane text-left fade show active" id="vert-tabs-home" role="tabpanel" aria-labelledby="vert-tabs-home-tab">
-                            Lorem ipsum dolor sit amet.
+                            TO be updated shortly!
                         </div>
                         <div class="tab-pane fade" id="vert-tabs-profile" role="tabpanel" aria-labelledby="vert-tabs-profile-tab">
-                            Mauris tincidunt mi at .
+                            TO be updated shortly!
                         </div>
+                        <div class="tab-pane fade" id="vert-tabs-gates" role="tabpanel" aria-labelledby="vert-tabs-gates-tab">
+                          <div class="card-body p-0">
+                            <table class="table">
+                              <thead>
+                                <tr>
+                                  <th style="width: 10px">#</th>
+                                  <th>Name</th>
+                                  <th>Status</th>
+                                  <th>Camera</th>
+                                  <th>Modify</th>
+                                  <th>Remove</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {% for gate in gates  %}
+                                <tr>
+                                  <td>1.</td>
+                                  <td>{{gate.name}}</td>
+                                  <td>{{gate.status}}</td>
+                                  <td>{{gate.camera_id}}</td>
+                                  <td><button type="submit" class="btn btn-warning">Modify</button></td>
+                                  <td><button type="submit" class="btn btn-danger">Remove</button></td>
+                                </tr>
+                                {% endfor %}
+                                <form action="{% url 'add_gate' %}" method="POST">
+                                {% csrf_token %}
+                                <tr>
+                                  <td></td>
+                                  <td><input type="text" class="form-control" id="gate_name" name='gate_name' placeholder="Gate name"></td>
+                                  <td>
+                                      <select class="form-control" style="width: 100%;" name='status'>
+                                        <option selected="selected">Active</option>
+                                        <option>Inactive</option>
+                                      </select>
+                                  </td>
+                                  <td>
+                                    <select class="form-control" style="width: 100%;">
+                                      <option selected="selected">No Cameras Available</option>
+                                    </select>
+                                  </td>
+                                  <td></td>
+                                  <td><button type="submit" class="btn btn-primary">Submit</button></td>
+                                </tr>
+                                </form>
+                              </tbody>
+                            </table>
+                          </div>
+                          <!-- /.card-body -->
+                        </div>  
+                      </div>
                         <div class="tab-pane fade" id="vert-tabs-messages" role="tabpanel" aria-labelledby="vert-tabs-messages-tab">
-                            Morbi turpis dolor.
+                          TO be updated shortly!
                         </div>
                         <div class="tab-pane fade" id="vert-tabs-settings" role="tabpanel" aria-labelledby="vert-tabs-settings-tab">
-                            Pellentesque vestibulum commodo .
+                          TO be updated shortly!
                         </div>
                     </div>
                     </div>

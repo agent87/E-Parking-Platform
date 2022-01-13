@@ -188,12 +188,21 @@ class Gates(models.Model):
     gate_id = models.AutoField(db_column='GateId', editable=False, primary_key=True)
     customer_id = models.ForeignKey(Customers, on_delete=models.CASCADE, blank=True, null=True)
     name = models.CharField(db_column='Name', max_length=50)
+    status = models.CharField(db_column='Status', max_length=50)
     description = models.CharField(db_column='Description', max_length=50, blank=True, null=True)  
     camera_id = models.CharField(db_column='CameraId', max_length=50, blank=True, null=True)  
     cashiers = models.JSONField(db_column='Cashiers', blank=True, null=True)
 
     class Meta:
         db_table = 'Gates'
+
+    @classmethod
+    def add_gate(self, customer_id, name, status, description=None, camera_id=None, cashiers=None):
+        try:
+            self.objects.create(customer_id=customer_id, name=name, status=status, description=description, camera_id=camera_id, cashiers=cashiers)
+            return True, self.objects.latest('gate_id')
+        except IntegrityError:
+            return False, 'Gate name already exists'
 
     @property
     def total_entries(self):

@@ -51,6 +51,7 @@ urlpatterns = [
 
     ###Settings
     path('settings', views.settings.settings_page, name='settings_page'),
+    path('settings/gates/add', views.settings.add_gate, name='add_gate'),
 
 
     path('contact-us', views.contact_us.contact_us_page, name='contact_us_page'),

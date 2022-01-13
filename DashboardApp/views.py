@@ -226,7 +226,6 @@ class users:
     def verify_email_success(request):
         return render(request, 'DashboardApp/Accounts/success-mail.html')
     
-
 class subscription:
     @login_required
     def subscribers_page(request):
@@ -258,8 +257,22 @@ class subscription:
 
 
 class settings:
+    @login_required
     def settings_page(request):
-        return render(request, 'DashboardApp/Settings/settings.html')
+        context = {'user' : request.user}
+        context['gates'] = models.Gates.objects.filter(customer_id=request.user.customer_id.customer_id)
+        return render(request, 'DashboardApp/Settings/settings.html', context)
+    
+    @login_required
+    def add_gate(request):
+        if request.method == "POST":
+            customer_id = request.user.customer_id
+            name = request.POST.get('gate_name')
+            status = request.POST.get('status')
+            models.Gates.add_gate(customer_id, name, status)
+            return redirect(reverse('settings_page'))
+        else:
+            return redirect(reverse('settings_page'))
 
 class contact_us:
     def contact_us_page(request):
