@@ -176,9 +176,6 @@ class pricing:
         else:
             return(reverse('pricing_page'))
 
-    @login_required
-    def edit_pricing(request, tarrif_id):
-        pass
 
     @login_required
     def delete_pricing(request, tarrif_id):

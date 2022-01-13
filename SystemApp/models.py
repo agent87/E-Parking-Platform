@@ -312,11 +312,13 @@ class Subscriptions(models.Model):
         return True, phonenum, name, platenum, end_date, amount, Customers.objects.get(customer_id=customer_id).company_name
 
     @classmethod
-    def is_subscribed(self, plate_number):
+    def is_subscribed(self, customer_id, plate_number):
         try:
-            return self.objects.get(plate_number=plate_number, end_date__gte=datetime.datetime.now())
+            return self.objects.get(customer_id = customer_id, plate_number=plate_number, end_date__gte=datetime.datetime.now())
         except self.DoesNotExist:
             return None
+        except self.MultipleObjectsReturned:
+            return self.objects.filter(customer_id = customer_id, plate_number=plate_number, end_date__gte=datetime.datetime.now()).first()
 
     @property
     def format_end_date(self):
