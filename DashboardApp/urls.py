@@ -46,8 +46,8 @@ urlpatterns = [
     path('accounts/<int:user_id>/profile', views.users.user_profile, name='user_profile'),
 
     path('sign-up/verify-mail', views.users.verify_email_view, name='VerifyEmail'),
-    path('sign-up/verify-mail/<slug:token>', views.users.verify_email_token, name='VerifyEmailToken'),
-    path('sign-up/verify-mail/success', views.users.verify_email_success, name='VerifyEmailSuccess'),
+    path('sign-up/verify/mail/<slug:token>', views.users.verify_email_token, name='VerifyEmailToken'),
+    path('sign-up/verify/mail/success', views.users.verify_email_success, name='VerifyEmailSuccess'),
 
     ###Settings
     path('settings', views.settings.settings_page, name='settings_page'),
