@@ -179,10 +179,13 @@ class pricing:
 
     @login_required
     def delete_pricing(request, tarrif_id):
-        pricing = models.Tarrif.objects.get(tarrif_id=request.POST.get('tarrif_id'))
-        if pricing.customer_id.customer_id == request.user.customer_id.customer_id:
-            pricing.delete()
-        return redirect(reverse('pricing_page'))
+        tarrif_id = int(tarrif_id)
+        try: 
+            pricing = models.Tarrif.objects.filter(tarrif_id=tarrif_id, customer_id=request.user.customer_id.customer_id).delete()
+            return redirect(reverse('pricing_page'))
+        except ObjectDoesNotExist:
+            return redirect(reverse('pricing_page'))
+        
 
 class users:
     @login_required

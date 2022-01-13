@@ -221,7 +221,7 @@ class Gates(models.Model):
 
    
 class Tarrif(models.Model):
-    tarrif_id = models.UUIDField(db_column='TarrifId', primary_key=True)  
+    tarrif_id = models.AutoField(db_column='TarrifId',primary_key=True)  
     customer_id = models.ForeignKey(Customers, on_delete=models.CASCADE, blank=True, null=True)
     name = models.CharField(db_column='Name', max_length=50)
     fromtime = models.FloatField(db_column='FromTime', blank=True, null=True)  
@@ -240,7 +240,6 @@ class Tarrif(models.Model):
     @classmethod
     def add_tarrif(self, customer_id, fromtime, totime, cost):
         self.objects.create(
-            tarrif_id = uuid4(),
             customer_id = Customers.objects.get(customer_id=customer_id),
             fromtime = fromtime,
             totime = totime,
@@ -490,3 +489,7 @@ def view_customer_users(customer_id):
     users =  Users.objects.filter(customer_id=customer_id)
     for user in users:
         print(user.email)
+
+def view_customers():
+    for customer in Customers.objects.all():
+        print(customer.customer_id, customer.company_name)
