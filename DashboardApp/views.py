@@ -160,7 +160,7 @@ class history:
 class pricing:
     @login_required
     def pricing_page(request):
-        context = {'tarrifs' : models.Tarrif.objects.all()}
+        context = {'tarrifs' : models.Tarrif.objects.filter(customer_id=request.user.customer_id.customer_id)}
         context['user'] = request.user
         return render(request, 'DashboardApp/Pricing/PricingPage.html', context)
 
