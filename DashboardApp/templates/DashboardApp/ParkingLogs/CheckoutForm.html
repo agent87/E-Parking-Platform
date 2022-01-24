@@ -70,10 +70,10 @@
                                             <label for="ticket_id">Checkin Method</label>
                                             <input type="text" class="form-control" id="checkin_method" value="{{ticket.checkin_method}}" disabled />
                                         </div>
-                                        <div class="form-group">
+                                        {% comment %} <div class="form-group">
                                             <label for="ticket_id">Checkin Agent</label>
                                             <input type="text" class="form-control" id="checkin_user" value="{{ticket.checkin_user.email}}" disabled />
-                                        </div>
+                                        </div> {% endcomment %}
                                         <!-- /.form-group -->
                                         <!-- /.form-group -->
                                         <div class="form-group">
@@ -123,10 +123,10 @@
                                             <label for="ticket_id">Checkout Method</label>
                                             <input type="text" class="form-control" id="checkout_method" name="checkout_method" value="Manual" disabled />
                                         </div>
-                                        <div class="form-group">
+                                        {% comment %} <div class="form-group">
                                             <label for="ticket_id">Checkout Agent(Current User)</label>
                                             <input type="text" class="form-control" value="{{user.email}}" disabled />
-                                        </div>
+                                        </div> {% endcomment %}
                                         <!-- /.form-group -->
                                         <!-- /.form-group -->
                                         <div class="form-group">

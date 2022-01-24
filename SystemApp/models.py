@@ -76,8 +76,11 @@ class Customers(models.Model):
         payements = []
         for account in list(Parkinglog.objects.filter(customer_id=self.customer_id).order_by().values('payment_method').distinct()):
             account_summary = {'name': account['payment_method']}
-            account_summary['count'] =  Parkinglog.objects.filter(customer_id=self.customer_id, payment_method=account['payment_method']).count()
-            account_summary['sum'] = "{:,.0f}".format(Parkinglog.objects.filter(customer_id=self.customer_id, payment_method=account['payment_method']).aggregate(Sum('cost'))['cost__sum'])
+            account_summary['count'] = Parkinglog.objects.filter(customer_id=self.customer_id, payment_method=account['payment_method']).count()
+            try:
+                account_summary['sum'] = "{:,.0f}".format(sum([int(payment.amount_payed) for payment in Parkinglog.objects.filter(customer_id=self.customer_id, payment_method=account['payment_method'])]))
+            except TypeError:
+                account_summary['sum'] = 0
             payements.append(account_summary)
         return payements
     
@@ -257,11 +260,15 @@ class Tarrif(models.Model):
     @classmethod
     def match_tarrif(self, duration):
         try:
-            cost =  self.objects.filter(fromtime__lte=duration, totime__gte=duration).first()
+            cost =  self.objects.filter(fromtime__lte=duration, totime__gte=duration)
             if cost is None:
-                return 0
+                return 0, {'warning': 'No tarrif found for this duration'}
+
+            elif len(cost) > 1:
+                return cost.first(), {'warning': 'Multiple tarrifs found for this duration. Consider deleting some overlapping tarrifs'}
+
             else:
-                return cost.cost
+                return int(cost.cost), {'warning': None}
         except AttributeError:
             return 0
 
