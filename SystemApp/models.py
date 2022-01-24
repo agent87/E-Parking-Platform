@@ -404,7 +404,7 @@ class Parkinglog(models.Model):
             checkout_method = checkout_method,
             checkout_user = Users.objects.get(user_id=checkout_user),
             exit_gate = Gates.objects.get(gate_id=exit_gate),
-            cost = Tarrif.match_tarrif((checkout_unix_time - checkin_unix_time).seconds/60).cost,
+            cost = Tarrif.match_tarrif((checkout_unix_time - checkin_unix_time).seconds/60),
             duration = (checkout_unix_time - checkin_unix_time).seconds,
             amount_payed = int(amount_payed),
             payment_method = payment_method,
