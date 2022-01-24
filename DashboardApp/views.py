@@ -139,7 +139,7 @@ class history:
         context = {'ticket' : models.Parkinglog.objects.get(ticket_id=ticket_id)}
         context['gates'] = models.Gates.objects.filter(customer_id=context['ticket'].customer_id.customer_id)
         context['user'] = request.user
-        context['cost'] = models.Tarrif.match_tarrif(context['ticket'].elapsed).cost
+        context['cost'] = models.Tarrif.match_tarrif(context['ticket'].elapsed)
         context['subscription'] = models.Subscriptions.is_subscribed(customer_id=request.user.customer_id.customer_id, plate_number = context['ticket'].plate_number)
         return render(request, 'DashboardApp/ParkingLogs/CheckoutForm.html', context)
 

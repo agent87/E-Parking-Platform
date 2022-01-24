@@ -24,6 +24,10 @@ class Customers(models.Model):
 
     class Meta:
         db_table = 'Customers'
+        verbose_name_plural = "Customers"
+
+    def __str__(self):
+        return self.company_name
 
     @classmethod
     def enroll_customer(self, company_name, address, comments):
@@ -94,6 +98,7 @@ class Users(AbstractUser):
 
     class Meta:
         db_table = 'Users'
+        verbose_name_plural = "Users"
 
     def __str__(self):
         return self.email
@@ -195,6 +200,7 @@ class Gates(models.Model):
 
     class Meta:
         db_table = 'Gates'
+        verbose_name_plural = "Gates"
 
     @classmethod
     def add_gate(self, customer_id, name, status, description=None, camera_id=None, cashiers=None):
@@ -234,6 +240,7 @@ class Tarrif(models.Model):
 
     class Meta:
         db_table = 'Tarrif'
+        verbose_name_plural = "Tarrifs"
         ordering = ('fromtime','totime')
 
 
@@ -250,7 +257,11 @@ class Tarrif(models.Model):
     @classmethod
     def match_tarrif(self, duration):
         try:
-            return self.objects.filter(fromtime__lte=duration, totime__gte=duration).first()
+            cost =  self.objects.filter(fromtime__lte=duration, totime__gte=duration).first()
+            if cost is None:
+                return 0
+            else:
+                return cost.cost
         except AttributeError:
             return 0
 
@@ -290,6 +301,10 @@ class Subscriptions(models.Model):
 
     class Meta:
         db_table = 'Subscriptions'
+        verbose_name_plural = "Subscription"
+
+    def __str__(self):
+        return self.customer_id.company_name + ' ' + self.plate_number
 
     @classmethod
     def add_subscription(self, user_id, customer_id, platenum, name, phonenum, office, parklot, amount, start_date, end_date):
@@ -361,6 +376,7 @@ class Parkinglog(models.Model):
 
     class Meta:
         db_table = 'ParkingLog'
+        verbose_name_plural = "Parking logs"
         ordering = ('-checkin_time',)
 
     @classmethod
