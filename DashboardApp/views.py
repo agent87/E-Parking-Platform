@@ -81,7 +81,7 @@ class Customers:
 
     def register(request):
         try:
-            customer = models.Customers.enroll_customer(company_name=request.POST.get('customer_name'), address = request.POST.get('address'), comments=None)
+            customer = models.Customers.enroll_customer(company_name=request.POST.get('customer_name'), address = request.POST.get('address'))
             if customer[0]:
                 try:
                     User = models.Users.add_user(customer[1].customer_id, request.POST.get('first_name'), request.POST.get('last_name'), request.POST.get('email'), request.POST.get('phonenum'), request.POST.get('password'), 'Admin')

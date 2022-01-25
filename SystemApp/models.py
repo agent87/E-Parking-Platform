@@ -17,10 +17,9 @@ from .managers import CustomUserManager
 class Customers(models.Model):
     customer_id = models.SmallAutoField(db_column='CustomerId', primary_key=True, editable=False)
     #administrator = models.ForeignKey('Users', on_delete=models.CASCADE, blank=True, null=True) 
-    company_name = models.CharField(db_column='CompanyName', max_length=50, blank=True, null=True) 
+    company_name = models.CharField(db_column='CompanyName', max_length=50 ) 
     address = models.CharField(db_column='Address', max_length=50, blank=True, null=True)
-    comments = models.CharField(db_column='Comments', max_length=500, blank=True, null=True)  
-    enrollment_date = models.DateField(blank=True, null=True)
+    enrollment_date = models.DateField(blank=True, default=datetime.date.today)
 
     class Meta:
         db_table = 'Customers'
@@ -30,8 +29,8 @@ class Customers(models.Model):
         return self.company_name
 
     @classmethod
-    def enroll_customer(self, company_name, address, comments):
-        self.objects.create(company_name=company_name, address=address, comments=comments, enrollment_date=datetime.date.today())
+    def enroll_customer(self, company_name, address):
+        self.objects.create(company_name=company_name, address=address, enrollment_date=datetime.date.today())
         return True, self.objects.latest('customer_id')
 
 
@@ -130,9 +129,9 @@ class Users(AbstractUser):
 
                                         ''',  [email])
 
-            return True, self.objects.latest('user_id')
+            return True, self.objects.latest('user_id'), None
         except IntegrityError:
-            return False, 'Email already exists'
+            return False, None, 'Email already exists'
     
     @property
     def total_entries(self):
