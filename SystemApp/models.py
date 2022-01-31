@@ -16,10 +16,9 @@ from .managers import CustomUserManager
 
 class Customers(models.Model):
     customer_id = models.SmallAutoField(db_column='CustomerId', primary_key=True, editable=False)
-    #administrator = models.ForeignKey('Users', on_delete=models.CASCADE, blank=True, null=True) 
-    company_name = models.CharField(db_column='CompanyName', max_length=50 ) 
+    company_name = models.CharField(db_column='CompanyName', max_length=50, unique=True) 
     address = models.CharField(db_column='Address', max_length=50, blank=True, null=True)
-    enrollment_date = models.DateField(blank=True, default=datetime.date.today)
+    enrollment_date = models.DateField( default=datetime.date.today)
 
     class Meta:
         db_table = 'Customers'
@@ -27,6 +26,18 @@ class Customers(models.Model):
 
     def __str__(self):
         return self.company_name
+
+    @classmethod
+    def enroll(self, CustomerForm):
+        try:
+            customer = Customers(
+                company_name=CustomerForm.cleaned_data['company_name'],
+                address=CustomerForm.cleaned_data['address'],
+                enrollment_date=datetime.date.today())
+            customer.save()
+            return customer
+        except IntegrityError:
+            return False
 
     @classmethod
     def enroll_customer(self, company_name, address):
@@ -104,6 +115,17 @@ class Users(AbstractUser):
 
     def __str__(self):
         return self.email
+
+    def enroll(self, customer_id, UserForm, role):
+        try:
+            user = Users(
+                email=UserForm.cleaned_data['email'],
+                phonenum=UserForm.cleaned_data['phonenum'],
+                mail_verified=UserForm.cleaned_data['mail_verified'])
+            user.save()
+            return user
+        except IntegrityError:
+            return False
     
     @classmethod
     def add_user(self, customer_id, first_name, last_name, email, phonenum, password, role):

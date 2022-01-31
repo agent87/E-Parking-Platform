@@ -12,8 +12,7 @@ urlpatterns = [
     path('logout', views.authentication.logout, name='logout_request'),
 
     ###Register Customer#####
-    path('sign-up', views.Customers.RegisterView, name='RegisterView'),
-    path('sign-up/submit', views.Customers.register, name='SubmitCustomerForm'),
+    path('registration', views.registration.as_view() , name='registration'),
 
 
     ###Testing####

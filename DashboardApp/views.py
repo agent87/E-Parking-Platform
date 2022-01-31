@@ -1,3 +1,4 @@
+from DashboardApp.forms import LoginForm
 from SystemApp import models
 from SystemApp import managers
 from django.shortcuts import render, redirect
@@ -5,8 +6,36 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.core.exceptions import ObjectDoesNotExist
+from django.views import View
 from System import utilities
 import time
+from DashboardApp import forms
+
+
+class registration(View):
+    template = 'DashboardApp/Accounts/CustomerForm.html'
+    context = { 'CustomerForm': forms.CustomerForm() }
+    context['AdminForm'] = forms.UserForm()
+
+    def get(self, request):
+        return render(request, self.template, context=self.context)
+
+    def post(self, request):
+        Customer = forms.CustomerForm(request.POST)
+        Admin = forms.UserForm(request.POST)
+        if Customer.is_valid() and Admin.is_valid():
+            if models.Users.objects.filter(username=Admin.cleaned_data['username']).exists():
+                self.context['error'] = 'Username already exists'
+                return render(request, self.template, context=self.context)
+            else:
+                models.Customers.enroll(Customer.cleaned_data)
+                models.Users.enroll(Admin.cleaned_data)
+                return redirect(reverse('VerifyEmail'))
+        else:
+            self.context['CustomerForm'] = Customer
+            self.context['AdminForm'] = Admin
+            return render(request, self.template, context=self.context)
+
 
 
 # Create your views here.
@@ -110,7 +139,8 @@ class DashboardView:
 
 class LoginView:
     def LoginView(request):
-        return render(request, 'DashboardApp/Authentication/login.html')
+        context = {'LoginForm': LoginForm()}
+        return render(request, 'DashboardApp/Authentication/login.html', context)
 
 
 class history:
