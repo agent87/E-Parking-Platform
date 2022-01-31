@@ -28,7 +28,7 @@
   </div>
   <div class="card card-default">
     <div class="card-header">
-      <h3 class="card-title">Customer Sign Up Form</h3>
+      <h3 class="card-title">Join our platform to get valuable insights</h3>
     </div>
     <div class="card-body p-0">
       <form action="{% url 'registration' %}" method="POST">
@@ -58,6 +58,7 @@
             </div>
             <div class="row">
               <div class="col">
+                <button class="btn btn-default col-sm-12" type="button" disabled>Previous</button>
               </div>
               <div class="col">
                 <button class="btn btn-primary col-sm-12" type="button" onclick="stepper.next()">Next</button>
@@ -87,7 +88,19 @@
     </div>
   </div>
   <!-- /.card -->
-
+  {% if FormError %}
+  <div id="toastsContainerTopRight" class="toasts-top-right fixed">
+    <div class="toast bg-danger fade show" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-header">
+        <strong class="mr-auto">Warning</strong>
+        <small>Invalid Credentials</small>
+        <button data-dismiss="toast" type="button" class="ml-2 mb-1 close" aria-label="Close"><span aria-hidden="true">×</span></button></div>
+        {% for error in FormError %}
+          <div class="toast-body">• {{error.message}}</div>
+        {% endfor %}
+      </div>
+  </div>
+  {% endif %}
 
 <!-- /.login-box -->
 

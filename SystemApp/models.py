@@ -16,7 +16,7 @@ from .managers import CustomUserManager
 
 class Customers(models.Model):
     customer_id = models.SmallAutoField(db_column='CustomerId', primary_key=True, editable=False)
-    company_name = models.CharField(db_column='CompanyName', max_length=50, unique=True) 
+    company_name = models.CharField(db_column='CompanyName', max_length=50) 
     address = models.CharField(db_column='Address', max_length=50, blank=True, null=True)
     enrollment_date = models.DateField( default=datetime.date.today)
 
@@ -30,10 +30,7 @@ class Customers(models.Model):
     @classmethod
     def enroll(self, CustomerForm):
         try:
-            customer = Customers(
-                company_name=CustomerForm.cleaned_data['company_name'],
-                address=CustomerForm.cleaned_data['address'],
-                enrollment_date=datetime.date.today())
+            customer = Customers(company_name=CustomerForm.cleaned_data['customer_name'], address=CustomerForm.cleaned_data['address'], enrollment_date=datetime.date.today())
             customer.save()
             return customer
         except IntegrityError:
@@ -116,12 +113,25 @@ class Users(AbstractUser):
     def __str__(self):
         return self.email
 
+    @classmethod
     def enroll(self, customer_id, UserForm, role):
+        if role == 'Admin':
+            is_superuser = True
+            is_staff = True
+        else:
+            is_superuser = False
+            is_staff = True
         try:
             user = Users(
-                email=UserForm.cleaned_data['email'],
-                phonenum=UserForm.cleaned_data['phonenum'],
-                mail_verified=UserForm.cleaned_data['mail_verified'])
+                customer_id = Customers.objects.get(customer_id=customer_id),
+                email = UserForm.cleaned_data['email'],
+                password = make_password(UserForm.cleaned_data['password']),
+                phonenum = UserForm.cleaned_data['phonenum'],
+                mail_verified = utilities.mail_server.generate_mail_verification_token(),
+                is_active = True,
+                is_staff = is_staff,
+                is_superuser = is_staff,
+                date_joined = datetime.datetime.now())
             user.save()
             return user
         except IntegrityError:

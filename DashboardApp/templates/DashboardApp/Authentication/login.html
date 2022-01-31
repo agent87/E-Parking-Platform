@@ -30,16 +30,13 @@
       <p class="login-box-msg">Sign in to start your session</p>
       <form action="{% url 'login' %}" method="POST">
         {% csrf_token %}
-        {{LoginForm}}
+        {{ LoginForm }}
         <div class="mb-2"> 
         </div> 
         <button type="submit" class="btn btn-primary btn-block">Sign In</button>
         <div>
           <p class="mb-0">
-            <a href={% url 'login' %}>I forgot my password</a>
-          </p>
-          <p class="mb-0">
-            <a href={% url 'registration' %} class="text-center">Register with us as a Parking owner!</a>
+            <a href={% url 'registration' %} class="text-center">Need an account? Join us here!</a>
           </p>
         </div>
       </form>
@@ -47,6 +44,18 @@
     <!-- /.login-card-body -->
   </div>
 </div>
+{% if errors %}
+<div id="toastsContainerTopRight" class="toasts-top-right fixed">
+  <div class="toast bg-danger fade show" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+      <strong class="mr-auto">Invalid Credentials</strong>
+      <button data-dismiss="toast" type="button" class="ml-2 mb-1 close" aria-label="Close"><span aria-hidden="true">×</span></button></div>
+      {% for error in errors %}
+        <div class="toast-body">• {{error.message}}</div>
+      {% endfor %}
+    </div>
+</div>
+{% endif %}
 <!-- /.login-box -->
 <!-- jQuery -->
 <script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
