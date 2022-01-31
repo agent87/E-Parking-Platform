@@ -24,16 +24,17 @@ class registration(View):
         Customer = forms.CustomerForm(request.POST)
         Admin = forms.UserForm(request.POST)
         if Customer.is_valid() and Admin.is_valid():
-            if models.Users.objects.filter(username=Admin.cleaned_data['username']).exists():
+            if models.Users.objects.filter(email=Admin.cleaned_data['email']).exists():
                 self.context['error'] = 'Username already exists'
                 return render(request, self.template, context=self.context)
             else:
-                models.Customers.enroll(Customer.cleaned_data)
-                models.Users.enroll(Admin.cleaned_data)
+                customer = models.Customers.enroll(Customer.cleaned_data)
+                models.Users.enroll(customer, Admin.cleaned_data, role="Admin")
                 return redirect(reverse('VerifyEmail'))
         else:
             self.context['CustomerForm'] = Customer
             self.context['AdminForm'] = Admin
+            self.context['error'] = 'Please check your inputs for error!'
             return render(request, self.template, context=self.context)
 
 
