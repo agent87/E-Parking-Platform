@@ -4,7 +4,7 @@ from SystemApp import managers
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login, logout
+from django.contrib import auth
 from django.core.exceptions import ObjectDoesNotExist
 from django.views import View
 from System import utilities
@@ -25,18 +25,55 @@ class registration(View):
         Admin = forms.UserForm(request.POST)
         if Customer.is_valid() and Admin.is_valid():
             if models.Users.objects.filter(email=Admin.cleaned_data['email']).exists():
-                self.context['error'] = 'Username already exists'
+                Admin.add_error(None, "Admin email already exists")
+                self.context['CustomerForm'] = Customer
+                self.context['AdminForm'] = Admin
+                self.context['FormError'] = Admin.errors.get_json_data()['__all__']
                 return render(request, self.template, context=self.context)
             else:
-                customer = models.Customers.enroll(Customer.cleaned_data)
-                models.Users.enroll(customer, Admin.cleaned_data, role="Admin")
+                customer_id = models.Customers.enroll(Customer).customer_id
+                models.Users.enroll(customer_id, Admin, role="Admin")
+                print('User created')
                 return redirect(reverse('VerifyEmail'))
         else:
-            self.context['CustomerForm'] = Customer
+            print('Forms are not valid')
+            self.context['CustomerForm'] = Customer.add_error(None, "Please fill all the fields & check for errors")
             self.context['AdminForm'] = Admin
-            self.context['error'] = 'Please check your inputs for error!'
             return render(request, self.template, context=self.context)
 
+
+class authentication:
+    class login(View):
+        template = 'DashboardApp/Authentication/login.html'
+        context = {'LoginForm': LoginForm()}
+
+        def get(self, request):
+            self.context['LoginForm'] = LoginForm()
+            return render(request, self.template, context=self.context)
+
+        def post(self, request):
+            form = LoginForm(request.POST)
+            if form.is_valid():
+                user = auth.authenticate(request, username=form.cleaned_data['email'], password=form.cleaned_data['password'])
+                if user is not None:
+                    auth.login(request, user)
+                    return redirect(reverse('dashboard_page'))
+                else:
+                    print(form.errors)
+                    form.add_error(None, "Incorect email or password!")
+                    self.context['LoginForm'] = form
+                    self.context['errors'] = form.errors.get_json_data()['__all__']
+                    return render(request, self.template, context=self.context)
+            else:
+                form.add_error(None, "Please fill all the fields & check for errors")
+                self.context['LoginForm'] = form
+                self.context['errors'] = form.errors.get_json_data()['__all__']
+                return render(request, self.template, context=self.context)
+        
+    class logout(View):
+        def get(request):
+            auth.logout(request)
+            return redirect(reverse('LoginView'))
 
 
 # Create your views here.
@@ -83,27 +120,6 @@ class responses:
         logout(request)
         return redirect(reverse('logout_request'))
 
-class authentication:
-    def login(request):
-        if request.method == "POST":
-            email = request.POST.get('username')
-            password = request.POST.get('password')
-            user = authenticate(request, username=email, password=password)
-            if user is not None:
-                if user.mail_verified == 'True':
-                    login(request, user)
-                    return redirect(reverse('dashboard_page'))
-                else:
-                    return redirect(reverse('VerifyEmail'))
-            else:
-                return redirect(reverse('LoginView'))
-        else:
-            return redirect(reverse('LoginView'))
-
-    def logout(request):
-        logout(request)
-        return redirect(reverse('LoginView'))
-
 class Customers:
     def RegisterView(request):
         return render(request, 'DashboardApp/Accounts/CustomerForm.html')
@@ -138,10 +154,6 @@ class DashboardView:
         context['payements_summary'] = models.Customers.objects.get(customer_id = request.user.customer_id.customer_id).payements_summary
         return render(request, 'DashboardApp/Dashboard/dashboard.html', context)
 
-class LoginView:
-    def LoginView(request):
-        context = {'LoginForm': LoginForm()}
-        return render(request, 'DashboardApp/Authentication/login.html', context)
 
 
 class history:

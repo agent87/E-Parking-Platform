@@ -1,22 +1,16 @@
 from django.urls import path
 from . import views
-from django.contrib import admin
 
 
 urlpatterns = [    
     ###Auth Related#####
-    path('', views.LoginView.LoginView, name='LoginView'),
-    path('auth/login', views.authentication.login, name='login'),
-    #path('login/<slug:redirect_to>', views.responses.login_page, name='login_page'),
-    path('reset', views.responses.login_page, name='reset_page'),
-    path('logout', views.authentication.logout, name='logout_request'),
+    path('login', views.authentication.login.as_view(), name='login'),
+    path('logout', views.authentication.logout.as_view(), name='logout'),
 
     ###Register Customer#####
-    path('registration', views.registration.as_view() , name='registration'),
+    path('join', views.registration.as_view() , name='registration'),
 
 
-    ###Testing####
-    path('test', views.responses.testing),
 
     ###Dashboard Related #####
     path('dashboard', views.DashboardView.dashboard_page, name='dashboard_page'),
