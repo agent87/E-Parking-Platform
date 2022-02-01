@@ -13,6 +13,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from DashboardApp import forms
 
 
+class index(View):
+    def get(self, request):
+        return redirect(reverse('login'))
+
 class registration(View):
     template = 'DashboardApp/Accounts/CustomerForm.html'
     context = { 'CustomerForm': forms.CustomerForm() }

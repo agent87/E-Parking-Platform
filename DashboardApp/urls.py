@@ -3,14 +3,12 @@ from . import views
 
 
 urlpatterns = [    
+    path('', views.index.as_view(), name='index'),
     ###Auth Related#####
     path('login', views.authentication.login.as_view(), name='login'),
     path('logout', views.authentication.logout.as_view(), name='logout'),
-
     ###Register Customer#####
     path('join', views.registration.as_view() , name='registration'),
-
-
 
     ###Dashboard Related #####
     path('dashboard', views.DashboardView.dashboard_page, name='dashboard_page'),
