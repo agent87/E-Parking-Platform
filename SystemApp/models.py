@@ -5,7 +5,6 @@ from django.db.models import Count, Avg, Sum, Max, Min
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.utils import IntegrityError
-from uuid import uuid4
 import time
 import datetime
 from System import utilities
