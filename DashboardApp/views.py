@@ -1,3 +1,4 @@
+from django.http import HttpResponse, HttpResponseBadRequest
 from DashboardApp.forms import LoginForm
 from SystemApp import models
 from SystemApp import managers
@@ -8,9 +9,13 @@ from django.contrib import auth
 from django.core.exceptions import ObjectDoesNotExist
 from django.views import View
 from System import utilities
-import time
+from django.contrib.auth.mixins import LoginRequiredMixin
 from DashboardApp import forms
 
+
+class index(View):
+    def get(self, request):
+        return redirect(reverse('login'))
 
 class registration(View):
     template = 'DashboardApp/Accounts/CustomerForm.html'
@@ -76,13 +81,73 @@ class authentication:
             return redirect(reverse('LoginView'))
 
 
+    
+class pricing(LoginRequiredMixin, View):
+    template_name = 'DashboardApp/Pricing/PricingPage.html'
+    context = {'tarrifForm' : forms.TarrifForm()}
+    http_method_names = ['get', 'post']
+
+    def get(self, request):
+        self.context['tarrifs'] = models.Tarrif.objects.filter(customer_id=request.user.customer_id.customer_id)
+        self.context['user'] = request.user
+        return render(request, self.template_name, self.context)
+
+    def post(self, request):
+        if request.POST.get('action') == 'add':
+            form = forms.TarrifForm(request.POST)
+            if form.is_valid():
+                form.cleaned_data['customer_id'] = request.user.customer_id
+                form.create()
+                self.context['tarrifs'] = models.Tarrif.objects.filter(customer_id=request.user.customer_id.customer_id)
+                self.context['success'] = {'message': 'Tarrif updated successfully'}
+                return render(request, self.template_name, self.context)
+            else:
+                self.context['tarrifForm'] = form
+                self.context['errors'] = form.errors.get_json_data()
+                return render(request, self.template_name, self.context)
+
+        elif request.POST.get('action') == 'update':
+            form = forms.TarrifForm(request.POST)
+            if form.is_valid():
+                form.update()
+                self.context['tarrifs'] = models.Tarrif.objects.filter(customer_id=request.user.customer_id.customer_id)
+                self.context['success'] = {'message': 'Tarrif updated successfully'}
+                return render(request, self.template_name, self.context)
+            else:
+                print(form.errors)
+                self.context['tarrifForm'] = form
+                self.context['errors'] = form.errors.get_json_data()
+                return render(request, self.template_name, self.context)
+
+        elif request.POST.get('action') == 'delete':
+            tarrif_id = request.POST.get('tarrif_id')
+            models.Tarrif.objects.get(tarrif_id=tarrif_id).delete()
+            self.context['tarrifs'] = models.Tarrif.objects.filter(customer_id=request.user.customer_id.customer_id)
+            return render(request, self.template_name, self.context)
+
+        else:
+            return HttpResponseBadRequest()
+
+
+
+    @login_required
+    def delete_pricing(request, tarrif_id):
+        tarrif_id = int(tarrif_id)
+        try: 
+            pricing = models.Tarrif.objects.filter(tarrif_id=tarrif_id, customer_id=request.user.customer_id.customer_id).delete()
+            return redirect(reverse('pricing_page'))
+        except ObjectDoesNotExist:
+            return redirect(reverse('pricing_page'))
+ 
+
+
 # Create your views here.
 class responses:
     def login_page(request, redirect_to=None):
         if request.method == "POST":
             username = request.POST.get('username')
             password = request.POST.get('password')
-            user = authenticate(request, username=username, password=password)
+            user = auth.authenticate(request, username=username, password=password)
             if user is not None:
                 return redirect(reverse('history_page'))
             else:
@@ -117,7 +182,7 @@ class responses:
 
     @login_required
     def logout_request(request):
-        logout(request)
+        auth.logout(request)
         return redirect(reverse('logout_request'))
 
 class Customers:
@@ -199,36 +264,7 @@ class history:
                                 )
         return redirect(reverse('parked_page'))
 
-    
-class pricing:
-    @login_required
-    def pricing_page(request):
-        context = {'tarrifs' : models.Tarrif.objects.filter(customer_id=request.user.customer_id.customer_id)}
-        context['user'] = request.user
-        return render(request, 'DashboardApp/Pricing/PricingPage.html', context)
-
-    @login_required
-    def add_pricing(request):
-        if request.method == "POST":
-            customer_id = request.user.customer_id.customer_id
-            fromtime = request.POST.get('fromtime')            
-            totime = request.POST.get('totime')
-            cost = request.POST.get('cost')
-            models.Tarrif.add_tarrif(customer_id, fromtime, totime, cost)
-            return redirect(reverse('pricing_page'))
-        else:
-            return(reverse('pricing_page'))
-
-
-    @login_required
-    def delete_pricing(request, tarrif_id):
-        tarrif_id = int(tarrif_id)
-        try: 
-            pricing = models.Tarrif.objects.filter(tarrif_id=tarrif_id, customer_id=request.user.customer_id.customer_id).delete()
-            return redirect(reverse('pricing_page'))
-        except ObjectDoesNotExist:
-            return redirect(reverse('pricing_page'))
-        
+       
 
 class users:
     @login_required

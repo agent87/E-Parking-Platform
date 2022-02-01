@@ -5,10 +5,10 @@ from django.db.models import Count, Avg, Sum, Max, Min
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.utils import IntegrityError
-from uuid import uuid4
 import time
 import datetime
 from System import utilities
+from django.utils import timezone
 
 
 from .managers import CustomUserManager
@@ -263,19 +263,15 @@ class Gates(models.Model):
 class Tarrif(models.Model):
     tarrif_id = models.AutoField(db_column='TarrifId',primary_key=True)  
     customer_id = models.ForeignKey(Customers, on_delete=models.CASCADE, blank=True, null=True)
-    name = models.CharField(db_column='Name', max_length=50)
-    fromtime = models.FloatField(db_column='FromTime', blank=True, null=True)  
-    totime = models.FloatField(db_column='ToTime', blank=True, null=True)  
+    from_time = models.BigIntegerField(db_column='FromTime')  
+    to_time = models.BigIntegerField(db_column='ToTime')  
     cost = models.FloatField(db_column='Cost', blank=True, null=True)  
-    initiatedby = models.CharField(db_column='Initiatedby', max_length=50, blank=True, null=True)  
-    date = models.DateField(db_column='Date', blank=True, null=True)  
-    lastupdate = models.DateField(db_column='LastUpdate', blank=True, null=True)  
-    updatelog = models.CharField(db_column='UpdateLog', max_length=50, blank=True, null=True)  
+    datetime = models.DateTimeField(db_column='Date', default=timezone.now)    
 
     class Meta:
         db_table = 'Tarrif'
         verbose_name_plural = "Tarrifs"
-        ordering = ('fromtime','totime')
+        ordering = ('from_time','to_time')
 
 
     @classmethod
@@ -308,12 +304,12 @@ class Tarrif(models.Model):
         self.objects.filter(tarrifid=tarrifid).delete()
 
     @property
-    def fromtime_formatted(self):
-        return utilities.time_str(self.fromtime * 60)
+    def from_time_formatted(self):
+        return utilities.time_str(self.from_time * 60)
 
     @property
-    def totime_formatted(self):
-        return utilities.time_str(self.totime * 60)
+    def to_time_formatted(self):
+        return utilities.time_str(self.to_time * 60)
 
     @property
     def cost_formated(self):

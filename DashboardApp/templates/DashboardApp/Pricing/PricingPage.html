@@ -14,7 +14,7 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <div class="container-fluid">
-        <h4 class="text-center display-4">Parking Tarrifs</h4>
+        <h4 class="text-center display-4">Pricing</h4>
       </div>
       <!-- /.container-fluid -->
     </section>
@@ -25,8 +25,8 @@
             {% if user.role != "Cashier" %}
             <div class="row">
                 <div class="col-md-12 offset-md-0">
-                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#TariffForm">
-                        Add Tarrifs
+                    <button type="button" class="btn btn-default" id="AddTarrif" data-toggle="modal" data-target="#PricingFormModal">
+                        Add Tarrif
                     </button>
                 </div>
             </div> 
@@ -37,8 +37,7 @@
                   <!--Entity Table-->
         <div class="card card-default">
             <div class="card-header">
-              <h3 class="card-title">Parking Tarrifs</h3>
-  
+              <h3 class="card-title"></h3>
               <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
                   <i class="fas fa-minus"></i>
@@ -57,19 +56,20 @@
                                             <th>Time From (Minutes)</th>
                                             <th>Time To (Minutes)</th>
                                             <th>Cost (RWF)</th>
-                                            <th>Remove</th>
+                                            <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for tarrif in tarrifs%}
+                                        {% for tarrif in tarrifs %}
                                         <tr>
                                             <th scope="row">{{forloop.counter}}</th>
-                                            <td>{{ tarrif.fromtime_formatted }}</td>
-                                            <td>{{ tarrif.totime_formatted }}</td>
+                                            <td>{{ tarrif.from_time_formatted }}</td>
+                                            <td>{{ tarrif.to_time_formatted }}</td>
                                             <td>{{ tarrif.cost_formated }} RWF</td>
                                             <td>
-                                              <a href="pricing/{{tarrif.tarrif_id}}/delete" class="btn-sm btn-danger" role="button" data-bs-toggle="button">Delete</a>
-                                            </td>
+                                              <a class="btn-sm btn-warning ModifyTarrif" data-toggle="modal" data-target="#PricingFormModal" role="button" data-from-time={{ tarrif.from_time }} data-to-time={{ tarrif.to_time }} data-cost={{ tarrif.cost }} id={{ tarrif.tarrif_id }} data-bs-toggle="button">Update</a>
+                                              <a class="btn-sm btn-danger DeleteTarrif"  data-toggle="modal" data-target="#ConfirmModalDelete" role="button" id={{ tarrif.tarrif_id }} data-bs-toggle="button">Delete</a>
+                                          </td>
                                         </tr>
                                         {% endfor %}
                                     </tbody>
@@ -88,7 +88,12 @@
 
     {% block PricingForm %}
 
-    {% include 'DashboardApp/Pricing/PricingForm.html' %}
+      {% include 'DashboardApp/Pricing/PricingForm.html' with tarrifForm=tarrifForm %}
+
+    {% endblock %}
+    {% block ConfirmModalDelete %}
+
+      {% include 'DashboardApp/Pricing/ConfirmDelete.html' %}
 
     {% endblock %}
         
@@ -135,10 +140,35 @@
       });
     });
   </script>
+<script>
+$(function(){
+  $(".ModifyTarrif").click(function(){
+    $("#PricingFormTitle").html("Update Tarrif");
+    $("#TarriffForm-tarrif_id").val($(this).attr("id"));
+    $("#from_time").val($(this).attr("data-from-time"));
+    $("#to_time").val($(this).attr("data-to-time"));
+    $("#cost").val($(this).attr("data-cost"));
+    $("#PricingFormAction").val("update");});
+
+  $(".DeleteTarrif").click(function(){
+    $("#DeleteTarrifForm-tarrifid").val($(this).attr("id"))});
+
+  $("#AddTarrif").click(function(){
+    $("#PricingFormTitle").html("Add New Tarrif");
+    $("#TariffForm").attr("Method", "POST");
+    $("#tarrif_id").val('None');
+    $("#from_time").val(0);
+    $("#to_time").val(0);
+    $("#cost").val(0);
+    
+  });
+
+});
+
+
+</script>
 
 <script>
-  $(function () {
-    $('.select2').select2()
-  });
+
 </script>
 {% endblock %}
