@@ -1,31 +1,27 @@
 {% block PricingForm %}
 
 <!-- Default Size -->
-    <div class="modal fade" id="TariffForm" tabindex="-1" role="dialog">
+    <div class="modal fade" id="PricingFormModal" tabindex="-1" role="dialog">
         <div class="modal-dialog " role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="title" id="defaultModalLabel"> Add New Pricing</h4>
+                    <h4 class="PricingFormModal title" id="PricingFormTitle"> Add New Pricing</h4>
                 </div>
-                <form action="pricing/add" method="POST">
+                <form id="TariffForm"  action="{% url 'pricing' %}" method="POST">
                 {% csrf_token %}
+                <input type="hidden" name="action" id="PricingFormAction" value="add">
                 <div class="modal-body"> 
                     <div class="col-sm-12">
-                        <div class="form-group col-sm-12">                                    
-                            <input type="number" class="form-control" name="fromtime" placeholder="Enter time from">
-                        </div>
-                        <div class="form-group col-sm-12">                                    
-                            <input type="number" class="form-control" name="totime" placeholder="Enter time to ">
-                        </div>
-                        <div class="form-group col-sm-12">                                    
-                            <input type="number" class="form-control" name="cost" placeholder="Enter cost ">
-                        </div>
-                        
+                        {{ tarrifForm }}
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary waves-effect">Save Changes</button>
-                    <button type="button" class="btn btn-danger btn-simple waves-effect" data-dismiss="modal">Close</button>
+                    <div class="col cancelform" >
+                        <button type="button" class="btn btn-danger col-sm-12" data-dismiss="modal">Close</button>
+                    </div>
+                    <div class="col submitform" >
+                        <button type="submit" id="SubmitTarrifFormButton" class="btn btn-primary col-sm-12">Save Changes</button>
+                    </div>
                 </div>
                 </form>
             </div>

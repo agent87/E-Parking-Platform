@@ -1,4 +1,5 @@
-from django import forms 
+from django import forms
+from django.utils import timezone
 import SystemApp
 from .models import *
 import datetime
@@ -29,11 +30,21 @@ class UserForm(forms.Form):
         model = SystemApp.models.Users
 
 class TarrifForm(forms.Form):
-    name = forms.CharField(label='Name', widget=forms.TextInput(attrs={'class': 'form-control', 'id':'name', 'placeholder':'Name'}))
-    from_time = forms.TimeField(label='From Time', widget=forms.TimeInput(attrs={'class': 'form-control', 'id':'from_time', 'placeholder':'From Time'}))
-    to_time = forms.TimeField(label='To Time', widget=forms.TimeInput(attrs={'class': 'form-control', 'id':'to_time', 'placeholder':'To Time'}))
-    price = forms.IntegerField(label='Price', widget=forms.NumberInput(attrs={'class': 'form-control', 'id':'price', 'placeholder':'Price'}))
-    date = datetime.datetime.now().date()
+    tarrif_id = forms.CharField(widget = forms.HiddenInput(attrs={'id':'TarriffForm-tarrif_id'}), required = False)
+    from_time = forms.IntegerField(label='From Time', widget=forms.NumberInput(attrs={'class': 'form-control', 'id':'from_time','type':'number','placeholder':'Minutes'}))
+    to_time = forms.IntegerField(label='To Time', widget=forms.NumberInput(attrs={'class': 'form-control', 'id':'to_time', 'type':'number', 'placeholder':'Minutes'}))
+    duration = forms.CharField(label='Duration', required=False, disabled=True, widget=forms.TextInput(attrs={'class': 'form-control', 'id':'duration', 'placeholder':'Days/Hours/Minutes'}))
+    cost = forms.IntegerField(label='Price in Rwf', widget=forms.NumberInput(attrs={'class': 'form-control', 'id':'cost', 'type':'number', 'placeholder':'RWF'}))
 
+    def create(self):
+        tarrif = SystemApp.models.Tarrif(customer_id=self.cleaned_data['customer_id'], from_time=self.cleaned_data['from_time'], to_time=self.cleaned_data['to_time'], cost=float(self.cleaned_data['cost']), datetime=timezone.now())
+        tarrif.save()
+        return tarrif
 
-    
+    def update(self):
+        tarrif = SystemApp.models.Tarrif.objects.get(pk=self.cleaned_data['tarrif_id'])
+        tarrif.from_time = self.cleaned_data['from_time']
+        tarrif.to_time = self.cleaned_data['to_time']
+        tarrif.cost = float(self.cleaned_data['cost'])
+        tarrif.save()
+        return tarrif

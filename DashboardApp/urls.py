@@ -26,9 +26,7 @@ urlpatterns = [
     path('parked', views.responses.parked_page, name='parked_page'),
 
     ###Tarrif Related#####
-    path('pricing', views.pricing.pricing_page, name='pricing_page'),
-    path('pricing/add', views.pricing.add_pricing, name='add_tarrif'),
-    path('pricing/<slug:tarrif_id>/delete', views.pricing.delete_pricing, name='delete_tarrif'),
+    path('pricing', views.pricing.as_view(), name='pricing'),
 
     ###Subcribers
     path('subscribers', views.subscription.subscribers_page, name='subscribers_page'),
