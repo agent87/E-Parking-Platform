@@ -10,10 +10,6 @@ class LoginForm(forms.Form):
     password = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={'class': 'form-control', 'id':'password', 'placeholder':'Password'}))
     
 
-class RegistrationForm:
-    def __init__(self, *args, **kwargs):
-        self.AdminForm = UserForm()
-        self.CustomerForm = CustomerForm()
 
 class CustomerForm(forms.Form):
     customer_name = forms.CharField(label='Company Name', widget=forms.TextInput(attrs={'class': 'form-control', 'id':'customer_name', 'placeholder':'Company Name'}))
@@ -28,6 +24,9 @@ class UserForm(forms.Form):
 
     class Meta:      
         model = SystemApp.models.Users
+
+    def verify_mail(self):
+        pass
 
 class TarrifForm(forms.Form):
     tarrif_id = forms.CharField(widget = forms.HiddenInput(attrs={'id':'TarriffForm-tarrif_id'}), required = False)
@@ -48,3 +47,15 @@ class TarrifForm(forms.Form):
         tarrif.cost = float(self.cleaned_data['cost'])
         tarrif.save()
         return tarrif
+
+class TicketForm:
+    class CheckinForm(forms.Form):
+        gate = forms.ChoiceField(label='Gate', choices=SystemApp.models.Gates.objects.all().values_list('gate_id', 'name'))
+        plate_number = forms.CharField(label='Plate Number', widget=forms.TextInput(attrs={'class': 'form-control', 'id':'plate_number', 'placeholder':'Plate Number'}))
+        entry_time = forms.DateTimeField(label='Entry Time', widget=forms.DateTimeInput(attrs={'class': 'form-control', 'id':'entry_time', 'placeholder':'Entry Time'}))
+
+        def create(self):
+            pass
+
+    class CheckoutForm(forms.Form):
+        pass

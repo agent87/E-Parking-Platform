@@ -391,7 +391,7 @@ class Subscriptions(models.Model):
 class Parkinglog(models.Model):
     ticket_id = models.BigAutoField(db_column='TicketId',  primary_key=True)  
     customer_id = models.ForeignKey(Customers, on_delete=models.CASCADE, blank=True, null=True)
-    date = models.DateField(db_column='Date')  
+    date = models.DateField(db_column='Date', default=timezone.now())  
     plate_number = models.CharField(db_column='PlateNum', max_length=50)  
     entry_gate = models.ForeignKey(Gates, related_name='entry_gate', on_delete=models.CASCADE, blank=True, null=True)  
     checkin_method = models.CharField(db_column='CheckInMethod', max_length=10)
