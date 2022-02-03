@@ -191,7 +191,8 @@ $(function(){
         var elapsed = now_datetime.getTime() - checkin_datetime.getTime();
 
         $('#CheckoutForm-ticket_id').val(ticket_id);
-        
+        $('#CheckoutForm-plate_number').val(data.plate_number);
+
         $('#checkout_entry_date').val(data.fields.entry_date).change();
         $('#checkout_entry_time').val()
         $('#checkout_entry_gate').val(data.fields.entry_gate).change();

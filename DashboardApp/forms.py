@@ -73,7 +73,7 @@ class TicketForm:
     class CheckoutForm(forms.Form):
         action = forms.CharField(widget = forms.HiddenInput(attrs={'id':'CheckoutForm-action', 'value':'update'}), required = False)
         ticket_id = forms.CharField(label='Ticket ID', disabled=True, widget=forms.TextInput(attrs={'class': 'form-control', 'id':'CheckoutForm-ticket_id', 'placeholder':'Ticket ID'}))
-        plate_number = forms.CharField(label='Plate Number', disabled=True, widget=forms.TextInput(attrs={'class': 'form-control', 'id':'CheckoutForm-plate_number', 'placeholder':'Plate Number'}))
+        plate_number = forms.CharField(label='Plate Number', initial="", disabled=True, widget=forms.TextInput(attrs={'class': 'form-control', 'id':'CheckoutForm-plate_number', 'placeholder':'Plate Number'}))
         subscription_id  = forms.CharField(label='Subscription', disabled=True, widget=forms.TextInput(attrs={'class': 'form-control', 'id':'CheckoutForm-subscription', 'placeholder':'Subscription'}))
 
         def __init__(self, *args, **kwargs):
@@ -92,6 +92,11 @@ class TicketForm:
             exit_time = forms.TimeField(label='Exit Time', widget=forms.TimeInput(attrs={'class': 'form-control', 'type':'time', 'id':'checkout_exit_time', 'placeholder':'Entry Time'}))
             exit_gate = forms.ModelChoiceField(label='Exit Gate', queryset=SystemApp.models.Gates.objects.all(), initial=0, widget=forms.Select(attrs={'class': 'form-control', 'id':'checkout_exit_gate'}))
         
+        class payment(forms.Form):
+            cost = forms.IntegerField(label='Cost', disabled=True, widget=forms.NumberInput(attrs={'class': 'form-control', 'id':'checkout_cost', 'placeholder':'Cost'}))
+            amount_payed = forms.IntegerField(label='Amount Payed', widget=forms.NumberInput(attrs={'class': 'form-control', 'id':'checkout_amount_payed', 'placeholder':'Amount Payed'}))
+            payment_method = forms.CharField(label='Payment Method', widget=forms.TextInput(attrs={'class': 'form-control', 'id':'checkout_payment_method', 'placeholder':'Payment Method'}))
+
 
 class SubscriptionForm(forms.Form):
     customer_name = forms.CharField(label='Customer Name', widget=forms.TextInput(attrs={'class': 'form-control', 'id':'customer_name', 'placeholder':'Name'}))
