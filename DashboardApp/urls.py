@@ -13,22 +13,17 @@ urlpatterns = [
     ###Dashboard Related #####
     path('dashboard', views.DashboardView.dashboard_page, name='dashboard_page'),
 
-    ###Parking Logs Related#####
-    path('history', views.history.history_page, name='history_page'),
-    path('history/add', views.history.add_ticket, name='add_vehicle'),
-    path('history/<slug:ticket_id>/checkout', views.history.checkout, name='checkout'),
-    #path('history/<str:ticket_id>', views.responses.history_page, name='history_page'),
-    path('history/<slug:ticket_id>/close', views.history.close_ticket, name='close_ticket'),
-    
     ### Parked Vehicles Related#####
-    path('parked', views.responses.parked_page, name='parked_page'),
+    path('parking', views.parking.as_view(), name='parking'),
 
+    ###Parking Logs Related#####
+    path('history', views.history.history_page, name='history'),
+    
     ###Tarrif Related#####
     path('pricing', views.pricing.as_view(), name='pricing'),
 
     ###Subcribers
-    path('subscribers', views.subscription.subscribers_page, name='subscribers_page'),
-    path('subscribers/add', views.subscription.add_subscription, name='add_subscription'), 
+    path('subscription', views.subscription.as_view() , name='subscription'),
 
     path('accounts', views.responses.user_page, name='accounts_page'),
     path('accounts/add', views.users.add_user, name='add_account'),

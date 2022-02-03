@@ -13,6 +13,8 @@
   <link rel="stylesheet" href="{% static 'plugins/fontawesome-free/css/all.min.css' %}">
   <!-- Theme style -->
   <link rel="stylesheet" href="{% static 'dist/css/adminlte.min.css' %}">
+  <!-- Toastr Style -->
+  <link rel="stylesheet" href="{% static 'plugins/toastr/toastr.min.css' %}">
     {% block sources %}
     {% endblock %}
 
@@ -48,19 +50,19 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="{% url 'parked_page' %}" class="nav-link">
+            <a href="{% url 'parking' %}" class="nav-link">
               <i class="nav-icon fas fa-car-alt"></i>
-              <p>Parked Vehicles</p>
+              <p>Parking</p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="{% url 'history_page' %}" class="nav-link">
+            <a href="{% url 'history' %}" class="nav-link">
               <i class="nav-icon fas fa-history"></i>
               <p>History</p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="{% url 'subscribers_page' %}" class="nav-link">
+            <a href="{% url 'subscription' %}" class="nav-link">
               <i class="nav-icon fas fa-address-book"></i>
               <p>Subcriptions</p>
             </a>
@@ -75,27 +77,27 @@
           {% endif %}
           <li class="nav-header">MISCELLANEOUS</li>
           <li class="nav-item">
-            <a href="{% url 'self_profile' %}" class="nav-link">
+            <a href="{% url 'self_profile' %}" id="profile-link" class="nav-link">
               <i class="nav-icon fas fa-user-cog"></i>
               <p>My Profile</p>
             </a>
           </li>
           {% if user.is_superuser %}
               <li class="nav-item">
-                <a href="{% url 'settings_page' %}" class="nav-link">
+                <a href="{% url 'settings_page' %}" id="settings-link" class="nav-link">
                   <i class="nav-icon fas fa-cog"></i>
                   <p>Systems Settings</p>
                 </a>
               </li>
           {% endif %}
           <li class="nav-item">
-            <a href="{% url 'contact_us_page' %}" class="nav-link">
+            <a href="{% url 'contact_us_page' %}" id="contact-link" class="nav-link">
               <i class="nav-icon fas fa-paper-plane"></i>
               <p>Contact us</p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="{% url 'logout' %}" class="nav-link">
+            <a href="{% url 'logout' %}" id="logout-link" class="nav-link">
               <i class="nav-icon fas fa-sign-out-alt"></i>
               <p>Sign Out</p>
             </a>
@@ -132,8 +134,17 @@
 <script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
 <!-- Bootstrap 4 -->
 <script src="{% static 'plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<!-- Toastr -->
+<script src="{% static 'plugins/toastr/toastr.min.js' %}"></script>
 <!-- AdminLTE App -->
 <script src="{% static 'dist/js/adminlte.min.js' %}"></script>
+<!-- Inputmasker-->
+<script src="{% static 'plugins/mask/dist/jquery.inputmask.js' %}"></script>
+
+<script>
+ 
+</script>
+
 {% block script %}
 
 {% endblock %}

@@ -93,62 +93,11 @@
         </div>
 
         <!-- Modal Dialogs ========= --> 
-    <!-- Default Size -->
-    <!-- Default Size -->
-    <div class="modal fade" id="SubcriptionForm" tabindex="-1" role="dialog">
-        <div class="modal-dialog " role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="title" id="defaultModalLabel">Subscription Payment Form</h4>
-                </div>
-                <form action="{% url 'add_subscription' %}"  method="POST">
-                {% csrf_token %}
-                <div class="modal-body"> 
-                    <div class="col-sm-12">
-                        <div class="form-group col-sm-12">    
-                            <label>Plate Number</label>                                  
-                            <input type="text" name="platenum" class="form-control" placeholder="Enter Plate Number">
-                        </div>
-                        <div class="form-group col-sm-12">    
-                            <label>Name</label>                                  
-                            <input type="text" name="name" class="form-control" placeholder="Name">
-                        </div>
-                        <div class="form-group col-sm-12">    
-                            <label>Phone Number</label>                                  
-                            <input type="text" name="phonenum" class="form-control" placeholder="Enter Contact">
-                        </div>
-                        <div class="form-group col-sm-12">    
-                            <label>Office Lot</label>                                  
-                            <input type="text" name="office" class="form-control" placeholder="Enter Office Lot">
-                        </div>
-                        <div class="form-group col-sm-12">    
-                            <label>Parking Lot </label>                                  
-                            <input type="text" name="parklot" class="form-control" placeholder="Enter Parking Lot">
-                        </div>
-                        <div class="form-group col-sm-12">    
-                            <label>Amount Recieved</label>                                  
-                            <input type="number" name="amount" class="form-control" placeholder="Amount Recieved">
-                        </div>
-                        <div class="form-group col-sm-12">    
-                            <label>Start Date</label>                                
-                            <input type="date" name="start_date" class="form-control" placeholder="Enter Time from">
-                        </div>
-                        <div class="form-group col-sm-12">    
-                            <label>End Date</label>                                
-                            <input type="date" name="end_date" class="form-control" placeholder="Enter Time from">
-                        </div>
-                    </div>
-                </div>        
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary waves-effect">Save Changes</button>
-                    <button type="button" class="btn btn-danger btn-simple waves-effect" data-dismiss="modal">Close</button>
-                </div>
-                </form>
-            </div>
-        </div>
-    </div>    
+ 
     </section>
   </div>
+
+{% include "DashboardApp/Subscribers/Subscriptions.html" with SubscriptionForm=SubscriptionForm %}
 
 {% endblock %}
 
@@ -176,18 +125,9 @@
 <script>
     $(function () {
       $("#example1").DataTable({
-        "responsive": true, "lengthChange": false, "autoWidth": false,
-        "buttons": ["copy", "csv", "excel", "colvis"]
+        "responsive": true, "lengthChange": true, "autoWidth": true,
+        "buttons": ["copy", "csv", "excel", "colvis"], "ordering" : true, "responsive": true
       }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-      $('#example2').DataTable({
-        "paging": true,
-        "lengthChange": false,
-        "searching": false,
-        "ordering": true,
-        "info": true,
-        "autoWidth": false,
-        "responsive": true,
-      });
     });
   </script>
 

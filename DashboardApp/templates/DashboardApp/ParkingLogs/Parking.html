@@ -1,0 +1,218 @@
+
+{% extends 'DashboardApp/Base.html' %}
+{% load static %}
+
+{% block sources %}
+  <link rel="stylesheet" href="{% static 'plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <h4 class="text-center display-4">Parked Vehicles</h4>
+      </div>
+      <!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 offset-md-0">
+                    <button type="button" class="btn btn-default"  id="AddVehicleButton" data-toggle="modal" data-target="#CheckinFormModal">
+                        Check in Vehicle
+                    </button>
+                </div>
+            </div> 
+            <!-- List of Accounts-->
+            <div class="row mt-2">
+                <div class="col-md-12 offset-md-0">
+                  <!--Entity Table-->
+        <div class="card card-default">
+            <div class="card-header">
+              <h3 class="card-title">Parked Vehicles List</h3>
+  
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                  <i class="fas fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-tool" data-card-widget="remove">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body" style="display: block;" id="entities">
+                <table class="table" id="example1">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            {% comment "" %}<th>Ticket Date</th>{% endcomment %}
+                                            <th>Plate Number</th>
+                                            <th>Entry Gate</th>
+                                            <th>Checkin Date/time</th>
+                                            <th>Elapsed</th>
+                                            <th>Close Ticket</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for vehicle in vehicles %}
+                                        <tr>
+                                            <th scope="row">{{forloop.counter}}</th>
+                                            {% comment "" %}<td>{{parked_vehicle.date}}</td>{% endcomment %}
+                                            <td>{{vehicle.plate_number}}</td>
+                                            <td>{{vehicle.entry_gate.name}}</td>
+                                            <td>{{vehicle.checkin_datetime}}</td>
+                                            <td>{{vehicle.format_elapsed}}</td>
+                                            <td>
+                                                <a class="btn-sm btn-primary checkout_ticket" id={{ vehicle.ticket_id }}  role="button" data-bs-toggle="button">Checkout</a>
+                                                <a class="btn-sm btn-warning delete_ticket" id={{ vehicle.ticket_id }}  data-toggle="modal" data-target="#ConfirmModal" role="button" data-bs-toggle="button">Delete</a>
+                                            </td>                                            
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+              <!-- /.row -->
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer" style="display: block;">
+              Total Parked Vehicles : {{ parked_vehicles.count }}
+            </div>
+        </div>
+                  <!-- /.card -->
+                </div>
+                <!-- /.col -->
+            </div>
+        </div>
+
+    
+    </section>
+  </div>
+
+{% endblock %}
+
+{% block script %}
+
+<!-- jQuery -->
+<script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+<!-- Bootstrap 4 -->
+<script src="{% static 'plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<!-- Select2 -->
+<script src="{% static 'plugins/select2/js/select2.full.min.js' %}"></script>
+<!-- DataTables  & Plugins -->
+<script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+<script src="{% static 'plugins/jszip/jszip.min.js' %}"></script>
+<script src="{% static 'plugins/pdfmake/vfs_fonts.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+
+
+<script>
+    $(function () {
+      $("#example1").DataTable({
+        "responsive": true, "lengthChange": false, "autoWidth": false,
+        "buttons": ["copy", "csv", "excel", "colvis"]
+      }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+      $('#example2').DataTable({
+        "paging": true,
+        "lengthChange": false,
+        "searching": false,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+      });
+    });
+  </script>
+
+<script>
+  $(function () {
+    $('.select2').select2()
+  });
+</script>
+
+{% if CheckinForm.gates > 0 %}
+
+      {% include 'DashboardApp/ParkingLogs/CheckinForm.html' with CheckinForm=CheckinForm %}
+      {% include 'DashboardApp/ParkingLogs/TicketForm.html' with TicketForm=TicketForm %}
+      {% include 'DashboardApp/ConfirmModal.html' with submit_url="/history" %}
+
+
+{% else %}
+
+      <script>
+        $(function () {
+          $("#AddVehicleButton").click(function(){
+              toastr.error("Can not enroll vehicle without a Gate. Click here to a gate", "Empty Gates!",
+              {onclick: function(){ window.location.href = "{% url 'settings_page' %}"},
+              closeButton: true,
+              progressBar: true,
+              timeout : 3000,
+              preventDuplicates: true,
+            });
+          });
+        }
+        );
+    </script>
+{% endif %}
+<script>
+  {% for alert in alerts %}
+    toastr.{{alert.type}}("{{alert.message}}", "{{alert.title}}",
+    {
+      closeButton: true,
+      progressBar: true,
+      timeout : 8000,
+      preventDuplicates: false,
+    });
+  {% endfor %}
+</script>
+
+<script>
+$(function(){
+  $('.checkout_ticket').click(function(){
+    var ticket_id = $(this).attr('id');
+    $.ajax({
+        url: '?format=json&ticket_id='+ticket_id,
+      }).done(function(data) {
+
+        var checkin_datetime = new Date(data.checkin_time);
+        var now_datetime = new Date();
+
+        var elapsed = now_datetime.getTime() - checkin_datetime.getTime();
+
+        $('#CheckoutForm-ticket_id').val(ticket_id);
+        $('#CheckoutForm-plate_number').val(data.plate_number);
+
+        $('#checkout_entry_date').val(data.fields.entry_date).change();
+        $('#checkout_entry_time').val()
+        $('#checkout_entry_gate').val(data.fields.entry_gate).change();
+
+        $('#checkout_exit_date').val(now_datetime.toISOString().split('T')[0]).change();
+        $('#checkout_exit_time').val(now_datetime.getHours() + ":" + now_datetime.getMinutes()).change();
+        $('#checkout_exit_gate').val(data.fields.entry_gate).change();
+        
+        $('#checkout_vehicle_plate_number').val(data.fields.plate_number).change();
+        $('#CheckoutFormModal').modal('show');
+      });   
+  });
+
+  $('.delete_ticket').click(function(){
+    var id = $(this).attr('id');
+    $('#item_id').val(id);
+    $('#ConfirmForm').attr('action', "{% url 'parking' %}");
+  });
+});
+
+</script>
+
+{% endblock %}

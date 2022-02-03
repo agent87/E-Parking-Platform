@@ -236,6 +236,9 @@ class Gates(models.Model):
         db_table = 'Gates'
         verbose_name_plural = "Gates"
 
+    def __str__(self):
+        return self.name
+
     @classmethod
     def add_gate(self, customer_id, name, status, description=None, camera_id=None, cashiers=None):
         try:
@@ -287,7 +290,7 @@ class Tarrif(models.Model):
     @classmethod
     def match_tarrif(self, duration):
         try:
-            cost =  self.objects.filter(fromtime__lte=duration, totime__gte=duration)
+            cost =  self.objects.filter(from_time__lte=duration, to_time__gte=duration)
             if cost is None:
                 return 0, {'warning': 'No tarrif found for this duration'}
 
@@ -391,7 +394,7 @@ class Subscriptions(models.Model):
 class Parkinglog(models.Model):
     ticket_id = models.BigAutoField(db_column='TicketId',  primary_key=True)  
     customer_id = models.ForeignKey(Customers, on_delete=models.CASCADE, blank=True, null=True)
-    date = models.DateField(db_column='Date')  
+    date = models.DateField(db_column='Date', default=timezone.now())  
     plate_number = models.CharField(db_column='PlateNum', max_length=50)  
     entry_gate = models.ForeignKey(Gates, related_name='entry_gate', on_delete=models.CASCADE, blank=True, null=True)  
     checkin_method = models.CharField(db_column='CheckInMethod', max_length=10)
@@ -412,6 +415,8 @@ class Parkinglog(models.Model):
         db_table = 'ParkingLog'
         verbose_name_plural = "Parking logs"
         ordering = ('-checkin_time',)
+
+    
 
     @classmethod
     def add(self, customer_id, date, time, plate_number, gate_id, user_id, checkin_method):
