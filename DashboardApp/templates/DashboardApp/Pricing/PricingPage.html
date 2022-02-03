@@ -155,19 +155,14 @@ $(function(){
     
   });
 
-  $("#from_time").change(function(){
-    if($("#from_time").val() > $("#to_time").val()){
-      $("#from_time").val(0);
-      toastr.warning("Time To must be greater than Time From");
-    }
-  });
+ 
 
   $("#to_time").change(function(){
-    if($(this).val() < $("#from_time").val()){
+    if(parseInt($(this).val()) < parseInt($("#from_time").val())){
       toastr.warning("Time To must be greater than Time From");
-      $(this).val($("#from_time").val());
+      $(this).val(parseInt($("#from_time").val())+1);
     }
-    if($(this).val() < 0){
+    if(parseInt($(this).val()) < 0){
       toastr.warning("Time To must be greater than 0");
       $(this).val(0);
     }
