@@ -1,16 +1,16 @@
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponseBadRequest, JsonResponse
 from DashboardApp.forms import LoginForm
 from SystemApp import models
-from SystemApp import managers
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib import auth
 from django.core.exceptions import ObjectDoesNotExist
 from django.views import View
-from System import utilities
+from django.core import serializers
 from django.contrib.auth.mixins import LoginRequiredMixin
 from DashboardApp import forms
+import json
 
 
 class index(View):
@@ -38,14 +38,11 @@ class registration(View):
             else:
                 customer_id = models.Customers.enroll(Customer).customer_id
                 models.Users.enroll(customer_id, Admin, role="Admin")
-                print('User created')
                 return redirect(reverse('VerifyEmail'))
         else:
-            print('Forms are not valid')
             self.context['CustomerForm'] = Customer.add_error(None, "Please fill all the fields & check for errors")
             self.context['AdminForm'] = Admin
             return render(request, self.template, context=self.context)
-
 
 class authentication:
     class login(View):
@@ -64,7 +61,6 @@ class authentication:
                     auth.login(request, user)
                     return redirect(reverse('dashboard_page'))
                 else:
-                    print(form.errors)
                     form.add_error(None, "Incorect email or password!")
                     self.context['LoginForm'] = form
                     self.context['errors'] = form.errors.get_json_data()['__all__']
@@ -79,8 +75,6 @@ class authentication:
         def get(request):
             auth.logout(request)
             return redirect(reverse('LoginView'))
-
-
     
 class pricing(LoginRequiredMixin, View):
     template_name = 'DashboardApp/Pricing/PricingPage.html'
@@ -114,7 +108,6 @@ class pricing(LoginRequiredMixin, View):
                 self.context['success'] = {'message': 'Tarrif updated successfully'}
                 return render(request, self.template_name, self.context)
             else:
-                print(form.errors)
                 self.context['tarrifForm'] = form
                 self.context['errors'] = form.errors.get_json_data()
                 return render(request, self.template_name, self.context)
@@ -129,28 +122,33 @@ class pricing(LoginRequiredMixin, View):
             return HttpResponseBadRequest()
 
 
-
-    @login_required
-    def delete_pricing(request, tarrif_id):
-        tarrif_id = int(tarrif_id)
-        try: 
-            pricing = models.Tarrif.objects.filter(tarrif_id=tarrif_id, customer_id=request.user.customer_id.customer_id).delete()
-            return redirect(reverse('pricing_page'))
-        except ObjectDoesNotExist:
-            return redirect(reverse('pricing_page'))
  
 class parking(LoginRequiredMixin, View):
     template_name = 'DashboardApp/ParkingLogs/Parking.html'
     context = {}
 
     def get(self, request):
-        self.context['CheckinForm'] = forms.TicketForm.CheckinForm()
-        self.context['CheckinForm'].populate(request.user.customer_id.customer_id)
-        self.context['alerts'] = None
-        self.context['vehicles'] = models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id)
-        self.context['gates'] = True if models.Gates.objects.filter(customer_id=request.user.customer_id.customer_id).exists() else False
-        self.context['user'] = request.user
-        return render(request, self.template_name, self.context)
+        if request.GET.get('format') == 'json':
+            if request.GET.get('ticket_id'):
+                ticket_id = int(request.GET.get('ticket_id'))
+                ticket_obj = models.Parkinglog.objects.filter(ticket_id=ticket_id, customer_id=request.user.customer_id.customer_id)
+                if ticket_obj.exists():
+                    ticket_json = {'fields' :json.loads(serializers.serialize('json', [ticket_obj[0],]))[0]['fields']}
+                    print(ticket_json)
+                    return JsonResponse(ticket_json, safe=False)
+                else:
+                    return JsonResponse({'error': 'No such ticket exists'})
+            else:
+                return HttpResponseBadRequest("Please provide a ticket id")
+
+        else:
+            self.context['CheckinForm'] = forms.TicketForm.CheckinForm()
+            self.context['CheckinForm'].populate(request.user.customer_id.customer_id)
+            self.context['CheckoutForm'] = forms.TicketForm.CheckoutForm()
+            self.context['alerts'] = None
+            self.context['vehicles'] = models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id)
+            self.context['user'] = request.user
+            return render(request, self.template_name, self.context)
 
     def post(self, request):
         self.request = request
@@ -201,8 +199,6 @@ class parking(LoginRequiredMixin, View):
         else:
             return HttpResponseBadRequest()
 
-
-
 class subscription(LoginRequiredMixin, View):
     template_name = "DashboardApp/Subscribers/Subscriptions.html"
     context = {'context' : forms.SubscriptionForm }
@@ -213,6 +209,8 @@ class subscription(LoginRequiredMixin, View):
 
     def post(self, request):
         return render(request, self.template_name, self.context)
+
+
 
 # Create your views here.
 class responses:
@@ -242,7 +240,6 @@ class responses:
 
     @login_required
     def subscribers_page(request):
-        print(request.user.customer_id.customer_id)
         context = {"subscription" : models.Subscriptions.objects.filter(customer_id = request.user.customer_id.customer_id)}
         context['user'] = request.user
         return render(request, 'DashboardApp/Subscribers/subscription.html', context)
@@ -301,19 +298,7 @@ class history:
         context['user'] = request.user
         return render(request, 'DashboardApp/ParkingLogs/HistoryPage.html', context)
 
-    @login_required
-    def add_ticket(request):
-        if request.method == "POST":
-            customer_id = request.user.customer_id.customer_id
-            date = request.POST.get('date')            
-            time = request.POST.get('time')
-            plate_number = request.POST.get('platenumber')
-            gate_id = request.POST.get('gate')
-            user_id = request.user.user_id
-            models.Parkinglog.add(customer_id, date, time, plate_number, gate_id, user_id, checkin_method='Manual')
-            return redirect(reverse('parked_page'))
-        else:
-            return(reverse('parked_page'))
+    
 
     @login_required
     def checkout(request, ticket_id):
@@ -324,18 +309,7 @@ class history:
         context['subscription'] = models.Subscriptions.is_subscribed(customer_id=request.user.customer_id.customer_id, plate_number = context['ticket'].plate_number)
         return render(request, 'DashboardApp/ParkingLogs/CheckoutForm.html', context)
 
-    @login_required
-    def close_ticket(request, ticket_id):
-        models.Parkinglog.close(ticket_id = ticket_id, 
-                                checkin_time = request.POST.get('checkin_datetime'),
-                                checkout_time = request.POST.get('checkout_datetime'),
-                                checkout_method='Manual',
-                                checkout_user = request.user.user_id,
-                                exit_gate = request.POST.get('exit_gate'), 
-                                amount_payed = request.POST.get('amount_payed'),
-                                payment_method = request.POST.get('payment_method')
-                                )
-        return redirect(reverse('parked_page'))
+    
 
        
 

@@ -1,0 +1,111 @@
+{% extends 'DashboardApp/Base.html' %} {% load static %} {% block sources %}
+<link rel="stylesheet" href="{% static 'plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}" />
+<link rel="stylesheet" href="{% static 'plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}" />
+<!-- daterange picker -->
+<link rel="stylesheet" href="{% static 'plugins/daterangepicker/daterangepicker.css' %}" />
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet" href="{% static 'plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css' %}" />
+{% endblock %} {% block content %}
+
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <h4 class="text-center display-4">Vehicle Ticket Checkout Form</h4>
+        </div>
+        <!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <!-- Space-->
+            <div class="row mt-2 justify-content-center">
+                <div class="col-md-9 offset-md-0">
+                    <!--Checkout Form Card-->
+                    <div class="card card-default">
+                        <div class="card-header">
+                            <h3 class="card-title">Checkout Form</h3>
+
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <form action="/history/{{ticket.ticket_id}}/close" method="POST">
+                            {% csrf_token %}
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col">
+                                        {{ CheeckoutForm.checkin_section }}
+                                    </div>
+                                    <div class="col">
+                                        {{ CheeckoutForm.checkout_section}}
+                                    </div>
+                                </div>
+                                <!-- /.row -->
+                            </div>
+                            <!-- /.card-body -->
+                            <div class="card-footer">
+                                <a href="{% url 'parking' %}" class="btn btn-primary float-left"><b>Back to Parking Logs</b></a>
+                                <button type="submit" class="btn btn-info float-right">Close Ticket</button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.card -->
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
+            </div>
+        </div>
+    </section>
+</div>
+
+{% endblock %} {% block script %}
+<!-- InputMask -->
+<script src="{% static 'plugins/moment/moment.min.js' %}"></script>
+<!-- date-range-picker -->
+<script src="{% static 'plugins/daterangepicker/daterangepicker.js' %}"></script>
+<!-- Tempusdominus Bootstrap 4 -->
+<script src="{% static 'plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js' %}"></script>
+
+<script type="text/javascript">
+    $(function () {
+        $("#datetimepicker7").datetimepicker({
+            locale: "eu",
+            useCurrent: false,
+            defaultDate: "{{ ticket.checkin_datetime }}",
+            format: 'MM/DD/YYYY H:mm',
+            icons: {
+                time: "fas fa-clock-o",
+                date: "fas fa-calendar",
+                up: "fas fa-arrow-up",
+                down: "fas fa-arrow-down",
+            },
+        });
+        $("#datetimepicker8").datetimepicker({
+            locale: "eu",
+            useCurrent: false,
+            defaultDate: new Date(),
+            format: 'MM/DD/YYYY H:mm',
+            icons: {
+                time: "fas fa-clock-o",
+                date: "fas fa-calendar",
+                up: "fas fa-arrow-up",
+                down: "fas fa-arrow-down",
+            },
+        });
+        $("#datetimepicker7").on("change.datetimepicker", function (e) {
+            $("#datetimepicker8").datetimepicker("minDate", e.date);
+        });
+        $("#datetimepicker8").on("change.datetimepicker", function (e) {
+            $("#datetimepicker7").datetimepicker("maxDate", e.date);
+        });
+    });
+</script>
+{% endblock %}

@@ -1,18 +1,18 @@
 {% block EntranceForm %}
 
 <!-- Default Size -->
-    <div class="modal fade" id="CheckoutFormModal" tabindex="-1" role="dialog">
+    <div class="modal fade" id="CheckinFormModal" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-sm" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="title" id="CheckoutFormModalLabel">Checkout Vehicle</h4>
+                    <h4 class="title" id="CheckinFormModalLabel">Add New Vehicle</h4>
                 </div>
             <form action={% url "parking" %} method="POST">    
             {% csrf_token %}
                 <div class="modal-body"> 
                     <div class="col-sm-12">
-                        <input type="hidden" name="action" value="update">
-                        {{ CheckoutForm }}
+                        <input type="hidden" name="action" value="add">
+                        {{ CheckinForm }}
                     </div>
                 </div>
                 <div class="modal-footer">

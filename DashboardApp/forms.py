@@ -58,8 +58,9 @@ class TicketForm:
         
 
         def populate(self, customer_id):
-            form = self.fields['gate'].queryset = SystemApp.models.Gates.objects.filter(customer_id=customer_id)
-            return form
+            gates = SystemApp.models.Gates.objects.filter(customer_id=customer_id)
+            self.fields['gate'].queryset = gates
+            self.gates = len(gates)
             
 
 
@@ -70,12 +71,27 @@ class TicketForm:
             return ticket
 
     class CheckoutForm(forms.Form):
-        ticket_id = forms.CharField(widget = forms.HiddenInput(attrs={'id':'CheckoutForm-ticket_id'}), required = False)
-        action = forms.CharField(widget = forms.HiddenInput(attrs={'id':'CheckoutForm-action'}), required = False)
-        class CheckinSection:
-            pass
-        class CheckoutSection:
-            pass
+        action = forms.CharField(widget = forms.HiddenInput(attrs={'id':'CheckoutForm-action', 'value':'update'}), required = False)
+        ticket_id = forms.CharField(label='Ticket ID', disabled=True, widget=forms.TextInput(attrs={'class': 'form-control', 'id':'CheckoutForm-ticket_id', 'placeholder':'Ticket ID'}))
+        plate_number = forms.CharField(label='Plate Number', disabled=True, widget=forms.TextInput(attrs={'class': 'form-control', 'id':'CheckoutForm-plate_number', 'placeholder':'Plate Number'}))
+        subscription_id  = forms.CharField(label='Subscription', disabled=True, widget=forms.TextInput(attrs={'class': 'form-control', 'id':'CheckoutForm-subscription', 'placeholder':'Subscription'}))
+
+        def __init__(self, *args, **kwargs):
+            super(TicketForm.CheckoutForm, self).__init__(*args, **kwargs)
+            self.fields['action'].initial = "update"
+            self.CheckinDetails = self.CheckinSection()
+            self.CheckoutDetails = self.CheckoutSection()
+
+        class CheckinSection(forms.Form):
+            entry_date = forms.DateField(label='Entry Date', widget=forms.DateInput(attrs={'class': 'form-control', 'id':'checkout_entry_date', 'type':'date'}))
+            entry_time = forms.TimeField(label='Entry Time', widget=forms.TimeInput(attrs={'class': 'form-control', 'type':'time', 'id':'checkout_entry_time', 'placeholder':'Entry Time'}))
+            entry_gate = forms.ModelChoiceField(label='Gate', queryset=SystemApp.models.Gates.objects.all(), initial=0, widget=forms.Select(attrs={'class': 'form-control', 'id':'checkout_entry_gate'}))
+        
+        class CheckoutSection(forms.Form):
+            exit_date = forms.DateField(label='Exit Date', widget=forms.DateInput(attrs={'class': 'form-control', 'id':'checkout_exit_date', 'type':'date'}))
+            exit_time = forms.TimeField(label='Exit Time', widget=forms.TimeInput(attrs={'class': 'form-control', 'type':'time', 'id':'checkout_exit_time', 'placeholder':'Entry Time'}))
+            exit_gate = forms.ModelChoiceField(label='Exit Gate', queryset=SystemApp.models.Gates.objects.all(), initial=0, widget=forms.Select(attrs={'class': 'form-control', 'id':'checkout_exit_gate'}))
+        
 
 class SubscriptionForm(forms.Form):
     customer_name = forms.CharField(label='Customer Name', widget=forms.TextInput(attrs={'class': 'form-control', 'id':'customer_name', 'placeholder':'Name'}))

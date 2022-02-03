@@ -18,10 +18,6 @@ urlpatterns = [
 
     ###Parking Logs Related#####
     path('history', views.history.history_page, name='history'),
-    path('history/add', views.history.add_ticket, name='add_vehicle'),
-    path('history/<slug:ticket_id>/checkout', views.history.checkout, name='checkout'),
-    #path('history/<str:ticket_id>', views.responses.history_page, name='history_page'),
-    path('history/<slug:ticket_id>/close', views.history.close_ticket, name='close_ticket'),
     
     ###Tarrif Related#####
     path('pricing', views.pricing.as_view(), name='pricing'),
