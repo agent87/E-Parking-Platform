@@ -1,0 +1,46 @@
+{% block EntranceForm %}
+
+<!-- Default Size -->
+    <div class="modal fade" id="CheckoutFormModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="title" id="CheckoutFormModalLabel">Checkout Vehicle</h4>
+                </div>
+            <form action={% url "parking" %} method="POST">    
+            {% csrf_token %}
+                <div class="modal-body"> 
+                    <div class="row">
+                        <div class="col-sm-2 ">
+                            {{ CheckoutForm.ticket_id }}
+                        </div>
+                        <div class="col-sm-6 ">
+                            {{ CheckoutForm.plate_number }}
+                        </div>
+                        <div class="col-sm-4 ">
+                            {{ CheckoutForm.subscription_id }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            {{ CheckoutForm.CheckinDetails }}
+                        </div>
+                        <div class="col">
+                            {{ CheckoutForm.CheckoutDetails }} 
+                        </div>
+                    </div>                    
+                </div>
+                <div class="modal-footer">
+                    <div class="col cancelform" >
+                        <button type="button" class="btn btn-danger col-sm-12" data-dismiss="modal">Close</button>
+                    </div>
+                    <div class="col submitform" >
+                        <button type="submit" id="SubmitCheckinFormButton" class="btn btn-primary col-sm-12">Save</button>
+                    </div>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

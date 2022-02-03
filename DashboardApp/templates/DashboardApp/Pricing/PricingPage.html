@@ -157,7 +157,8 @@ $(function(){
 
   $("#from_time").change(function(){
     if($("#from_time").val() > $("#to_time").val()){
-      $("#to_time").val($("#from_time").val());
+      $("#from_time").val(0);
+      toastr.warning("Time To must be greater than Time From");
     }
   });
 
