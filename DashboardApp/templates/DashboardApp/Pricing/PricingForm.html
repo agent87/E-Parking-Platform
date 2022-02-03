@@ -2,16 +2,16 @@
 
 <!-- Default Size -->
     <div class="modal fade" id="PricingFormModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog " role="document">
+        <div class="modal-dialog modal-sm" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="PricingFormModal title" id="PricingFormTitle"> Add New Pricing</h4>
                 </div>
-                <form id="TariffForm"  action="{% url 'pricing' %}" method="POST">
+                <form id="TariffForm"  action="{% url 'pricing' %}" onsubmit="SubmitTarrifFormFunction()" method="POST">
                 {% csrf_token %}
-                <input type="hidden" name="action" id="PricingFormAction" value="add">
                 <div class="modal-body"> 
                     <div class="col-sm-12">
+                        <input type="hidden" name="action" id="PricingFormAction" value="add">
                         {{ tarrifForm }}
                     </div>
                 </div>

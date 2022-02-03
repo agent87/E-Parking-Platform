@@ -1,253 +1,31 @@
-{% extends 'DashboardApp/Base.html' %} {% load static %} {% block sources %}
-<link rel="stylesheet" href="{% static 'plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}" />
-<link rel="stylesheet" href="{% static 'plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}" />
-<!-- daterange picker -->
-<link rel="stylesheet" href="{% static 'plugins/daterangepicker/daterangepicker.css' %}" />
-<!-- Tempusdominus Bootstrap 4 -->
-<link rel="stylesheet" href="{% static 'plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css' %}" />
-{% endblock %} {% block content %}
+{% block EntranceForm %}
 
-<div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-        <div class="container-fluid">
-            <h4 class="text-center display-4">Vehicle Ticket Checkout Form</h4>
-        </div>
-        <!-- /.container-fluid -->
-    </section>
-
-    <!-- Main content -->
-    <section class="content">
-        <div class="container-fluid">
-            <!-- Space-->
-            <div class="row mt-2 justify-content-center">
-                <div class="col-md-9 offset-md-0">
-                    <!--Checkout Form Card-->
-                    <div class="card card-default">
-                        <div class="card-header">
-                            <h3 class="card-title">Checkout Form</h3>
-
-                            <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                                <button type="button" class="btn btn-tool" data-card-widget="remove">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <!-- /.card-header -->
-                        <form action="/history/{{ticket.ticket_id}}/close" method="POST">
-                            {% csrf_token %}
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="ticket_id">Ticket ID</label>
-                                            <input type="text" class="form-control" id="ticekt_id" name="ticekt_id" value="{{ticket.ticket_id}}" disabled />
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="ticekt_id">Plate Number</label>
-                                            <input type="text" class="form-control" id="plate_number" name="plate_number" value="{{ticket.plate_number}}" disabled />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <!--Entrance Form Details-->
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Entry Date and time</label>
-                                            <div class="input-group date" id="datetimepicker7" data-target-input="nearest">
-                                                <input type="text" class="form-control datetimepicker-input" name="checkin_datetime" data-target="#datetimepicker7" />
-                                                <div class="input-group-append" data-target="#datetimepicker7" data-toggle="datetimepicker">
-                                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="ticket_id">Checkin Method</label>
-                                            <input type="text" class="form-control" id="checkin_method" value="{{ticket.checkin_method}}" disabled />
-                                        </div>
-                                        {% comment %} <div class="form-group">
-                                            <label for="ticket_id">Checkin Agent</label>
-                                            <input type="text" class="form-control" id="checkin_user" value="{{ticket.checkin_user.email}}" disabled />
-                                        </div> {% endcomment %}
-                                        <!-- /.form-group -->
-                                        <!-- /.form-group -->
-                                        <div class="form-group">
-                                            <label>Entry Gate</label>
-                                            <select class="form-control" disabled="disabled">
-                                                {% for gate in gates%} {% if gate.name == ticket.entry_gate %}
-                                                <option value="{{gate.gate_id}}" selected>{{gate.name}}</option>
-                                                {% else %}
-                                                <option value="{{gate.gate_id}}">{{gate.name}}</option>
-                                                {% endif %} {% endfor %}
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Duration</label>
-                                            <div class="input-group">
-                                                <input type="number" class="form-control" id="duration" name="duration" value="{{ticket.elapsed}}" disabled />
-                                                <div class="input-group-append">
-                                                    <span class="input-group-text">Minutes</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Amount Payed</label>
-                                            <div class="input-group">
-                                                <input type="number" name="amount_payed" class="form-control" />
-                                                <div class="input-group-append">
-                                                    <span class="input-group-text">RWF</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- /.form-group -->
-                                    </div>
-                                    <!-- /.col -->
-                                    <!-- Checkout Form Details -->
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Exit Date and time</label>
-                                            <div class="input-group date" id="datetimepicker8" data-target-input="nearest">
-                                                <input type="text" class="form-control datetimepicker-input" name="checkout_datetime" data-target="#datetimepicker8" />
-                                                <div class="input-group-append" data-target="#datetimepicker8" data-toggle="datetimepicker">
-                                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- Checkout Method-->
-                                        <div class="form-group">
-                                            <label for="ticket_id">Checkout Method</label>
-                                            <input type="text" class="form-control" id="checkout_method" name="checkout_method" value="Manual" disabled />
-                                        </div>
-                                        {% comment %} <div class="form-group">
-                                            <label for="ticket_id">Checkout Agent(Current User)</label>
-                                            <input type="text" class="form-control" value="{{user.email}}" disabled />
-                                        </div> {% endcomment %}
-                                        <!-- /.form-group -->
-                                        <!-- /.form-group -->
-                                        <div class="form-group">
-                                            <label>Exit Gate</label>
-                                            <select class="form-control" name="exit_gate">
-                                                {% for gate in gates%} 
-                                                    {% if forloop.first %}
-                                                        <option value="{{gate.gate_id}}" selected>{{gate.name}}</option>
-                                                    {% else %}
-                                                        <option value="{{gate.gate_id}}">{{gate.name}}</option>
-                                                    {% endif %} 
-                                                {% endfor %}
-                                            </select>
-                                        </div>
-                                        <div class="row">
-                                            <div class="form-group col-md-5">
-                                                <label>Cost(Auto Calculated)</label>
-                                                <div class="input-group">
-                                                    {% if subscription %}
-                                                    <input type="number" class="form-control" name="cost" value=0 disabled />
-                                                    <div class="input-group-append">
-                                                        <span class="input-group-text">RWF</span>
-                                                    </div>
-                                                    {% else %}
-                                                    <input type="number" class="form-control" name="cost" value={{cost}} disabled />
-                                                    <div class="input-group-append">
-                                                        <span class="input-group-text">RWF</span>
-                                                    </div>
-                                                    {% endif %}
-                                                </div>
-                                            </div>
-                                            <div class="form-group col-md-5">
-                                                <label>Subcription Validity</label>
-                                                <div class="input-group">
-                                                    {% if subscription %}
-                                                    <input type="text" class="form-control row-md-2" value="{{subscription.format_end_date}}" disabled />
-                                                    <div class="input-group-append">
-                                                        <span class="input-group-text text-primary">Active</span>
-                                                    </div>
-                                                    {% else %}
-                                                    <input type="text" class="form-control" disabled />
-                                                    <div class="input-group-append">
-                                                        <span class="input-group-text text-danger">None</span>
-                                                    </div>
-                                                    {% endif %}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Payment method</label>
-                                            <select class="form-control" name="payment_method">
-                                                <option selected="selected">No Payment</option>
-                                                <option>Cash</option>
-                                                <option>Mobile Money</option>
-                                                <option>Subcription</option>
-                                                <option>Bank Card</option>
-                                                <option>Ewawe Parking Card</option>
-                                            </select>
-                                        </div>
-                                        <!-- /.form-group -->
-                                    </div>
-                                </div>
-
-                                <!-- /.row -->
-                            </div>
-                            <!-- /.card-body -->
-                            <div class="card-footer">
-                                <a href="{% url 'parked_page' %}" class="btn btn-primary float-left"><b>Back to Parking Logs</b></a>
-                                <button type="submit" class="btn btn-info float-right">Close Ticket</button>
-                            </div>
-                        </form>
-                    </div>
-                    <!-- /.card -->
-                    <!-- /.card -->
+<!-- Default Size -->
+    <div class="modal fade" id="CheckoutFormModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="title" id="CheckoutFormModalLabel">Checkout Vehicle</h4>
                 </div>
-                <!-- /.col -->
+            <form action={% url "parking" %} method="POST">    
+            {% csrf_token %}
+                <div class="modal-body"> 
+                    <div class="col-sm-12">
+                        <input type="hidden" name="action" value="update">
+                        {{ CheckoutForm }}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="col cancelform" >
+                        <button type="button" class="btn btn-danger col-sm-12" data-dismiss="modal">Close</button>
+                    </div>
+                    <div class="col submitform" >
+                        <button type="submit" id="SubmitCheckinFormButton" class="btn btn-primary col-sm-12">Save</button>
+                    </div>
+                </div>
+            </form>
             </div>
         </div>
-    </section>
-</div>
+    </div>
 
-{% endblock %} {% block script %}
-<!-- InputMask -->
-<script src="{% static 'plugins/moment/moment.min.js' %}"></script>
-<!-- date-range-picker -->
-<script src="{% static 'plugins/daterangepicker/daterangepicker.js' %}"></script>
-<!-- Tempusdominus Bootstrap 4 -->
-<script src="{% static 'plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js' %}"></script>
-
-<script type="text/javascript">
-    $(function () {
-        $("#datetimepicker7").datetimepicker({
-            locale: "eu",
-            useCurrent: false,
-            defaultDate: "{{ ticket.checkin_datetime }}",
-            format: 'MM/DD/YYYY H:mm',
-            icons: {
-                time: "fas fa-clock-o",
-                date: "fas fa-calendar",
-                up: "fas fa-arrow-up",
-                down: "fas fa-arrow-down",
-            },
-        });
-        $("#datetimepicker8").datetimepicker({
-            locale: "eu",
-            useCurrent: false,
-            defaultDate: new Date(),
-            format: 'MM/DD/YYYY H:mm',
-            icons: {
-                time: "fas fa-clock-o",
-                date: "fas fa-calendar",
-                up: "fas fa-arrow-up",
-                down: "fas fa-arrow-down",
-            },
-        });
-        $("#datetimepicker7").on("change.datetimepicker", function (e) {
-            $("#datetimepicker8").datetimepicker("minDate", e.date);
-        });
-        $("#datetimepicker8").on("change.datetimepicker", function (e) {
-            $("#datetimepicker7").datetimepicker("maxDate", e.date);
-        });
-    });
-</script>
 {% endblock %}

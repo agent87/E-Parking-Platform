@@ -126,18 +126,10 @@
 <script>
     $(function () {
       $("#example1").DataTable({
-        "responsive": true, "lengthChange": false, "autoWidth": false,
+        "responsive": true, "lengthChange": true, "autoWidth": true,
         "buttons": ["copy", "csv", "excel", "colvis"]
       }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-      $('#example2').DataTable({
-        "paging": true,
-        "lengthChange": false,
-        "searching": false,
-        "ordering": true,
-        "info": true,
-        "autoWidth": false,
-        "responsive": true,
-      });
+      
     });
   </script>
 <script>
@@ -163,12 +155,37 @@ $(function(){
     
   });
 
-});
+  $("#from_time").change(function(){
+    if($("#from_time").val() > $("#to_time").val()){
+      $("#to_time").val($("#from_time").val());
+    }
+  });
 
+  $("#to_time").change(function(){
+    if($(this).val() < $("#from_time").val()){
+      toastr.warning("Time To must be greater than Time From");
+      $(this).val($("#from_time").val());
+    }
+    if($(this).val() < 0){
+      toastr.warning("Time To must be greater than 0");
+      $(this).val(0);
+    }
+  });
+});
 
 </script>
 
 <script>
+
+$(function (){
+
+$("#TarriffForm").submit(function(e){
+  e.preventDefault();
+  
+});
+
+});
+
 
 </script>
 {% endblock %}

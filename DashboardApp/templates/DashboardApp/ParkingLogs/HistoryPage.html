@@ -22,130 +22,95 @@
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12 offset-md-0">
-                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#VehicleForm">
-                        Add Car
-                    </button>
-                </div>
-            </div> 
             <!-- List of Accounts-->
             <div class="row mt-2">
                 <div class="col-md-12 offset-md-0">
                   <!--Entity Table-->
-        <div class="card card-default">
-            <div class="card-header">
-              <h3 class="card-title">Parking Logs</h3>
-  
-              <div class="card-tools">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                  <i class="fas fa-minus"></i>
-                </button>
-                <button type="button" class="btn btn-tool" data-card-widget="remove">
-                  <i class="fas fa-times"></i>
-                </button>
-              </div>
-            </div>
-            <!-- /.card-header -->
-            <div class="card-body" style="display: block;" id="entities">
-                <table id="example1" class="table table-sm">
-                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Ticket Date</th>
-                                            <th>Plate Number</th>
-                                            <th>Entry Gate</th>
-                                            <th>Checkin time</th>
-                                            <th>Checkout Time</th>
-                                            <th>Exit Gate</th>
-                                            <th>Duration</th>
-                                            <th>Payed</th>
-                                            <th>Subscription</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for parking_log in parking_logs %}
-                                        <tr>
-                                            <th scope="row">{{forloop.counter}}</th>
-                                            <td>{{parking_log.date}}</td> 
-                                            <td>{{parking_log.plate_number}}</td>
-                                            <td>{{parking_log.entry_gate.name}}</td>
-                                            <td>{{parking_log.checkin_datetime}}</td>
-                                            <!-- Checkout Time Logic -->
-                                            {% if parking_log.checkout_time == None %}
-                                                <td></td>
-                                            {% else %}
-                                                <td>{{parking_log.checkout_datetime}}</td>
-                                            {% endif %}
-                                            <!-- Exit Gate Logic -->
-                                            {% if parking_log.exit_gate == None %}
-                                                <td></td>
-                                            {% else %}
-                                                <td>{{parking_log.exit_gate.name}}</td>
-                                            {% endif %}
-                                            <!-- Duration Logic -->
-                                            {% if parking_log.format_duration == None %}
-                                                <td></td>
-                                            {% else %}
-                                                <td>{{parking_log.format_duration}} Minutes</td>
-                                            {% endif %}
-                                            <!-- Cash Collected Logic -->
-                                            {% if parking_log.amount_payed == None %}
-                                                <td>0 RWF</td>
-                                            {% else %}
-                                                <td>{{parking_log.amount_payed}} RWF</td>
-                                            {% endif %}
-                                            <!-- Subscription Status -->
-                                            {% if parking_log.is_subscribed %}
-                                                <td><span class="badge badge-success text-center">Active</span></td>
-                                            {% else %}
-                                                <td><span class="badge badge-danger text-center">None</span></td>
-                                            {% endif %}
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                </table>
-              <!-- /.row -->
-            </div>
-            <!-- /.card-body -->
-            <div class="card-footer" style="display: block;">
-              TOTAL CARS : {{ total_accounts }}
-            </div>
-        </div>
+                  <div class="card card-default">
+                    <div class="card-header">
+                      <h3 class="card-title">Parking Logs</h3>
+          
+                      <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                          <i class="fas fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-tool" data-card-widget="remove">
+                          <i class="fas fa-times"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body" style="display: block;" id="entities">
+                        <table id="example1" class="table table-sm">
+                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Ticket Date</th>
+                                                    <th>Plate Number</th>
+                                                    <th>Entry Gate</th>
+                                                    <th>Checkin time</th>
+                                                    <th>Checkout Time</th>
+                                                    <th>Exit Gate</th>
+                                                    <th>Duration</th>
+                                                    <th>Payed</th>
+                                                    <th>Subscription</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for parking_log in parking_logs %}
+                                                <tr>
+                                                    <th scope="row">{{forloop.counter}}</th>
+                                                    <td>{{parking_log.date}}</td> 
+                                                    <td>{{parking_log.plate_number}}</td>
+                                                    <td>{{parking_log.entry_gate.name}}</td>
+                                                    <td>{{parking_log.checkin_datetime}}</td>
+                                                    <!-- Checkout Time Logic -->
+                                                    {% if parking_log.checkout_time == None %}
+                                                        <td></td>
+                                                    {% else %}
+                                                        <td>{{parking_log.checkout_datetime}}</td>
+                                                    {% endif %}
+                                                    <!-- Exit Gate Logic -->
+                                                    {% if parking_log.exit_gate == None %}
+                                                        <td></td>
+                                                    {% else %}
+                                                        <td>{{parking_log.exit_gate.name}}</td>
+                                                    {% endif %}
+                                                    <!-- Duration Logic -->
+                                                    {% if parking_log.format_duration == None %}
+                                                        <td></td>
+                                                    {% else %}
+                                                        <td>{{parking_log.format_duration}} Minutes</td>
+                                                    {% endif %}
+                                                    <!-- Cash Collected Logic -->
+                                                    {% if parking_log.amount_payed == None %}
+                                                        <td>0 RWF</td>
+                                                    {% else %}
+                                                        <td>{{parking_log.amount_payed}} RWF</td>
+                                                    {% endif %}
+                                                    <!-- Subscription Status -->
+                                                    {% if parking_log.is_subscribed %}
+                                                        <td><span class="badge badge-success text-center">Active</span></td>
+                                                    {% else %}
+                                                        <td><span class="badge badge-danger text-center">None</span></td>
+                                                    {% endif %}
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                        </table>
+                      <!-- /.row -->
+                    </div>
+                    <!-- /.card-body -->
+                    <div class="card-footer" style="display: block;">
+                      TOTAL CARS : {{ total_accounts }}
+                    </div>
+                </div>
                   <!-- /.card -->
                 </div>
                 <!-- /.col -->
             </div>
         </div>
-
-        <!-- Modal Dialogs ========= --> 
-    <!-- Default Size -->
-    <div class="modal fade" id="VehicleForm" tabindex="-1" role="dialog">
-        <div class="modal-dialog " role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="title" id="defaultModalLabel"> View All Vehicles </h4>
-                </div>
-                <div class="modal-body"> 
-                    <div class="col-sm-12">
-                        
-                        <div class="form-group col-sm-12">    
-                            <label>Date From </label>                                  
-                            <input type="date" class="form-control" placeholder="Enter Plate Number">
-                        </div>
-                        <div class="form-group col-sm-12">    
-                            <label>Date to</label>                                
-                            <input type="date" class="form-control" placeholder="Enter Time from">
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary waves-effect">Search </button>
-                    <button type="button" class="btn btn-danger btn-simple waves-effect" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>    
+  
     </section>
   </div>
 

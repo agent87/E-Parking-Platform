@@ -139,7 +139,80 @@ class pricing(LoginRequiredMixin, View):
         except ObjectDoesNotExist:
             return redirect(reverse('pricing_page'))
  
+class parking(LoginRequiredMixin, View):
+    template_name = 'DashboardApp/ParkingLogs/Parking.html'
+    context = {}
 
+    def get(self, request):
+        self.context['CheckinForm'] = forms.TicketForm.CheckinForm()
+        self.context['CheckinForm'].populate(request.user.customer_id.customer_id)
+        self.context['alerts'] = None
+        self.context['vehicles'] = models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id)
+        self.context['gates'] = True if models.Gates.objects.filter(customer_id=request.user.customer_id.customer_id).exists() else False
+        self.context['user'] = request.user
+        return render(request, self.template_name, self.context)
+
+    def post(self, request):
+        self.request = request
+        if request.POST.get('action') == 'add':
+            form = forms.TicketForm.CheckinForm(request.POST)
+            if form.is_valid():
+                if models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id, plate_number=form.cleaned_data['plate_number'], parked = True).exists():
+                    self.context['alerts'] = [{'message': 'Vehicle already parked! Consider checking out the vehicle.', 'title':'Vehicel already parked', 'type':'error'},]
+                    self.context['vehicles'] = models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id)
+                    return render(request, self.template_name, self.context)
+                else:
+                    form.cleaned_data['user'] = request.user
+                    form.create()
+                    self.context['vehicles'] = models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id)
+                    self.context['alerts'] = [{'message': f"Ticket with vehicle plate number {form.cleaned_data['plate_number']} has been added sucessfully.", 'title':'Vehicle added succesffuly', 'type':'success'}]
+                    return render(request, self.template_name, self.context)
+            else:
+                self.context['parkingForm'] = form
+                self.context['errors'] = form.errors.get_json_data()
+                return render(request, self.template_name, self.context)
+
+        elif request.POST.get('action') == 'update':
+            form = forms.TicketForm.CheckinForm(request.POST)
+            if form.is_valid():
+                form.update()
+                self.context['vehicles'] = models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id)
+                self.context['success'] = {'message': 'Vehicle updated successfully'}
+                return render(request, self.template_name, self.context)
+            else:
+                self.context['parkingForm'] = form
+                self.context['errors'] = form.errors.get_json_data()
+                return render(request, self.template_name, self.context)
+
+        elif request.POST.get('action') == 'delete':
+            ticket_id = request.POST.get('item_id')
+            obj =  models.Parkinglog.objects.filter(ticket_id=ticket_id, customer_id=request.user.customer_id.customer_id)
+            if obj.exists(): 
+                plate_number = obj.first().plate_number
+                obj.delete()
+                self.context['alerts'] = [{'message': f"Ticket with with Plate number {plate_number} has been removed.", 'title':'Ticket removed successfully', 'type':'success'}]
+                self.context['vehicles'] = models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id)
+                return render(request, self.template_name, self.context)
+            else:
+                self.context['alerts'] = [{'message': 'Unable to find ticket with matching plate number', 'title':'Invalid request', 'type':'error'},]
+                self.context['vehicles'] = models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id)
+                return render(request, self.template_name, self.context)
+
+        else:
+            return HttpResponseBadRequest()
+
+
+
+class subscription(LoginRequiredMixin, View):
+    template_name = "DashboardApp/Subscribers/Subscriptions.html"
+    context = {'context' : forms.SubscriptionForm }
+
+    def get(self, request):
+        self.context['subscribers'] = models.Subscriptions.objects.filter(customer_id=request.user.customer_id.customer_id)
+        return render(request, self.template_name, self.context)
+
+    def post(self, request):
+        return render(request, self.template_name, self.context)
 
 # Create your views here.
 class responses:
@@ -307,37 +380,7 @@ class users:
 
     def verify_email_success(request):
         return render(request, 'DashboardApp/Accounts/success-mail.html')
-    
-class subscription:
-    @login_required
-    def subscribers_page(request):
-        print(request.user.customer_id.customer_id)
-        context = {"subscriptions" : models.Subscriptions.objects.filter(customer_id = request.user.customer_id.customer_id)}
-        return render(request, 'DashboardApp/Subscribers/subscription.html', context)
-
-    @login_required
-    def add_subscription(request):
-        if request.method == "POST":
-            user_id = request.user.user_id
-            customer_id = request.user.customer_id.customer_id
-            platenum = request.POST.get('platenum')
-            name = request.POST.get('name')
-            phonenum = request.POST.get('phonenum')
-            office = request.POST.get('office')
-            parklot = request.POST.get('parklot')
-            amount = request.POST.get('amount')
-            start_date = request.POST.get('start_date')
-            end_date = request.POST.get('end_date')
-            status = models.Subscriptions.add_subscription(user_id, customer_id, platenum, name, phonenum, office, parklot, amount, start_date, end_date)
-            if status[0]:
-                utilities.sms_server.subscription_reciept(status[1],status[2],status[3],status[4],status[5],status[6])
-                return redirect(reverse('subscribers_page'))
-            else:
-                return redirect(reverse('subscribers_page'))
-        else:
-            return redirect(reverse('subscribers_page'))
-
-
+ 
 class settings:
     @login_required
     def settings_page(request):

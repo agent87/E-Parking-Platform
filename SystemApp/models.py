@@ -236,6 +236,9 @@ class Gates(models.Model):
         db_table = 'Gates'
         verbose_name_plural = "Gates"
 
+    def __str__(self):
+        return self.name
+
     @classmethod
     def add_gate(self, customer_id, name, status, description=None, camera_id=None, cashiers=None):
         try:
@@ -287,7 +290,7 @@ class Tarrif(models.Model):
     @classmethod
     def match_tarrif(self, duration):
         try:
-            cost =  self.objects.filter(fromtime__lte=duration, totime__gte=duration)
+            cost =  self.objects.filter(from_time__lte=duration, to_time__gte=duration)
             if cost is None:
                 return 0, {'warning': 'No tarrif found for this duration'}
 
@@ -412,6 +415,8 @@ class Parkinglog(models.Model):
         db_table = 'ParkingLog'
         verbose_name_plural = "Parking logs"
         ordering = ('-checkin_time',)
+
+    
 
     @classmethod
     def add(self, customer_id, date, time, plate_number, gate_id, user_id, checkin_method):
