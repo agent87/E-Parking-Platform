@@ -81,7 +81,7 @@
             </div>
             <!-- /.card-body -->
             <div class="card-footer" style="display: block;">
-              Total Parked Vehicles : {{ parked_vehicles.count }}
+              Total Parked Vehicles : {{ vehicles.count }}
             </div>
         </div>
                   <!-- /.card -->
@@ -144,7 +144,7 @@
 {% if CheckinForm.gates > 0 %}
 
       {% include 'DashboardApp/ParkingLogs/CheckinForm.html' with CheckinForm=CheckinForm %}
-      {% include 'DashboardApp/ParkingLogs/TicketForm.html' with TicketForm=TicketForm %}
+      {% include 'DashboardApp/ParkingLogs/TicketForm.html' with CheckoutForm=TicketForm %}
       {% include 'DashboardApp/ConfirmModal.html' with submit_url="/history" %}
 
 
@@ -191,18 +191,26 @@ $(function(){
         var elapsed = now_datetime.getTime() - checkin_datetime.getTime();
 
         $('#CheckoutForm-ticket_id').val(ticket_id);
-        $('#CheckoutForm-plate_number').val(data.plate_number);
+        $('#CheckoutForm-plate_number').val(data.fields.plate_number);
 
         $('#checkout_entry_date').val(data.fields.entry_date).change();
         $('#checkout_entry_time').val()
         $('#checkout_entry_gate').val(data.fields.entry_gate).change();
 
         $('#checkout_exit_date').val(now_datetime.toISOString().split('T')[0]).change();
-        $('#checkout_exit_time').val(now_datetime.getHours() + ":" + now_datetime.getMinutes()).change();
+        $('#checkout_exit_time').val(now_datetime.toISOString().split('T')[1].slice(0,5)).change();
         $('#checkout_exit_gate').val(data.fields.entry_gate).change();
+
+
+        $('#checkout_cost').val(parseInt(data.fields.cost));
         
         $('#checkout_vehicle_plate_number').val(data.fields.plate_number).change();
         $('#CheckoutFormModal').modal('show');
+
+        $.each(data.alerts,function(index,value){ 
+          toastr.error(value.message)
+      });
+
       });   
   });
 

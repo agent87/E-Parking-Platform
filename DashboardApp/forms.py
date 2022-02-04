@@ -81,6 +81,7 @@ class TicketForm:
             self.fields['action'].initial = "update"
             self.CheckinDetails = self.CheckinSection()
             self.CheckoutDetails = self.CheckoutSection()
+            self.paymentDetails = self.payment()
 
         class CheckinSection(forms.Form):
             entry_date = forms.DateField(label='Entry Date', widget=forms.DateInput(attrs={'class': 'form-control', 'id':'checkout_entry_date', 'type':'date'}))
@@ -93,9 +94,25 @@ class TicketForm:
             exit_gate = forms.ModelChoiceField(label='Exit Gate', queryset=SystemApp.models.Gates.objects.all(), initial=0, widget=forms.Select(attrs={'class': 'form-control', 'id':'checkout_exit_gate'}))
         
         class payment(forms.Form):
+            Mobile_Money = "Mobile Money"
+            Cash = "Cash"
+            Cheque = "Cheque"
+            Bank_Transfer = "Bank Transfer"
+            Debit_Card = "Visa Card"
+            Ewawe_Card = "Ewawe Card"   
+            Subscription = "Subscription"
+            Payment_Method = (
+                (Mobile_Money, 'Mobile Money'),
+                (Cash, 'Cash'),
+                (Cheque, 'Cheque'),
+                (Bank_Transfer, 'Bank Transfer'),
+                (Debit_Card, 'Debit Card'),
+                (Ewawe_Card, 'Ewawe Card'),
+                (Subscription, 'Subscription'),
+            )
             cost = forms.IntegerField(label='Cost', disabled=True, widget=forms.NumberInput(attrs={'class': 'form-control', 'id':'checkout_cost', 'placeholder':'Cost'}))
-            amount_payed = forms.IntegerField(label='Amount Payed', widget=forms.NumberInput(attrs={'class': 'form-control', 'id':'checkout_amount_payed', 'placeholder':'Amount Payed'}))
-            payment_method = forms.CharField(label='Payment Method', widget=forms.TextInput(attrs={'class': 'form-control', 'id':'checkout_payment_method', 'placeholder':'Payment Method'}))
+            payed = forms.IntegerField(label='Amount Payed', widget=forms.NumberInput(attrs={'class': 'form-control', 'id':'checkout_amount_payed', 'placeholder':'Amount Payed'}))
+            method = forms.CharField(label='Payment Method', widget=forms.Select(choices=Payment_Method, attrs={'class': 'form-control', 'id':'checkout_payment_method'}))
 
 
 class SubscriptionForm(forms.Form):

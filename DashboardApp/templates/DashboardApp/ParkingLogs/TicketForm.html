@@ -12,12 +12,15 @@
                 <div class="modal-body"> 
                     <div class="row">
                         <div class="col-sm-2 ">
+                            <label>Id</label>
                             {{ CheckoutForm.ticket_id }}
                         </div>
-                        <div class="col-sm-6 ">
+                        <div class="col-sm-4 ">
+                            <label>Plate Number</label>
                             {{ CheckoutForm.plate_number }}
                         </div>
-                        <div class="col-sm-4 ">
+                        <div class="col-sm-6 ">
+                            <label>Subscription Valid Until</label>
                             {{ CheckoutForm.subscription_id }}
                         </div>
                     </div>
@@ -27,6 +30,20 @@
                         </div>
                         <div class="col">
                             {{ CheckoutForm.CheckoutDetails }} 
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <label>Cost</label>
+                            {{ CheckoutForm.payment.cost }}
+                        </div>
+                        <div class="col-sm-4">
+                            <label>payed</label>
+                            {{ CheckoutForm.payment.payed }}
+                        </div>
+                        <div class="col-sm-4">
+                            <label>Method</label>
+                            {{ CheckoutForm.payment.method }}
                         </div>
                     </div>                    
                 </div>

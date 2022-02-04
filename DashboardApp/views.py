@@ -1,4 +1,4 @@
-from django.http import HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponseBadRequest, JsonResponse, HttpRequest, HttpResponse 
 from DashboardApp.forms import LoginForm
 from SystemApp import models
 from django.shortcuts import render, redirect
@@ -11,6 +11,7 @@ from django.core import serializers
 from django.contrib.auth.mixins import LoginRequiredMixin
 from DashboardApp import forms
 import json
+import time
 
 
 class index(View):
@@ -22,7 +23,7 @@ class registration(View):
     context = { 'CustomerForm': forms.CustomerForm() }
     context['AdminForm'] = forms.UserForm()
 
-    def get(self, request):
+    def get(self, request : HttpRequest) -> HttpResponse:
         return render(request, self.template, context=self.context)
 
     def post(self, request):
@@ -129,22 +130,27 @@ class parking(LoginRequiredMixin, View):
 
     def get(self, request):
         if request.GET.get('format') == 'json':
-            if request.GET.get('ticket_id'):
+            if request.GET.get('ticket_id') and not request.GET.get('cost'):
                 ticket_id = int(request.GET.get('ticket_id'))
                 ticket_obj = models.Parkinglog.objects.filter(ticket_id=ticket_id, customer_id=request.user.customer_id.customer_id)
                 if ticket_obj.exists():
                     ticket_json = {'fields' :json.loads(serializers.serialize('json', [ticket_obj[0],]))[0]['fields']}
-                    print(ticket_json)
+                    ticket_json['fields']['cost'], ticket_json['alerts']  = models.Tarrif.match_tarrif(time.time(), ticket_json['fields']['checkin_time'])
                     return JsonResponse(ticket_json, safe=False)
                 else:
                     return JsonResponse({'error': 'No such ticket exists'})
+            elif request.GET.get('ticket_id') and request.GET.get('cost') and request.GET.get('checkout_time') and request.GET.get('checkin_time'):
+                response = {'fields': {'cost': models.Tarrif.match_tarrif(request.GET.get('checkout_time'), request.GET.get('checkin_time') ) }}
+
+                return JsonResponse({'error': 'No such ticket exists'})
+            
             else:
                 return HttpResponseBadRequest("Please provide a ticket id")
 
         else:
             self.context['CheckinForm'] = forms.TicketForm.CheckinForm()
             self.context['CheckinForm'].populate(request.user.customer_id.customer_id)
-            self.context['CheckoutForm'] = forms.TicketForm.CheckoutForm()
+            self.context['TicketForm'] = forms.TicketForm.CheckoutForm()
             self.context['alerts'] = None
             self.context['vehicles'] = models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id)
             self.context['user'] = request.user
