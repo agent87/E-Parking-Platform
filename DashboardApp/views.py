@@ -10,6 +10,7 @@ from django.views import View
 from django.core import serializers
 from django.contrib.auth.mixins import LoginRequiredMixin
 from DashboardApp import forms
+from datetime import datetime
 import json
 import time
 
@@ -136,10 +137,12 @@ class parking(LoginRequiredMixin, View):
                 if ticket_obj.exists():
                     ticket_json = {'fields' :json.loads(serializers.serialize('json', [ticket_obj[0],]))[0]['fields']}
                     ticket_json['fields']['cost'], ticket_json['alerts']  = models.Tarrif.match_tarrif(time.time(), ticket_json['fields']['checkin_time'])
+                    ticket_json['fields']['checkin_time'] = datetime.utcfromtimestamp(ticket_obj.first().checkin_time).strftime('%H:%M')
+                    ticket_json['fields']['checkin_date'] = datetime.utcfromtimestamp(ticket_obj.first().checkin_time).strftime('%Y-%m-%d')
                     return JsonResponse(ticket_json, safe=False)
                 else:
                     return JsonResponse({'error': 'No such ticket exists'})
-            elif request.GET.get('ticket_id') and request.GET.get('cost') and request.GET.get('checkout_time') and request.GET.get('checkin_time'):
+            elif request.GET.get('ticket_id') and request.GET.get('checkout_time') and request.GET.get('checkin_time'):
                 response = {'fields': {'cost': models.Tarrif.match_tarrif(request.GET.get('checkout_time'), request.GET.get('checkin_time') ) }}
 
                 return JsonResponse({'error': 'No such ticket exists'})
@@ -178,6 +181,9 @@ class parking(LoginRequiredMixin, View):
 
         elif request.POST.get('action') == 'update':
             form = forms.TicketForm.CheckinForm(request.POST)
+            checkin = forms.TicketForm.CheckinForm()
+            checkout = forms.TicketForm.CheckoutForm()
+            ticket = forms.TicketForm.CheckoutForm()
             if form.is_valid():
                 form.update()
                 self.context['vehicles'] = models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id)
@@ -206,82 +212,17 @@ class parking(LoginRequiredMixin, View):
             return HttpResponseBadRequest()
 
 class subscription(LoginRequiredMixin, View):
-    template_name = "DashboardApp/Subscribers/Subscriptions.html"
+    template_name = "DashboardApp/Subscription/Subscriptions.html"
     context = {'context' : forms.SubscriptionForm }
 
     def get(self, request):
-        self.context['subscribers'] = models.Subscriptions.objects.filter(customer_id=request.user.customer_id.customer_id)
+        #self.context['subscribers'] = models.Subscriptions.objects.filter(customer_id=request.user.customer_id.customer_id)
         return render(request, self.template_name, self.context)
 
     def post(self, request):
         return render(request, self.template_name, self.context)
 
 
-
-# Create your views here.
-class responses:
-    def login_page(request, redirect_to=None):
-        if request.method == "POST":
-            username = request.POST.get('username')
-            password = request.POST.get('password')
-            user = auth.authenticate(request, username=username, password=password)
-            if user is not None:
-                return redirect(reverse('history_page'))
-            else:
-                return render(request, 'DashboardApp/Authentication/login.html', {'code': 302})
-        else:
-            return render(request, 'DashboardApp/Authentication/login.html')
-
-    
-    def testing(request):
-        return render(request, 'Auth/histor.html')
-
-    
-
-    @login_required
-    def parked_page(request):
-        context = {'parked_vehicles' : models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id, parked=True)}
-        context['EntranceFormContext'] = {'gates' : models.Gates.objects.filter(customer_id=request.user.customer_id.customer_id)}
-        return render(request, 'DashboardApp/ParkingLogs/ParkedVehicles.html', context)
-
-    @login_required
-    def subscribers_page(request):
-        context = {"subscription" : models.Subscriptions.objects.filter(customer_id = request.user.customer_id.customer_id)}
-        context['user'] = request.user
-        return render(request, 'DashboardApp/Subscribers/subscription.html', context)
-
-    @login_required
-    def user_page(request):
-        context = {'users': models.Users.objects.filter(customer_id = request.user.customer_id.customer_id)}
-        context['user'] = request.user
-        return render(request, 'DashboardApp/Accounts/user.html', context)
-
-    @login_required
-    def logout_request(request):
-        auth.logout(request)
-        return redirect(reverse('logout_request'))
-
-class Customers:
-    def RegisterView(request):
-        return render(request, 'DashboardApp/Accounts/CustomerForm.html')
-
-
-    def register(request):
-        try:
-            customer = models.Customers.enroll_customer(company_name=request.POST.get('customer_name'), address = request.POST.get('address'))
-            if customer[0]:
-                try:
-                    User = models.Users.add_user(customer[1].customer_id, request.POST.get('first_name'), request.POST.get('last_name'), request.POST.get('email'), request.POST.get('phonenum'), request.POST.get('password'), 'Admin')
-                    if User[0]:
-                        return redirect(reverse('VerifyEmail'))
-                    else:
-                        return redirect(reverse('RegisterView'))
-                except ObjectDoesNotExist:
-                    return redirect(reverse('RegisterView'))
-        
-        except ObjectDoesNotExist:
-            return redirect(reverse('RegisterView'))
-    
 
 
 class DashboardView:
