@@ -288,19 +288,21 @@ class Tarrif(models.Model):
         )
 
     @classmethod
-    def match_tarrif(self, duration):
+    def match_tarrif(self, end_time:int,start_time: int):
+        duration = int((end_time - start_time)/60)
         try:
             cost =  self.objects.filter(from_time__lte=duration, to_time__gte=duration)
-            if cost is None:
-                return 0, {'warning': 'No tarrif found for this duration'}
-
-            elif len(cost) > 1:
-                return cost.first(), {'warning': 'Multiple tarrifs found for this duration. Consider deleting some overlapping tarrifs'}
-
+            if cost: 
+                if len(cost) > 1:
+                    return int(cost.first().cost), [{'message': 'Multiple tarrifs found for this duration. Consider deleting some overlapping tarrifs', 'type':'warning'},]
+                else:
+                    return int(cost[0].cost), None
             else:
-                return int(cost.cost), {'warning': None}
+                return 0, [{'message': 'No tarrif found for this duration. Please consider adding one', 'type':'error'},]
+
         except AttributeError:
-            return 0
+            return 0, [{'message': 'No tarrif found for this duration.', 'type':'error'},]
+
 
     @classmethod
     def remove_tarrif(self, tarrifid):
@@ -393,11 +395,11 @@ class Subscriptions(models.Model):
 
 class Parkinglog(models.Model):
     ticket_id = models.BigAutoField(db_column='TicketId',  primary_key=True)  
-    customer_id = models.ForeignKey(Customers, on_delete=models.CASCADE, blank=True, null=True)
+    customer_id = models.ForeignKey(Customers, on_delete=models.CASCADE)
     date = models.DateField(db_column='Date', default=timezone.now())  
     plate_number = models.CharField(db_column='PlateNum', max_length=50)  
     entry_gate = models.ForeignKey(Gates, related_name='entry_gate', on_delete=models.CASCADE, blank=True, null=True)  
-    checkin_method = models.CharField(db_column='CheckInMethod', max_length=10)
+    checkin_method = models.CharField(db_column='CheckInMethod', max_length=10, default='Manual')
     checkin_time = models.BigIntegerField(db_column='CheckinTime')  
     checkin_user = models.ForeignKey(Users, related_name='checkin_user', on_delete=models.CASCADE, blank=True, null=True)
     checkout_time = models.BigIntegerField(db_column='CheckoutTime', blank=True, null=True)  
@@ -418,22 +420,8 @@ class Parkinglog(models.Model):
 
     
 
-    @classmethod
-    def add(self, customer_id, date, time, plate_number, gate_id, user_id, checkin_method):
-        format_datetime = datetime.datetime.strptime(date + ' ' + time, '%Y-%m-%d %H:%M')
-        self.objects.create(plate_number=plate_number, 
-                            date = datetime.datetime.now(),
-                            customer_id = Customers.objects.get(customer_id=customer_id),
-                            checkin_time= format_datetime.timestamp(),
-                            checkin_method = checkin_method,
-                            checkin_user = Users.objects.get(user_id=user_id),
-                            entry_gate= Gates.objects.get(gate_id=gate_id),
-                            parked = True)
-        
-        return self.objects.latest('ticket_id')
-            
     
-    @staticmethod
+    @classmethod
     def close(ticket_id, checkin_time, checkout_time, checkout_method, checkout_user, exit_gate, amount_payed, payment_method, *subscription):
         checkin_unix_time = datetime.datetime.strptime(checkin_time, '%m/%d/%Y %H:%M')
         checkout_unix_time = datetime.datetime.strptime(checkout_time, '%m/%d/%Y %H:%M')

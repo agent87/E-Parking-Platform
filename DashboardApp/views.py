@@ -1,4 +1,4 @@
-from django.http import HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponseBadRequest, JsonResponse, HttpRequest, HttpResponse 
 from DashboardApp.forms import LoginForm
 from SystemApp import models
 from django.shortcuts import render, redirect
@@ -10,7 +10,9 @@ from django.views import View
 from django.core import serializers
 from django.contrib.auth.mixins import LoginRequiredMixin
 from DashboardApp import forms
+from datetime import datetime
 import json
+import time
 
 
 class index(View):
@@ -22,7 +24,7 @@ class registration(View):
     context = { 'CustomerForm': forms.CustomerForm() }
     context['AdminForm'] = forms.UserForm()
 
-    def get(self, request):
+    def get(self, request : HttpRequest) -> HttpResponse:
         return render(request, self.template, context=self.context)
 
     def post(self, request):
@@ -129,22 +131,29 @@ class parking(LoginRequiredMixin, View):
 
     def get(self, request):
         if request.GET.get('format') == 'json':
-            if request.GET.get('ticket_id'):
+            if request.GET.get('ticket_id') and not request.GET.get('cost'):
                 ticket_id = int(request.GET.get('ticket_id'))
                 ticket_obj = models.Parkinglog.objects.filter(ticket_id=ticket_id, customer_id=request.user.customer_id.customer_id)
                 if ticket_obj.exists():
                     ticket_json = {'fields' :json.loads(serializers.serialize('json', [ticket_obj[0],]))[0]['fields']}
-                    print(ticket_json)
+                    ticket_json['fields']['cost'], ticket_json['alerts']  = models.Tarrif.match_tarrif(time.time(), ticket_json['fields']['checkin_time'])
+                    ticket_json['fields']['checkin_time'] = datetime.utcfromtimestamp(ticket_obj.first().checkin_time).strftime('%H:%M')
+                    ticket_json['fields']['checkin_date'] = datetime.utcfromtimestamp(ticket_obj.first().checkin_time).strftime('%Y-%m-%d')
                     return JsonResponse(ticket_json, safe=False)
                 else:
                     return JsonResponse({'error': 'No such ticket exists'})
+            elif request.GET.get('ticket_id') and request.GET.get('checkout_time') and request.GET.get('checkin_time'):
+                response = {'fields': {'cost': models.Tarrif.match_tarrif(request.GET.get('checkout_time'), request.GET.get('checkin_time') ) }}
+
+                return JsonResponse({'error': 'No such ticket exists'})
+            
             else:
                 return HttpResponseBadRequest("Please provide a ticket id")
 
         else:
             self.context['CheckinForm'] = forms.TicketForm.CheckinForm()
             self.context['CheckinForm'].populate(request.user.customer_id.customer_id)
-            self.context['CheckoutForm'] = forms.TicketForm.CheckoutForm()
+            self.context['TicketForm'] = forms.TicketForm.CheckoutForm()
             self.context['alerts'] = None
             self.context['vehicles'] = models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id)
             self.context['user'] = request.user
@@ -167,19 +176,21 @@ class parking(LoginRequiredMixin, View):
                     return render(request, self.template_name, self.context)
             else:
                 self.context['parkingForm'] = form
-                self.context['errors'] = form.errors.get_json_data()
+                self.context['alerts'] = form.errors.get_json_data()
                 return render(request, self.template_name, self.context)
 
         elif request.POST.get('action') == 'update':
-            form = forms.TicketForm.CheckinForm(request.POST)
+            form = forms.TicketForm.CheckoutForm(request.POST)
+            print(request.POST)
             if form.is_valid():
                 form.update()
-                self.context['vehicles'] = models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id)
-                self.context['success'] = {'message': 'Vehicle updated successfully'}
+                self.context['vehicles'] = models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id, parked=True)
+                self.context['success'] = {'message': f'Checkout with Plate Number {form.cleaned_data["plate_number"]} has been done effectively!'}
                 return render(request, self.template_name, self.context)
             else:
                 self.context['parkingForm'] = form
-                self.context['errors'] = form.errors.get_json_data()
+                self.context['vehicles'] = models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id, parked=True)
+                self.context['alerts'] = form.errors.get_json_data()
                 return render(request, self.template_name, self.context)
 
         elif request.POST.get('action') == 'delete':
@@ -200,82 +211,17 @@ class parking(LoginRequiredMixin, View):
             return HttpResponseBadRequest()
 
 class subscription(LoginRequiredMixin, View):
-    template_name = "DashboardApp/Subscribers/Subscriptions.html"
+    template_name = "DashboardApp/Subscription/Subscriptions.html"
     context = {'context' : forms.SubscriptionForm }
 
     def get(self, request):
-        self.context['subscribers'] = models.Subscriptions.objects.filter(customer_id=request.user.customer_id.customer_id)
+        #self.context['subscribers'] = models.Subscriptions.objects.filter(customer_id=request.user.customer_id.customer_id)
         return render(request, self.template_name, self.context)
 
     def post(self, request):
         return render(request, self.template_name, self.context)
 
 
-
-# Create your views here.
-class responses:
-    def login_page(request, redirect_to=None):
-        if request.method == "POST":
-            username = request.POST.get('username')
-            password = request.POST.get('password')
-            user = auth.authenticate(request, username=username, password=password)
-            if user is not None:
-                return redirect(reverse('history_page'))
-            else:
-                return render(request, 'DashboardApp/Authentication/login.html', {'code': 302})
-        else:
-            return render(request, 'DashboardApp/Authentication/login.html')
-
-    
-    def testing(request):
-        return render(request, 'Auth/histor.html')
-
-    
-
-    @login_required
-    def parked_page(request):
-        context = {'parked_vehicles' : models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id, parked=True)}
-        context['EntranceFormContext'] = {'gates' : models.Gates.objects.filter(customer_id=request.user.customer_id.customer_id)}
-        return render(request, 'DashboardApp/ParkingLogs/ParkedVehicles.html', context)
-
-    @login_required
-    def subscribers_page(request):
-        context = {"subscription" : models.Subscriptions.objects.filter(customer_id = request.user.customer_id.customer_id)}
-        context['user'] = request.user
-        return render(request, 'DashboardApp/Subscribers/subscription.html', context)
-
-    @login_required
-    def user_page(request):
-        context = {'users': models.Users.objects.filter(customer_id = request.user.customer_id.customer_id)}
-        context['user'] = request.user
-        return render(request, 'DashboardApp/Accounts/user.html', context)
-
-    @login_required
-    def logout_request(request):
-        auth.logout(request)
-        return redirect(reverse('logout_request'))
-
-class Customers:
-    def RegisterView(request):
-        return render(request, 'DashboardApp/Accounts/CustomerForm.html')
-
-
-    def register(request):
-        try:
-            customer = models.Customers.enroll_customer(company_name=request.POST.get('customer_name'), address = request.POST.get('address'))
-            if customer[0]:
-                try:
-                    User = models.Users.add_user(customer[1].customer_id, request.POST.get('first_name'), request.POST.get('last_name'), request.POST.get('email'), request.POST.get('phonenum'), request.POST.get('password'), 'Admin')
-                    if User[0]:
-                        return redirect(reverse('VerifyEmail'))
-                    else:
-                        return redirect(reverse('RegisterView'))
-                except ObjectDoesNotExist:
-                    return redirect(reverse('RegisterView'))
-        
-        except ObjectDoesNotExist:
-            return redirect(reverse('RegisterView'))
-    
 
 
 class DashboardView:

@@ -25,7 +25,7 @@ urlpatterns = [
     ###Subcribers
     path('subscription', views.subscription.as_view() , name='subscription'),
 
-    path('accounts', views.responses.user_page, name='accounts_page'),
+    path('accounts', views.users.add_user, name='accounts_page'),
     path('accounts/add', views.users.add_user, name='add_account'),
     path('accounts/profile', views.users.self_profile, name='self_profile'),
     path('accounts/<int:user_id>/profile', views.users.user_profile, name='user_profile'),
