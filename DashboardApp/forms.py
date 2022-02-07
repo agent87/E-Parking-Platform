@@ -71,37 +71,31 @@ class TicketForm:
             return ticket
 
     class CheckoutForm(forms.Form):
-        action = forms.CharField(widget = forms.HiddenInput(attrs={'id':'CheckoutForm-action', 'value':'update'}), required = False)
+        #ticket details
+        action = forms.CharField(widget = forms.HiddenInput(attrs={'id':'CheckoutForm-action'}), initial="update", required = False)
         ticket_id = forms.CharField(label='Ticket ID', disabled=True, widget=forms.TextInput(attrs={'class': 'form-control', 'id':'CheckoutForm-ticket_id', 'placeholder':'Ticket ID'}))
         plate_number = forms.CharField(label='Plate Number', initial="", disabled=True, widget=forms.TextInput(attrs={'class': 'form-control', 'id':'CheckoutForm-plate_number', 'placeholder':'Plate Number'}))
-        subscription_id  = forms.CharField(label='Subscription', disabled=True, widget=forms.TextInput(attrs={'class': 'form-control', 'id':'CheckoutForm-subscription', 'placeholder':'Subscription'}))
+        subscription_id  = forms.CharField(label='Subscription', required=False, disabled=True, widget=forms.TextInput(attrs={'class': 'form-control', 'id':'CheckoutForm-subscription', 'placeholder':'Subscription'}))
 
-        def __init__(self, *args, **kwargs):
-            super(TicketForm.CheckoutForm, self).__init__(*args, **kwargs)
-            self.fields['action'].initial = "update"
-            self.CheckinDetails = self.CheckinSection()
-            self.CheckoutDetails = self.CheckoutSection()
-            self.paymentDetails = self.payment()
-
-        class CheckinSection(forms.Form):
-            entry_date = forms.DateField(label='Entry Date', widget=forms.DateInput(attrs={'class': 'form-control', 'id':'checkout_entry_date', 'type':'date'}))
-            entry_time = forms.TimeField(label='Entry Time', widget=forms.TimeInput(attrs={'class': 'form-control', 'type':'time', 'id':'checkout_entry_time', 'placeholder':'Entry Time'}))
-            entry_gate = forms.ModelChoiceField(label='Gate', queryset=SystemApp.models.Gates.objects.all(), initial=0, widget=forms.Select(attrs={'class': 'form-control', 'id':'checkout_entry_gate'}))
+        #entry details
+        entry_date = forms.DateField(label='Entry Date', widget=forms.DateInput(attrs={'class': 'form-control', 'id':'checkout_entry_date', 'type':'date'}))
+        entry_time = forms.TimeField(label='Entry Time', widget=forms.TimeInput(attrs={'class': 'form-control', 'type':'time', 'id':'checkout_entry_time', 'placeholder':'Entry Time'}))
+        entry_gate = forms.ModelChoiceField(label='Exit Gate', queryset=SystemApp.models.Gates.objects.all(), initial=0, widget=forms.Select(attrs={'class': 'form-control', 'id':'checkout_entry_gate'}))
         
-        class CheckoutSection(forms.Form):
-            exit_date = forms.DateField(label='Exit Date', widget=forms.DateInput(attrs={'class': 'form-control', 'id':'checkout_exit_date', 'type':'date'}))
-            exit_time = forms.TimeField(label='Exit Time', widget=forms.TimeInput(attrs={'class': 'form-control', 'type':'time', 'id':'checkout_exit_time', 'placeholder':'Entry Time'}))
-            exit_gate = forms.ModelChoiceField(label='Exit Gate', queryset=SystemApp.models.Gates.objects.all(), initial=0, widget=forms.Select(attrs={'class': 'form-control', 'id':'checkout_exit_gate'}))
+        #exit details
+        exit_date = forms.DateField(label='Exit Date', widget=forms.DateInput(attrs={'class': 'form-control', 'id':'checkout_exit_date', 'type':'date'}))
+        exit_time = forms.TimeField(label='Exit Time', widget=forms.TimeInput(attrs={'class': 'form-control', 'type':'time', 'id':'checkout_exit_time', 'placeholder':'Entry Time'}))
+        exit_gate = forms.ModelChoiceField(label='Exit Gate', queryset=SystemApp.models.Gates.objects.all(), initial=0, widget=forms.Select(attrs={'class': 'form-control', 'id':'checkout_exit_gate'}))
         
-        class payment(forms.Form):
-            Mobile_Money = "Mobile Money"
-            Cash = "Cash"
-            Cheque = "Cheque"
-            Bank_Transfer = "Bank Transfer"
-            Debit_Card = "Visa Card"
-            Ewawe_Card = "Ewawe Card"   
-            Subscription = "Subscription"
-            Payment_Method = (
+        #payment detials
+        Mobile_Money = "Mobile Money"
+        Cash = "Cash"
+        Cheque = "Cheque"
+        Bank_Transfer = "Bank Transfer"
+        Debit_Card = "Visa Card"
+        Ewawe_Card = "Ewawe Card"   
+        Subscription = "Subscription"
+        Payment_Method = (
                 (Mobile_Money, 'Mobile Money'),
                 (Cash, 'Cash'),
                 (Cheque, 'Cheque'),
@@ -110,10 +104,16 @@ class TicketForm:
                 (Ewawe_Card, 'Ewawe Card'),
                 (Subscription, 'Subscription'),
             )
-            cost = forms.IntegerField(label='Cost', disabled=True, widget=forms.NumberInput(attrs={'class': 'form-control', 'id':'checkout_cost', 'placeholder':'Cost'}))
-            payed = forms.IntegerField(label='Amount Payed', widget=forms.NumberInput(attrs={'class': 'form-control', 'id':'checkout_amount_payed', 'placeholder':'Amount Payed'}))
-            method = forms.CharField(label='Payment Method', widget=forms.Select(choices=Payment_Method, attrs={'class': 'form-control', 'id':'checkout_payment_method'}))
+        cost = forms.IntegerField(label='Cost', disabled=True, widget=forms.NumberInput(attrs={'class': 'form-control', 'id':'checkout_cost', 'placeholder':'Cost'}))
+        payed = forms.IntegerField(label='Amount Payed', widget=forms.NumberInput(attrs={'class': 'form-control', 'value':0, 'id':'checkout_amount_payed', 'placeholder':'Amount Payed'}))
+        method = forms.CharField(label='Payment Method', widget=forms.Select(choices=Payment_Method, attrs={'class': 'form-control', 'id':'checkout_payment_method'}))
 
+
+        def create(self, customer_id):
+            pass
+
+        def update(self):
+            print('finan update')
 
 class SubscriptionForm(forms.Form):
     customer_name = forms.CharField(label='Customer Name', widget=forms.TextInput(attrs={'class': 'form-control', 'id':'customer_name', 'placeholder':'Name'}))

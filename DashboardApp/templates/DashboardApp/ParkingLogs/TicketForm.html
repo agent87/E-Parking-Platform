@@ -11,6 +11,7 @@
             {% csrf_token %}
                 <div class="modal-body"> 
                     <div class="row">
+                        {{ CheckoutForm.action }}
                         <div class="col-sm-2 ">
                             <label>Id</label>
                             {{ CheckoutForm.ticket_id }}
@@ -20,30 +21,40 @@
                             {{ CheckoutForm.plate_number }}
                         </div>
                         <div class="col-sm-6 ">
-                            <label>Subscription Valid Until</label>
+                            <label>Subscription Status</label>
                             {{ CheckoutForm.subscription_id }}
                         </div>
                     </div>
                     <div class="row">
                         <div class="col">
-                            {{ CheckoutForm.CheckinDetails }}
+                            <label>Entry Date</label>
+                            {{ CheckoutForm.entry_date }}
+                            <label>Entry Time</label>
+                            {{ CheckoutForm.entry_time }}
+                            <label>Entry Gate</label>
+                            {{ CheckoutForm.entry_gate }}
                         </div>
                         <div class="col">
-                            {{ CheckoutForm.CheckoutDetails }} 
+                            <label>Exit Gate</label>
+                            {{ CheckoutForm.exit_date }}
+                            <label>Exit Time</label>
+                            {{ CheckoutForm.exit_time }}
+                            <label>Exit Gate</label>
+                            {{ CheckoutForm.exit_gate }} 
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-4">
                             <label>Cost</label>
-                            {{ CheckoutForm.payment.cost }}
+                            {{ CheckoutForm.cost }}
                         </div>
                         <div class="col-sm-4">
                             <label>payed</label>
-                            {{ CheckoutForm.payment.payed }}
+                            {{ CheckoutForm.payed }}
                         </div>
                         <div class="col-sm-4">
                             <label>Method</label>
-                            {{ CheckoutForm.payment.method }}
+                            {{ CheckoutForm.method }}
                         </div>
                     </div>                    
                 </div>

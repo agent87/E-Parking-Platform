@@ -395,11 +395,11 @@ class Subscriptions(models.Model):
 
 class Parkinglog(models.Model):
     ticket_id = models.BigAutoField(db_column='TicketId',  primary_key=True)  
-    customer_id = models.ForeignKey(Customers, on_delete=models.CASCADE, blank=True, null=True)
+    customer_id = models.ForeignKey(Customers, on_delete=models.CASCADE)
     date = models.DateField(db_column='Date', default=timezone.now())  
     plate_number = models.CharField(db_column='PlateNum', max_length=50)  
     entry_gate = models.ForeignKey(Gates, related_name='entry_gate', on_delete=models.CASCADE, blank=True, null=True)  
-    checkin_method = models.CharField(db_column='CheckInMethod', max_length=10)
+    checkin_method = models.CharField(db_column='CheckInMethod', max_length=10, default='Manual')
     checkin_time = models.BigIntegerField(db_column='CheckinTime')  
     checkin_user = models.ForeignKey(Users, related_name='checkin_user', on_delete=models.CASCADE, blank=True, null=True)
     checkout_time = models.BigIntegerField(db_column='CheckoutTime', blank=True, null=True)  

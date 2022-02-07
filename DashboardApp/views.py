@@ -176,22 +176,21 @@ class parking(LoginRequiredMixin, View):
                     return render(request, self.template_name, self.context)
             else:
                 self.context['parkingForm'] = form
-                self.context['errors'] = form.errors.get_json_data()
+                self.context['alerts'] = form.errors.get_json_data()
                 return render(request, self.template_name, self.context)
 
         elif request.POST.get('action') == 'update':
-            form = forms.TicketForm.CheckinForm(request.POST)
-            checkin = forms.TicketForm.CheckinForm()
-            checkout = forms.TicketForm.CheckoutForm()
-            ticket = forms.TicketForm.CheckoutForm()
+            form = forms.TicketForm.CheckoutForm(request.POST)
+            print(request.POST)
             if form.is_valid():
                 form.update()
-                self.context['vehicles'] = models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id)
-                self.context['success'] = {'message': 'Vehicle updated successfully'}
+                self.context['vehicles'] = models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id, parked=True)
+                self.context['success'] = {'message': f'Checkout with Plate Number {form.cleaned_data["plate_number"]} has been done effectively!'}
                 return render(request, self.template_name, self.context)
             else:
                 self.context['parkingForm'] = form
-                self.context['errors'] = form.errors.get_json_data()
+                self.context['vehicles'] = models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id, parked=True)
+                self.context['alerts'] = form.errors.get_json_data()
                 return render(request, self.template_name, self.context)
 
         elif request.POST.get('action') == 'delete':
