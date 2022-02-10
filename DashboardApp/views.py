@@ -168,14 +168,12 @@ class parking(LoginRequiredMixin, View):
                 if models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id, plate_number=form.cleaned_data['plate_number'], parked = True).exists():
                     self.context['alerts'] = [{'message': 'Vehicle already parked! Consider checking out the vehicle.', 'title':'Vehicel already parked', 'type':'error'},]
                     self.context['vehicles'] = models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id)
-                    self.context['CheckinForm'].populate(request.user.customer_id.customer_id)
                     return render(request, self.template_name, self.context)
                 else:
                     form.cleaned_data['user'] = request.user
                     form.create()
                     self.context['vehicles'] = models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id)
                     self.context['alerts'] = [{'message': f"Ticket with vehicle plate number {form.cleaned_data['plate_number']} has been added sucessfully.", 'title':'Vehicle added succesffuly', 'type':'success'}]
-                    self.context['CheckinForm'].populate(request.user.customer_id.customer_id)
                     return render(request, self.template_name, self.context)
             else:
                 self.context['parkingForm'] = form
