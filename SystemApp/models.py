@@ -288,10 +288,10 @@ class Tarrif(models.Model):
         )
 
     @classmethod
-    def match_tarrif(self, end_time:int,start_time: int):
+    def match_tarrif(self, customer_id, end_time:int,start_time: int):
         duration = int((end_time - start_time)/60)
         try:
-            cost =  self.objects.filter(from_time__lte=duration, to_time__gte=duration)
+            cost =  self.objects.filter(customer_id=customer_id, from_time__lte=duration, to_time__gte=duration)
             if cost: 
                 if len(cost) > 1:
                     return int(cost.first().cost), [{'message': 'Multiple tarrifs found for this duration. Consider deleting some overlapping tarrifs', 'type':'warning'},]
@@ -303,7 +303,7 @@ class Tarrif(models.Model):
         except AttributeError:
             return 0, [{'message': 'No tarrif found for this duration.', 'type':'error'},]
 
-
+    
     @classmethod
     def remove_tarrif(self, tarrifid):
         self.objects.filter(tarrifid=tarrifid).delete()
