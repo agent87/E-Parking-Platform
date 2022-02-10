@@ -129,14 +129,28 @@ class SubscriptionForm(forms.ModelForm):
  
     class Meta:
         model = SystemApp.models.Subscriptions
-        exclude = ['customer_id', 'subscription_id', 'user']
+        exclude = ['customer_id','date', 'subscription_id', 'user']
+        widgets = { 'name': forms.TextInput(attrs={'class': 'form-control', 'id':'subscription_name', 'placeholder':'Name'}),
+                    'plate_number': forms.TextInput( attrs={'class': 'form-control', 'id':'plate_number', 'minlength':'6', 'maxlength':'7','placeholder':'RAZ-999-Z'}),
+                    'start_date' : forms.DateInput(attrs={'class': 'form-control', 'id':'start_date', 'type':'date'}),
+                    'end_date' : forms.DateInput(attrs={'class': 'form-control', 'id':'end_date', 'type':'date'}),
+                    'amount' : forms.NumberInput(attrs={'class': 'form-control', 'id':'amount', 'placeholder':'Amount'}),
+                    'phone_number' : forms.TextInput(attrs={'class': 'form-control', 'id':'phone_number', 'placeholder':'Phone Number'}),
+                    'comments' : forms.Textarea(attrs={'class': 'form-control', 'id':'comments', 'placeholder':'Comments'}),
+
+
+         }
 
     def create(self, user):
-        instance = SystemApp.models.Subscriptions(customer_id=user.customer_id,  user=user)
-        pass
+        sub= self.save(commit=False)
+        sub.user = user
+        sub.customer_id = user.customer_id
+        return sub.save()
 
-    def update(self):
-        pass
+    def update(self, user):
+        sub= self.save(commit=False)
+        sub.user = user
+        sub.customer_id = user.customer_id
+        return sub.save()
 
-    def delete(self):
-        pass
+    

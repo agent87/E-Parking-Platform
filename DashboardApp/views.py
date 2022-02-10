@@ -1,4 +1,4 @@
-from django.http import HttpResponseBadRequest, JsonResponse, HttpRequest, HttpResponse 
+from django.http import Http404, HttpResponseBadRequest, JsonResponse, HttpRequest, HttpResponse 
 from DashboardApp.forms import LoginForm
 from SystemApp import models
 from django.shortcuts import render, redirect
@@ -75,9 +75,9 @@ class authentication:
                 return render(request, self.template, context=self.context)
         
     class logout(View):
-        def get(request):
+        def get(self, request):
             auth.logout(request)
-            return redirect(reverse('LoginView'))
+            return redirect(reverse('login'))
     
 class pricing(LoginRequiredMixin, View):
     template_name = 'DashboardApp/Pricing/PricingPage.html'
@@ -215,14 +215,42 @@ class parking(LoginRequiredMixin, View):
 
 class subscription(LoginRequiredMixin, View):
     template_name = "DashboardApp/Subscription/Subscriptions.html"
-    context = {'context' : forms.SubscriptionForm }
+    context = {'SubscriptionForm' : forms.SubscriptionForm() }
 
     def get(self, request):
-        #self.context['subscribers'] = models.Subscriptions.objects.filter(customer_id=request.user.customer_id.customer_id)
+        self.context['subscriptions'] = models.Subscriptions.objects.filter(customer_id=request.user.customer_id.customer_id)
         return render(request, self.template_name, self.context)
 
     def post(self, request):
-        return render(request, self.template_name, self.context)
+        if request.POST.get('action') == 'add':
+            form = forms.SubscriptionForm(request.POST)
+            if form.is_valid():
+                plate_number = form.create(user=request.user)
+                self.context['subscriptions'] = models.Subscriptions.objects.filter(customer_id=request.user.customer_id.customer_id)
+                self.context['alerts'] = [{'message': f"Subscription with {plate_number} has been added successfuly.", 'title':'Subscription Added Succesfully', 'type':'success'}]
+                return render(request, self.template_name, self.context)
+            else:
+                self.context['SubscriptionForm'] = form
+                self.context['alerts'] = form.errors.get_json_data()
+                return render(request, self.template_name, self.context)
+
+        elif request.POST.get('action') == 'update':
+            return render(request, self.template_name, self.context)
+
+        elif request.POST.get('action') == 'delete':
+            subscription_id = request.POST.get('item_id')
+            obj =  models.Subscriptions.objects.filter(subscription_id=subscription_id, customer_id=request.user.customer_id.customer_id)
+            if obj.exists():
+                plate_number = obj.first().plate_number
+                obj.delete()
+                self.context['subscriptions'] = models.Subscriptions.objects.filter(customer_id=request.user.customer_id.customer_id)
+                self.context['alerts'] = [{'message': f"Subscription with {plate_number} has been removed.", 'title':'Subscription removed successfully', 'type':'success'}]
+                return render(request, self.template_name, self.context)
+            else:
+                return render(request, self.template_name, self.context)
+
+        else:
+            return Http404()
 
 
 

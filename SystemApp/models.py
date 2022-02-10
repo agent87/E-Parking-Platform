@@ -331,9 +331,9 @@ class Subscriptions(models.Model):
     start_date = models.DateField(db_column='start')  
     end_date = models.DateField(db_column='end')  
     amount = models.FloatField(db_column='SubscriptionAmount')  
-    name = models.CharField(db_column='Name', max_length=50)  
+    name = models.CharField(db_column='Name', max_length=50, blank=True, null=True)  
     phone_number = models.CharField(db_column='ContactNumber', max_length=50)  
-    comments = models.TextField(db_column='Comments', max_length=300, blank=True, null=True))  
+    comments = models.TextField(db_column='Comments', max_length=100, blank=True, null=True)
     user = models.ForeignKey(Users, on_delete=models.CASCADE, blank=True, null=True)
 
     class Meta:
