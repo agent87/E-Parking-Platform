@@ -6,3 +6,4 @@ psycopg2
 pip
 requests
 django-environ
+pytz
