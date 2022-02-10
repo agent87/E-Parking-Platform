@@ -137,7 +137,7 @@ class parking(LoginRequiredMixin, View):
                 ticket_obj = models.Parkinglog.objects.filter(ticket_id=ticket_id, customer_id=request.user.customer_id.customer_id)
                 if ticket_obj.exists():
                     ticket_json = {'fields' :json.loads(serializers.serialize('json', [ticket_obj[0],]))[0]['fields']}
-                    ticket_json['fields']['cost'], ticket_json['alerts']  = models.Tarrif.match_tarrif(time.time(), ticket_json['fields']['checkin_time'])
+                    ticket_json['fields']['cost'], ticket_json['alerts']  = models.Tarrif.match_tarrif(request.user.customer_id.customer_id, time.time(), ticket_json['fields']['checkin_time'])
                     ticket_json['fields']['checkin_time'] = datetime.utcfromtimestamp(ticket_obj.first().checkin_time + 7400).strftime('%H:%M')
                     ticket_json['fields']['checkin_date'] = datetime.utcfromtimestamp(ticket_obj.first().checkin_time).strftime('%Y-%m-%d')
                     print(ticket_json['fields']['checkin_time'])
@@ -169,12 +169,14 @@ class parking(LoginRequiredMixin, View):
                 if models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id, plate_number=form.cleaned_data['plate_number'], parked = True).exists():
                     self.context['alerts'] = [{'message': 'Vehicle already parked! Consider checking out the vehicle.', 'title':'Vehicel already parked', 'type':'error'},]
                     self.context['vehicles'] = models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id)
+                    self.context['CheckinForm'].populate(request.user.customer_id.customer_id)
                     return render(request, self.template_name, self.context)
                 else:
                     form.cleaned_data['user'] = request.user
                     form.create()
                     self.context['vehicles'] = models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id)
                     self.context['alerts'] = [{'message': f"Ticket with vehicle plate number {form.cleaned_data['plate_number']} has been added sucessfully.", 'title':'Vehicle added succesffuly', 'type':'success'}]
+                    self.context['CheckinForm'].populate(request.user.customer_id.customer_id)
                     return render(request, self.template_name, self.context)
             else:
                 self.context['parkingForm'] = form
@@ -189,9 +191,11 @@ class parking(LoginRequiredMixin, View):
                 form.update()
                 self.context['vehicles'] = models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id, parked=True)
                 self.context['success'] = {'message': f'Checkout with Plate Number {form.cleaned_data["plate_number"]} has been done effectively!'}
+                self.context['CheckinForm'].populate(request.user.customer_id.customer_id)
                 return render(request, self.template_name, self.context)
             else:
                 self.context['parkingForm'] = form
+                self.context['CheckinForm'].populate(request.user.customer_id.customer_id)
                 self.context['vehicles'] = models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id, parked=True)
                 self.context['alerts'] = form.errors.get_json_data()
                 return render(request, self.template_name, self.context)
@@ -204,8 +208,10 @@ class parking(LoginRequiredMixin, View):
                 obj.delete()
                 self.context['alerts'] = [{'message': f"Ticket with with Plate number {plate_number} has been removed.", 'title':'Ticket removed successfully', 'type':'success'}]
                 self.context['vehicles'] = models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id)
+                self.context['CheckinForm'].populate(request.user.customer_id.customer_id)
                 return render(request, self.template_name, self.context)
             else:
+                self.context['CheckinForm'].populate(request.user.customer_id.customer_id)
                 self.context['alerts'] = [{'message': 'Unable to find ticket with matching plate number', 'title':'Invalid request', 'type':'error'},]
                 self.context['vehicles'] = models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id)
                 return render(request, self.template_name, self.context)
