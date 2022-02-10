@@ -122,7 +122,6 @@ class TicketForm:
             ticket.payment_method = self.cleaned_data['method']
             ticket.parked = False
             ticket.save()
-            print("----------------done---------------")
             return ticket
 
 class SubscriptionForm(forms.ModelForm):

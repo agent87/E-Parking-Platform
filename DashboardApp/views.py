@@ -140,7 +140,6 @@ class parking(LoginRequiredMixin, View):
                     ticket_json['fields']['cost'], ticket_json['alerts']  = models.Tarrif.match_tarrif(request.user.customer_id.customer_id, time.time(), ticket_json['fields']['checkin_time'])
                     ticket_json['fields']['checkin_time'] = datetime.utcfromtimestamp(ticket_obj.first().checkin_time + 7400).strftime('%H:%M')
                     ticket_json['fields']['checkin_date'] = datetime.utcfromtimestamp(ticket_obj.first().checkin_time).strftime('%Y-%m-%d')
-                    print(ticket_json['fields']['checkin_time'])
                     return JsonResponse(ticket_json, safe=False)
                 else:
                     return JsonResponse({'error': 'No such ticket exists'})
@@ -185,7 +184,6 @@ class parking(LoginRequiredMixin, View):
 
         elif request.POST.get('action') == 'update':
             form = forms.TicketForm.CheckoutForm(request.POST)
-            print(form.errors)
             if form.is_valid():
                 form.cleaned_data['user'] = request.user
                 form.update()

@@ -303,7 +303,7 @@ class Tarrif(models.Model):
         except AttributeError:
             return 0, [{'message': 'No tarrif found for this duration.', 'type':'error'},]
 
-    
+
     @classmethod
     def remove_tarrif(self, tarrifid):
         self.objects.filter(tarrifid=tarrifid).delete()
@@ -486,7 +486,6 @@ class Parkinglog(models.Model):
 
     @property
     def checkin_datetime(self):
-        print(datetime.datetime.fromtimestamp(self.checkin_time).strftime("%m/%d/%Y %H:%M"))
         return datetime.datetime.fromtimestamp(self.checkin_time).strftime("%m/%d/%Y %H:%M")
 
     @property
@@ -529,8 +528,8 @@ def delete_customer(customer_id):
 def view_customer_users(customer_id):
     users =  Users.objects.filter(customer_id=customer_id)
     for user in users:
-        print(user.email)
+        pass
 
 def view_customers():
     for customer in Customers.objects.all():
-        print(customer.customer_id, customer.company_name)
+        pass
