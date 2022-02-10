@@ -134,7 +134,7 @@
                     {% for gate in gates %}
                       <div class="progress-group">
                         {{ gate.name }}
-                        <span class="float-right"><b>{{ gate.total_entries }}</b>/{{ gate.total_exits }}</span>
+                        <span class="float-right"><b>{{ gate.total_exits }} exits</b>/{{ gate.total_entries }} entry</span>
                         <div class="progress progress-sm" style="background-color: #ffaab2;">
                           <div class="progress-bar bg-primary" style ="width: {{ gate.traffic_ratio }}%"></div>
                         </div>

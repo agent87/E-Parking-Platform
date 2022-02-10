@@ -14,7 +14,7 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <div class="container-fluid">
-        <h4 class="text-center display-4">Subcribed Plate Numbers</h4>
+        <h4 class="text-center display-4">Subscription</h4>
       </div>
       <!-- /.container-fluid -->
     </section>
@@ -22,21 +22,22 @@
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
+            {% if user.role != "Cashier" %}
             <div class="row">
                 <div class="col-md-12 offset-md-0">
-                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#SubcriptionForm">
+                    <button type="button" class="btn btn-default" id="AddTarrif" data-toggle="modal" data-target="#SubcriptionFormModal">
                         Add Subscription
                     </button>
                 </div>
             </div> 
+            {% endif %}
             <!-- List of Accounts-->
             <div class="row mt-2">
                 <div class="col-md-12 offset-md-0">
                   <!--Entity Table-->
         <div class="card card-default">
             <div class="card-header">
-              <h3 class="card-title">Subscription</h3>
-  
+              <h3 class="card-title"></h3>
               <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
                   <i class="fas fa-minus"></i>
@@ -48,42 +49,37 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body" style="display: block;" id="entities">
-                <table class="table" id="example1">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Plate Number</th>
-                                            <th>Name</th>
-                                            <th>Contact</th>
-                                            <th>Office Space</th>
-                                            <th>Parking Lot</th>
-                                            <th>Expiry Date</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for subscription in subscriptions %}
-                                        <tr>
-                                            <th scope="row">{{forloop.counter}}</th>
-                                            <td>{{subscription.plate_number}}</td>
-                                            <td>{{subscription.phone_number}}</td>
-                                            <td>{{subscription.name}}</td>
-                                            <td>{{subscription.office}}</td>
-                                            <td>{{subscription.parklot}}</td>
-                                            <td>{{subscription.end_date}}</td>
-                                            <td>
-                                                {% comment %} <button class="btn btn-warning mb-3" data-toggle="modal" data-target="#closeTicket" style="color: #ffffff;"> <i class="zmdi zmdi-close"></i> Close Ticket</button>
-                                                {% endcomment %}<a href="history/{{subscription.TicketId}}/close" class="btn-sm btn-primary" role="button" data-bs-toggle="button">more</a>
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-              <!-- /.row -->
+              <table class="table" id="example1">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Plate Number</th>
+                        <th>Name</th>
+                        <th>Contact</th>
+                        <th>Expiry Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for subscription in subscriptions %}
+                    <tr>
+                        <th scope="row">{{forloop.counter}}</th>
+                        <td>{{subscription.plate_number}}</td>
+                        <td>{{subscription.name}}</td>
+                        <td>{{subscription.phone_number}}</td>
+                        <td>{{subscription.end_date}}</td>
+                        <td>
+                          <a class="btn-sm btn-warning ModifySubscription" data-toggle="modal" data-target="#SubcriptionFormModal" role="button" id={{ subscription.subscription_id }} data-bs-toggle="button">Update</a>
+                          <a class="btn-sm btn-danger DeleteSubscription"  data-toggle="modal" data-target="#ConfirmModal" role="button" id={{ subscription.subscription_id }} data-bs-toggle="button">Delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+              </table>
             </div>
             <!-- /.card-body -->
             <div class="card-footer" style="display: block;">
-              TOTAL ACTIVE SUBSCRIPTIONS : {{ total_accounts }}
+              Total Subscription : {{ subscriptions.count }}
             </div>
         </div>
                   <!-- /.card -->
@@ -92,12 +88,12 @@
             </div>
         </div>
 
-        <!-- Modal Dialogs ========= --> 
- 
+    
+    {% include "DashboardApp/Subscription/SubscriptionForm.html" with SubscriptionForm=SubscriptionForm %}
+    {% include 'DashboardApp/ConfirmModal.html' with submit_url="/subscription" %}
+        
     </section>
   </div>
-
-{% include "DashboardApp/Subscribers/Subscriptions.html" with SubscriptionForm=SubscriptionForm %}
 
 {% endblock %}
 
@@ -120,20 +116,74 @@
 <script src="{% static 'plugins/pdfmake/vfs_fonts.js' %}"></script>
 <script src="{% static 'plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
 <script src="{% static 'plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
-
+<script src="{% static 'plugins/mask/dist/jquery.inputmask.js' %}"></script>
+<script>
+$(document).ready(function(){
+  $('#phone_number').inputmask({"mask": "(250) 799-999999"});
+});
+</script>
 
 <script>
     $(function () {
       $("#example1").DataTable({
-        "responsive": true, "lengthChange": true, "autoWidth": true,
-        "buttons": ["copy", "csv", "excel", "colvis"], "ordering" : true, "responsive": true
+        "responsive": false, "lengthChange": false, "autoWidth": false,
+        "buttons": ["copy", "csv", "excel", "colvis"]
       }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+      
     });
   </script>
-
 <script>
-  $(function () {
-    $('.select2').select2()
+    {% for alert in alerts %}
+      toastr.{{alert.type}}("{{alert.message}}", "{{alert.title}}",
+      {
+        closeButton: true,
+        progressBar: true,
+        timeout : 8000,
+        preventDuplicates: false,
+      });
+    {% endfor %}
+  </script>
+<script>
+$(function(){
+  $(".ModifySubscription").click(function(){
+    $("#PricingFormTitle").html("Update Tarrif");
+    $("#TarriffForm-tarrif_id").val($(this).attr("id"));
+    $("#from_time").val($(this).attr("data-from-time"));
+    $("#to_time").val($(this).attr("data-to-time"));
+    $("#cost").val($(this).attr("data-cost"));
+    $("#PricingFormAction").val("update");});
+
+  $(".DeleteSubscription").click(function(){
+    var id = $(this).attr('id');
+    $('#item_id').val(id);
+    $('#ConfirmForm').attr('action', "{% url 'subscription' %}");
   });
+
+  $("#AddSubscription").click(function(){
+    $("#PricingFormTitle").html("Add New Tarrif");
+    $("#TariffForm").attr("Method", "POST");
+    $("#tarrif_id").val('None');
+    $("#from_time").val(0);
+    $("#to_time").val(0);
+    $("#cost").val(0);
+    
+  });
+
+ 
+
+  $("#to_time").change(function(){
+    if(parseInt($(this).val()) < parseInt($("#from_time").val())){
+      toastr.warning("Time To must be greater than Time From");
+      $(this).val(parseInt($("#from_time").val())+1);
+    }
+    if(parseInt($(this).val()) < 0){
+      toastr.warning("Time To must be greater than 0");
+      $(this).val(0);
+    }
+  });
+});
+
 </script>
+
+
 {% endblock %}

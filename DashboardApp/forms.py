@@ -65,7 +65,7 @@ class TicketForm:
 
 
         def create(self):
-            format_datetime = datetime.datetime.strptime(str(self.cleaned_data['date']) + ' ' + str(self.cleaned_data['entry_time']), '%Y-%m-%d %H:%M:%S')
+            format_datetime = datetime.datetime.strptime(str(self.cleaned_data['date']) + ' ' + str(self.cleaned_data['entry_time']), '%Y-%m-%d %H:%M:%S') 
             ticket = SystemApp.models.Parkinglog(plate_number=self.cleaned_data['plate_number'].upper(), date = timezone.now(), customer_id = self.cleaned_data['user'].customer_id, checkin_time= format_datetime.timestamp(),checkin_method = 'Manual', checkin_user = self.cleaned_data['user'], entry_gate= SystemApp.models.Gates.objects.get(gate_id=self.cleaned_data['gate'].gate_id), parked = True)
             ticket.save()
             return ticket
@@ -73,9 +73,11 @@ class TicketForm:
     class CheckoutForm(forms.Form):
         #ticket details
         action = forms.CharField(widget = forms.HiddenInput(attrs={'id':'CheckoutForm-action'}), initial="update", required = False)
-        ticket_id = forms.CharField(label='Ticket ID', disabled=True, widget=forms.TextInput(attrs={'class': 'form-control', 'id':'CheckoutForm-ticket_id', 'placeholder':'Ticket ID'}))
-        plate_number = forms.CharField(label='Plate Number', initial="", disabled=True, widget=forms.TextInput(attrs={'class': 'form-control', 'id':'CheckoutForm-plate_number', 'placeholder':'Plate Number'}))
-        subscription_id  = forms.CharField(label='Subscription', required=False, disabled=True, widget=forms.TextInput(attrs={'class': 'form-control', 'id':'CheckoutForm-subscription', 'placeholder':'Subscription'}))
+        ticket_id = forms.CharField(widget = forms.HiddenInput(attrs={'id':'CheckoutForm-ticket_id'}), required = False)
+        
+        show_ticket = forms.CharField(label='Ticket ID', disabled=True, required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'id':'CheckoutForm-ticket', 'placeholder':'Ticket ID'}))
+        plate_number = forms.CharField(label='Plate Number', initial="", required=False, disabled=True, widget=forms.TextInput(attrs={'class': 'form-control', 'id':'CheckoutForm-plate_number', 'placeholder':'Plate Number'}))
+        Subscription_id  = forms.CharField(label='Subscription', required=False, disabled=True, widget=forms.TextInput(attrs={'class': 'form-control', 'id':'CheckoutForm-subscription_id', 'placeholder':'Subscription'}))
 
         #entry details
         entry_date = forms.DateField(label='Entry Date', widget=forms.DateInput(attrs={'class': 'form-control', 'id':'checkout_entry_date', 'type':'date'}))
@@ -104,30 +106,51 @@ class TicketForm:
                 (Ewawe_Card, 'Ewawe Card'),
                 (Subscription, 'Subscription'),
             )
-        cost = forms.IntegerField(label='Cost', disabled=True, widget=forms.NumberInput(attrs={'class': 'form-control', 'id':'checkout_cost', 'placeholder':'Cost'}))
+        cost = forms.IntegerField(label='Cost', disabled=True, required=False, widget=forms.NumberInput(attrs={'class': 'form-control', 'id':'checkout_cost', 'placeholder':'Cost'}))
         payed = forms.IntegerField(label='Amount Payed', widget=forms.NumberInput(attrs={'class': 'form-control', 'value':0, 'id':'checkout_amount_payed', 'placeholder':'Amount Payed'}))
         method = forms.CharField(label='Payment Method', widget=forms.Select(choices=Payment_Method, attrs={'class': 'form-control', 'id':'checkout_payment_method'}))
 
 
-        def create(self, customer_id):
-            pass
-
         def update(self):
-            print('finan update')
+            ticket = SystemApp.models.Parkinglog.objects.get(ticket_id=self.cleaned_data['ticket_id'])
+            ticket.checkout_time = datetime.datetime.strptime(str(self.cleaned_data['exit_date']) + ' ' + str(self.cleaned_data['exit_time']), '%Y-%m-%d %H:%M:%S').timestamp()
+            ticket.checkout_gate = SystemApp.models.Gates.objects.get(gate_id=self.cleaned_data['exit_gate'].gate_id)
+            ticket.checkout_method = 'Manual'
+            ticket.exit_gate = SystemApp.models.Gates.objects.get(gate_id=self.cleaned_data['exit_gate'].gate_id)
+            ticket.checkout_user = self.cleaned_data['user']
+            ticket.amount_payed = self.cleaned_data['payed']
+            ticket.payment_method = self.cleaned_data['method']
+            ticket.parked = False
+            ticket.save()
+            print("----------------done---------------")
+            return ticket
 
-class SubscriptionForm(forms.Form):
-    customer_name = forms.CharField(label='Customer Name', widget=forms.TextInput(attrs={'class': 'form-control', 'id':'customer_name', 'placeholder':'Name'}))
-    plate_number = forms.CharField(label='Plate Number', widget=forms.TextInput(attrs={'class': 'form-control', 'id':'plate_number', 'placeholder':'Plate Number' ,  'minlength':'6', 'maxlength':'7','pattern':'[a-zA-Z0-9]+'}))
-    phonenum = forms.CharField(label='Phone Number', widget=forms.TextInput(attrs={'class': 'form-control', 'id':'phonenum'}))
-    amount = forms.IntegerField(label='Price in Rwf', widget=forms.NumberInput(attrs={'class': 'form-control', 'id':'amount', 'type':'number', 'placeholder':'RWF'}))
-    start_date = forms.DateField(label='Date', widget=forms.DateInput(attrs={'class': 'form-control', 'id':'start_date', 'type':'date'}))
-    end_date = forms.DateField(label='Date', widget=forms.DateInput(attrs={'class': 'form-control', 'id':'end_date', 'type':'date'}))
+class SubscriptionForm(forms.ModelForm):
+ 
+    class Meta:
+        model = SystemApp.models.Subscriptions
+        exclude = ['customer_id','date', 'subscription_id', 'user']
+        widgets = { 'name': forms.TextInput(attrs={'class': 'form-control', 'id':'subscription_name', 'placeholder':'Name'}),
+                    'plate_number': forms.TextInput( attrs={'class': 'form-control', 'id':'plate_number', 'minlength':'6', 'maxlength':'7','placeholder':'RAZ-999-Z'}),
+                    'start_date' : forms.DateInput(attrs={'class': 'form-control', 'id':'start_date', 'type':'date'}),
+                    'end_date' : forms.DateInput(attrs={'class': 'form-control', 'id':'end_date', 'type':'date'}),
+                    'amount' : forms.NumberInput(attrs={'class': 'form-control', 'id':'amount', 'placeholder':'Amount'}),
+                    'phone_number' : forms.TextInput(attrs={'class': 'form-control', 'id':'phone_number', 'placeholder':'Phone Number'}),
+                    'comments' : forms.Textarea(attrs={'class': 'form-control', 'id':'comments', 'placeholder':'Comments'}),
 
-    def create(self):
-        pass
 
-    def update(self):
-        pass
+         }
 
-    def delete(self):
-        pass
+    def create(self, user):
+        sub= self.save(commit=False)
+        sub.user = user
+        sub.customer_id = user.customer_id
+        return sub.save()
+
+    def update(self, user):
+        sub= self.save(commit=False)
+        sub.user = user
+        sub.customer_id = user.customer_id
+        return sub.save()
+
+    

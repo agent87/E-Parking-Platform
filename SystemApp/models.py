@@ -325,17 +325,15 @@ class Tarrif(models.Model):
 
 class Subscriptions(models.Model):
     customer_id = models.ForeignKey(Customers, on_delete=models.CASCADE, blank=True, null=True)
-    date = models.DateField(db_column='Date', blank=True, null=True)
+    date = models.DateField(db_column='Date', default=timezone.now())
     subscription_id = models.BigAutoField(db_column='SubscriptionId', primary_key=True)  
     plate_number = models.CharField(db_column='PlateNumber', max_length=50)  
     start_date = models.DateField(db_column='start')  
     end_date = models.DateField(db_column='end')  
-    type = models.CharField(db_column='SubscriptionType', max_length=50)
     amount = models.FloatField(db_column='SubscriptionAmount')  
-    name = models.CharField(db_column='Name', max_length=50)  
+    name = models.CharField(db_column='Name', max_length=50, blank=True, null=True)  
     phone_number = models.CharField(db_column='ContactNumber', max_length=50)  
-    office = models.CharField(db_column='OfficeLocation', max_length=50)  
-    parklot = models.CharField(db_column='ParkingLot', max_length=50)  
+    comments = models.TextField(db_column='Comments', max_length=100, blank=True, null=True)
     user = models.ForeignKey(Users, on_delete=models.CASCADE, blank=True, null=True)
 
     class Meta:

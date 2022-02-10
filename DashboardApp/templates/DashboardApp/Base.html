@@ -68,12 +68,12 @@
             </a>
           </li>
           {% if user.is_superuser %}
-              <li class="nav-item">
+              {% comment %} <li class="nav-item">
                 <a href="{% url 'accounts_page' %}" class="nav-link">
                   <i class="nav-icon fas fa-users"></i>
                   <p>Accounts</p>
                 </a>
-              </li>
+              </li> {% endcomment %}
           {% endif %}
           <li class="nav-header">MISCELLANEOUS</li>
           <li class="nav-item">

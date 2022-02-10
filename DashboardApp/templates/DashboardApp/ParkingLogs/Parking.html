@@ -193,6 +193,9 @@ $(function(){
         $('#CheckoutForm-ticket_id').val(ticket_id);
         $('#CheckoutForm-plate_number').val(data.fields.plate_number);
 
+        $('#CheckoutForm-ticket').val(ticket_id);
+        $('#CheckoutForm-plate_num').val(data.fields.plate_number);
+
         $('#checkout_entry_date').val(data.fields.checkin_date).change();
         $('#checkout_entry_time').val(data.fields.checkin_time).change();
         $('#checkout_entry_gate').val(data.fields.entry_gate).change();
