@@ -10,7 +10,8 @@ from django.views import View
 from django.core import serializers
 from django.contrib.auth.mixins import LoginRequiredMixin
 from DashboardApp import forms
-from datetime import datetime
+from django.utils.timezone import datetime
+import pytz
 import json
 import time
 
@@ -137,8 +138,9 @@ class parking(LoginRequiredMixin, View):
                 if ticket_obj.exists():
                     ticket_json = {'fields' :json.loads(serializers.serialize('json', [ticket_obj[0],]))[0]['fields']}
                     ticket_json['fields']['cost'], ticket_json['alerts']  = models.Tarrif.match_tarrif(time.time(), ticket_json['fields']['checkin_time'])
-                    ticket_json['fields']['checkin_time'] = datetime.utcfromtimestamp(ticket_obj.first().checkin_time).strftime('%H:%M')
+                    ticket_json['fields']['checkin_time'] = datetime.utcfromtimestamp(ticket_obj.first().checkin_time + 7400).strftime('%H:%M')
                     ticket_json['fields']['checkin_date'] = datetime.utcfromtimestamp(ticket_obj.first().checkin_time).strftime('%Y-%m-%d')
+                    print(ticket_json['fields']['checkin_time'])
                     return JsonResponse(ticket_json, safe=False)
                 else:
                     return JsonResponse({'error': 'No such ticket exists'})
@@ -181,8 +183,9 @@ class parking(LoginRequiredMixin, View):
 
         elif request.POST.get('action') == 'update':
             form = forms.TicketForm.CheckoutForm(request.POST)
-            print(request.POST)
+            print(form.errors)
             if form.is_valid():
+                form.cleaned_data['user'] = request.user
                 form.update()
                 self.context['vehicles'] = models.Parkinglog.objects.filter(customer_id=request.user.customer_id.customer_id, parked=True)
                 self.context['success'] = {'message': f'Checkout with Plate Number {form.cleaned_data["plate_number"]} has been done effectively!'}
