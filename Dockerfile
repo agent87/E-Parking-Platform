@@ -23,4 +23,4 @@ RUN ["python" , "manage.py", "makemigrations"]
 RUN ["python" , "manage.py", "migrate"]
 
 #
-CMD ["python", "manage.py", "runserver", "0.0.0.0:80"]
+CMD gunicorn -w 2 -b 0.0.0.0:80 System.wsgi:application

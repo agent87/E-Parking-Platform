@@ -1,8 +1,6 @@
-django-heroku
 django
 gunicorn
 whitenoise
 pip
 requests
-django-environ
 pytz

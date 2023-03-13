@@ -29,7 +29,7 @@ DEBUG = True
 
 AUTH_USER_MODEL = 'SystemApp.Users'
 
-ALLOWED_HOSTS = ['127.0.0.1','ewawe-parking.herokuapp.com', 'localhost']
+ALLOWED_HOSTS = ['*']
 
 LOGIN_URL = '/'
 
